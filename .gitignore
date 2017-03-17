@@ -27,3 +27,16 @@
 *.exe
 *.out
 *.app
+
+# Build folder
+build*/
+
+# bin folder
+bin/
+
+# Misc folder
+.settings/
+
+# Eclipse files
+.cproject
+.project
