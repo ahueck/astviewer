@@ -1,32 +1,3 @@
-//===---- ClangQuery.cpp - clang-query tool -------------------------------===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-//
-// This tool is for interactive exploration of the Clang AST using AST matchers.
-// It currently allows the user to enter a matcher at an interactive prompt and
-// view the resulting bindings as diagnostics, AST pretty prints or AST dumps.
-// Example session:
-//
-// $ cat foo.c
-// void foo(void) {}
-// $ clang-query foo.c --
-// clang-query> match functionDecl()
-//
-// Match #1:
-//
-// foo.c:1:1: note: "root" binds here
-// void foo(void) {}
-// ^~~~~~~~~~~~~~~~~
-// 1 match.
-//
-//===----------------------------------------------------------------------===//
-
-
 #include "Query.h"
 #include "QueryParser.h"
 #include "QuerySession.h"
