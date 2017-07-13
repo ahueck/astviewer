@@ -300,7 +300,15 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuRecent_File">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionClear_Menu"/>
+    </widget>
     <addaction name="actionOpen_File"/>
+    <addaction name="menuRecent_File"/>
     <addaction name="actionOpen_DB"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -334,6 +342,27 @@
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </action>
+  <action name="actionPh">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </action>
+  <action name="actionClear_Menu">
+   <property name="text">
+    <string>Clear Menu</string>
    </property>
   </action>
  </widget>

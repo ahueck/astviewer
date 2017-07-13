@@ -48,6 +48,7 @@ public:
   }
 
   void read(QString file) {
+    this->file = file;
     QFuture<QString> result = QtConcurrent::run(astviewer::readTxtFile, file);
     //auto watcher = new QFutureWatcher<QString>(this);
     watcher.setFuture(result);
