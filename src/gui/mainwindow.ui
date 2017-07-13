@@ -320,6 +320,12 @@
    <property name="toolTip">
     <string>Status</string>
    </property>
+   <property name="layoutDirection">
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
    <property name="sizeGripEnabled">
     <bool>true</bool>
    </property>

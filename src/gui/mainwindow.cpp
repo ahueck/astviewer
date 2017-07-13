@@ -3,20 +3,31 @@
 
 #include "gui/CommandInput.h"
 #include "util/QLogHandler.h"
+#include "util/Util.h"
 #include "core/ClangToolSession.h"
 
 #include <QFileDialog>
 #include <QPointer>
 #include <QDebug>
+#include <QLabel>
+#include <QtConcurrent>
+#include <QFuture>
+#include <QFutureWatcher>
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    in(nullptr)
+    label_status(nullptr),
+    in(nullptr),
+    loader(new astviewer::FileLoader(this))
 {
     ui->setupUi(this);
 
+    label_status = new QLabel(this);
+    label_status->setText("Status");
+    ui->statusBar->addPermanentWidget(label_status);
+    ui->statusBar->showMessage("Testing a message here");
     QObject::connect(astviewer::QLogHandler::instance().data(),
           SIGNAL(doLog(const QString&)),
           ui->logBrowser,
@@ -24,9 +35,12 @@ MainWindow::MainWindow(QWidget *parent) :
           Qt::QueuedConnection
       );
 
+
     QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this, SLOT(openTU()));
     QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this, SLOT(openCompilationDB()));
-    //QObject::connect(ui->textInput, SIGNAL(textChanged()), this, SLOT(cmdInputChanged()));
+
+    QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this, SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(selectedTU(const QString&)), this, SLOT(loadFile(const QString&)));
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
@@ -54,8 +68,18 @@ void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
   QObject::connect(session, SIGNAL(matchedAST(const QString&)), ui->textBrowserAST, SLOT(setPlainText(const QString&)));
 }
 
-void MainWindow::setSourceView(const QString& content) {
+void MainWindow::loadFileFinished(QString file, QString content) {
   emit ui->textBrowserSrc->insertPlainText(content);
+  ui->actionOpen_File->setEnabled(true);
+  ui->actionOpen_DB->setEnabled(true);
+  in->setEnabled(true);
+}
+
+void MainWindow::loadFile(const QString& file) {
+  ui->actionOpen_File->setEnabled(false);
+  ui->actionOpen_DB->setEnabled(false);
+  in->setEnabled(false);
+  loader->read(file);
 }
 
 void MainWindow::openTU() {
@@ -71,7 +95,7 @@ void MainWindow::openCompilationDB() {
   const auto file = QFileDialog::getOpenFileName(this,
                     tr("Open Compilation Database"),
                     QString(),
-                    tr("TUs (*.json)"));
+                    tr("CompilationDatabase (*.json)"));
   qDebug() << "Selected DB file " << file;
   emit selectedCompilationDB(file);
 }

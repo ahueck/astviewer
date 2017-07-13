@@ -10,7 +10,10 @@ class MainWindow;
 namespace astviewer {
   class ClangToolSession;
   class CommandInput;
+  class FileLoader;
 }
+
+class QLabel;
 
 class MainWindow: public QMainWindow {
 Q_OBJECT
@@ -23,7 +26,8 @@ public:
 public slots:
 	void openTU();
 	void openCompilationDB();
-	void setSourceView(const QString&);
+	void loadFile(const QString&);
+	void loadFileFinished(QString, QString);
 
 signals:
   void selectedTU(const QString&);
@@ -31,7 +35,9 @@ signals:
 
 private:
 	Ui::MainWindow *ui;
+	QLabel* label_status;
 	astviewer::CommandInput* in;
+	astviewer::FileLoader* loader;
 };
 
 #endif // MAINWINDOW_H

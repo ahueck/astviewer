@@ -45,7 +45,7 @@ void ClangToolSession::loadTU(const QString& file) {
 
 void ClangToolSession::loadCompilationDB(const QString& file) {
   using clang::tooling::CompilationDatabase;
-  qDebug() << "Loading Compilation DB ot supported!";
+  qDebug() << "Loading Compilation DB not supported!";
 }
 
 void ClangToolSession::commandInput(const QString& in) {

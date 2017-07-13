@@ -6,7 +6,7 @@ find_package(Clang REQUIRED)
 find_package(LibEdit REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Concurrent REQUIRED)
 include(AddLLVM)
 
 if(NOT CLANG_FOUND)

@@ -24,6 +24,8 @@ set(UISOURCES
   
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
+
+  include/util/Util.h
   
   src/core/ClangToolSession.cpp
   include/core/ClangToolSession.h
@@ -51,7 +53,7 @@ add_tidy_fix_target(tidy-core-fix
 
 add_library(query ${QSOURCES})
 add_library(astui ${UISOURCES})
-target_link_libraries(astui Qt5::Widgets ${CLANG_LIBS})
+target_link_libraries(astui Qt5::Widgets Qt5::Concurrent ${CLANG_LIBS})
 
 
 add_executable(astviewer${EXE_SUFFIX} src/main.cpp)
