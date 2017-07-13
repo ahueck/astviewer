@@ -42,8 +42,4 @@ void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context
   emit doLog(log_string);
 }
 
-QLogHandler::~QLogHandler() {
-
-}
-
 } /* namespace astviewer */

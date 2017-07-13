@@ -24,14 +24,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    /*
     label_status = new QLabel(this);
     label_status->setText("Status");
     ui->statusBar->addPermanentWidget(label_status);
     ui->statusBar->showMessage("Testing a message here");
+    */
+
     QObject::connect(astviewer::QLogHandler::instance().data(),
           SIGNAL(doLog(const QString&)),
           ui->logBrowser,
-          SLOT(append(const QString&)),
+          SLOT(appendPlainText(const QString&)),
           Qt::QueuedConnection
       );
 
@@ -65,11 +68,11 @@ void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
   QObject::connect(this, SIGNAL(selectedCompilationDB(const QString&)), session, SLOT(loadCompilationDB(const QString&)));
 
   QObject::connect(in, SIGNAL(commandEntered(const QString&)), session, SLOT(commandInput(const QString&)));
-  QObject::connect(session, SIGNAL(matchedAST(const QString&)), ui->textBrowserAST, SLOT(setPlainText(const QString&)));
+  QObject::connect(session, SIGNAL(matchedAST(const QString&)), ui->plainTextEditAST, SLOT(setPlainText(const QString&)));
 }
 
 void MainWindow::loadFileFinished(QString file, QString content) {
-  emit ui->textBrowserSrc->insertPlainText(content);
+  emit ui->plainTextEditSrc->insertPlainText(content);
   ui->actionOpen_File->setEnabled(true);
   ui->actionOpen_DB->setEnabled(true);
   in->setEnabled(true);
@@ -86,7 +89,7 @@ void MainWindow::openTU() {
   const auto file = QFileDialog::getOpenFileName(this,
                     tr("Open Translation Unit"),
                     QString(),
-                    tr("TUs (*.cpp *.c *.cc *.cxx)"));
+                    tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
   qDebug() << "Selected TU file " << file;
   emit selectedTU(file);
 }
@@ -95,7 +98,7 @@ void MainWindow::openCompilationDB() {
   const auto file = QFileDialog::getOpenFileName(this,
                     tr("Open Compilation Database"),
                     QString(),
-                    tr("CompilationDatabase (*.json)"));
+                    tr("Compilation Database (*.json)"));
   qDebug() << "Selected DB file " << file;
   emit selectedCompilationDB(file);
 }

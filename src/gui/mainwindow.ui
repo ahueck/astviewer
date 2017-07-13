@@ -188,7 +188,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextBrowser" name="textBrowserSrc"/>
+                 <widget class="QPlainTextEdit" name="plainTextEditSrc"/>
                 </item>
                </layout>
               </widget>
@@ -217,7 +217,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextBrowser" name="textBrowserAST"/>
+                 <widget class="QPlainTextEdit" name="plainTextEditAST"/>
                 </item>
                </layout>
               </widget>
@@ -251,7 +251,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabInput">
             <attribute name="title">
@@ -265,7 +265,7 @@
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QTextEdit" name="logBrowser">
+              <widget class="QPlainTextEdit" name="logBrowser">
                <property name="enabled">
                 <bool>true</bool>
                </property>
@@ -273,15 +273,6 @@
                 <font>
                  <pointsize>9</pointsize>
                 </font>
-               </property>
-               <property name="undoRedoEnabled">
-                <bool>false</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-               <property name="acceptRichText">
-                <bool>true</bool>
                </property>
               </widget>
              </item>

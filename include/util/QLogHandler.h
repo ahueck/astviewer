@@ -17,7 +17,7 @@ class QLogHandler: public QObject {
   Q_OBJECT
 
 private:
-  QLogHandler() {}
+  QLogHandler() = default;
 
 public:
 
@@ -31,7 +31,7 @@ public:
 
 void outputMessage(QtMsgType type,const QMessageLogContext &context, const QString &msg);
 
-virtual ~QLogHandler();
+virtual ~QLogHandler() = default;
 
 signals:
 void doLog(const QString& message);

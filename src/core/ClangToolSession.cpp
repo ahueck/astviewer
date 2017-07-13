@@ -15,8 +15,8 @@
 
 namespace astviewer {
 
-ClangToolSession::ClangToolSession() {
-
+ClangToolSession::ClangToolSession() : query(this) {
+ connect(&query, SIGNAL(queryResult(QString)), this, SLOT(queryResult(QString)));
 }
 
 void ClangToolSession::loadTU(const QString& file) {
@@ -50,7 +50,13 @@ void ClangToolSession::loadCompilationDB(const QString& file) {
 
 void ClangToolSession::commandInput(const QString& in) {
   qDebug() <<"Received command: " << in;
-  emit matchedAST(this->query.run(in));
+  this->query.run(in);
+  //emit matchedAST(this->query.run(in));
+}
+
+void ClangToolSession::queryResult(QString matched_ast) {
+  qDebug() << "Query result received";
+  emit matchedAST(matched_ast);
 }
 
 ClangToolSession::~ClangToolSession() {

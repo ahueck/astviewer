@@ -42,6 +42,9 @@ public slots:
   void loadCompilationDB(const QString&);
   void commandInput(const QString&);
 
+private slots:
+  void queryResult(QString);
+public:
 signals:
   void matchedAST(const QString&);
   void inputCompletition(QStringList);
