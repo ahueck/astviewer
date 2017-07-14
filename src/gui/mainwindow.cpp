@@ -20,8 +20,11 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), label_status(nullptr), in(
         nullptr), loader(new astviewer::FileLoader(this)), file_manager(
-        new astviewer::RecentFileManager(this)) {
+        new astviewer::RecentFileManager(this)), p_handler(
+        new astviewer::ProcessHandler(this)) {
   ui->setupUi(this);
+  p_handler->setStatus(ui->statusBar);
+  p_handler->addActions({ui->actionOpen_File, ui->actionOpen_DB});
 
   /*
    label_status = new QLabel(this);
@@ -30,10 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
    ui->statusBar->showMessage("Testing a message here");
    */
 
+  // Logging:
   QObject::connect(astviewer::QLogHandler::instance().data(),
       SIGNAL(doLog(const QString&)), ui->logBrowser,
       SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
 
+  // Recent file management:
   file_manager->setTopLevelMenu(ui->menuRecent_File);
   QObject::connect(this, SIGNAL(fileLoaded(QString)), file_manager,
       SLOT(updateRecentFiles(QString)));
@@ -42,15 +47,21 @@ MainWindow::MainWindow(QWidget *parent) :
   QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), file_manager,
       SLOT(clearRecentFiles()));
 
+  // Open action -> file / db:
   QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this,
       SLOT(openTU()));
   QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this,
       SLOT(openCompilationDB()));
-
-  QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this,
-      SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
   QObject::connect(this, SIGNAL(selectedTU(const QString&)), this,
       SLOT(loadFile(const QString&)));
+
+  // Processhandler -> file load done
+  QObject::connect(this, SIGNAL(fileLoaded(QString)), p_handler,
+      SLOT(processFinished()));
+
+  // this->loadFileFinished emits fileLoaded()
+  QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this,
+      SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
@@ -84,21 +95,23 @@ void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
 
 void MainWindow::loadFileFinished(QString file, QString content) {
   qDebug() << "File finished loading: " << file;
-  emit ui->plainTextEditSrc->clear();
-  emit ui->plainTextEditSrc->insertPlainText(content);
+  ui->plainTextEditSrc->clear();
+  ui->plainTextEditSrc->insertPlainText(content);
+  /*
   ui->actionOpen_File->setEnabled(true);
   ui->actionOpen_DB->setEnabled(true);
   in->setEnabled(true);
-
-  if (file != "") {
-    emit fileLoaded(file);
-  }
+  */
+  emit fileLoaded(file);
 }
 
 void MainWindow::loadFile(const QString& file) {
+  /*
   ui->actionOpen_File->setEnabled(false);
   ui->actionOpen_DB->setEnabled(false);
   in->setEnabled(false);
+  */
+  p_handler->processStarted("Read file: " + file);
   loader->read(file);
 }
 
@@ -107,6 +120,7 @@ void MainWindow::openTU() {
       tr("Open Translation Unit"), QString(),
       tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
   qDebug() << "Selected TU file " << file;
+
   emit selectedTU(file);
 }
 
@@ -115,6 +129,7 @@ void MainWindow::openCompilationDB() {
       tr("Open Compilation Database"), QString(),
       tr("Compilation Database (*.json)"));
   qDebug() << "Selected DB file " << file;
+
   emit selectedCompilationDB(file);
 }
 

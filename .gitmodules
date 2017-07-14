@@ -1,0 +1,4 @@
+[submodule "qspinner"]
+	path = externalpackages/qspinner
+	url = https://github.com/snowwlex/QtWaitingSpinner.git
+	branch = master

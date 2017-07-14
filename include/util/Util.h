@@ -15,6 +15,11 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QObject>
+#include <qstatusbar.h>
+#include <qaction.h>
+#include <qvariant.h>
+
+#include <waitingspinnerwidget.h>
 
 namespace astviewer {
 
@@ -26,6 +31,82 @@ inline QString readTxtFile(QString file_path) {
   QTextStream in(&file);
   return in.readAll();
 }
+
+class ProcessHandler : public QObject {
+  Q_OBJECT
+
+private:
+  WaitingSpinnerWidget spinner;
+  QWidgetList widgets;
+  QList<QAction* > actions;
+  QStatusBar* status;
+
+public:
+  ProcessHandler(QObject* parent = 0) : QObject(parent), spinner(0, false, false), status(nullptr) {
+    spinner.setLineLength(5);
+    spinner.setInnerRadius(5);
+  }
+
+  void setStatus(QStatusBar* status) {
+    this->status = status;
+    status->insertPermanentWidget(0, &spinner, 0);
+  }
+
+  void addWidget(QWidget* widget) {
+    widgets.push_back(widget);
+  }
+
+  void addWidgets(std::initializer_list<QWidget*> widgets) {
+    for(auto widget : widgets) {
+      this->widgets.push_back(widget);
+    }
+  }
+
+  void addAction(QAction* widget) {
+    actions.push_back(widget);
+  }
+
+  void addActions(std::initializer_list<QAction*> actions) {
+    for(auto action: actions) {
+      this->actions.push_back(action);
+    }
+  }
+
+  void clear() {
+    widgets.clear();
+    actions.clear();
+  }
+  virtual ~ProcessHandler() {
+
+  }
+
+public slots:
+  void processStarted(QString msg) {
+    for(auto widget : widgets) {
+      widget->setEnabled(false);
+    }
+    for(auto action: actions) {
+      action->setEnabled(false);
+    }
+    if(status) {
+      spinner.start();
+      status->showMessage(msg);
+    }
+  }
+
+  void processFinished() {
+    if(status) {
+      status->clearMessage();
+      spinner.stop();
+    }
+    for(auto widget : widgets) {
+      widget->setEnabled(true);
+    }
+    for(auto action: actions) {
+      action->setEnabled(true);
+    }
+  }
+};
 
 class FileLoader : public QObject {
   Q_OBJECT
@@ -63,6 +144,7 @@ private slots:
   }
 
 signals:
+  void fileLoading();
   void fileLoaded(QString, QString);
 };
 

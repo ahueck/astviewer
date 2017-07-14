@@ -12,6 +12,7 @@ namespace astviewer {
   class CommandInput;
   class FileLoader;
   class RecentFileManager;
+  class ProcessHandler;
 }
 
 class QLabel;
@@ -23,9 +24,6 @@ public:
 	void registerInput(astviewer::CommandInput*);
 	void registerClangTool(astviewer::ClangToolSession*);
 	~MainWindow();
-
-private:
-	void updateRecentFileActions(QString file);
 
 public slots:
 	void openTU();
@@ -44,6 +42,7 @@ private:
 	astviewer::CommandInput* in;
 	astviewer::FileLoader* loader;
 	astviewer::RecentFileManager* file_manager;
+	astviewer::ProcessHandler* p_handler;
 };
 
 #endif // MAINWINDOW_H

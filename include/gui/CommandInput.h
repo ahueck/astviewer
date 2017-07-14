@@ -20,6 +20,7 @@ public:
   virtual ~CommandInput();
 
 public slots:
+  //void commandFinished();
   void addToHistory(const QString&);
 
 signals:

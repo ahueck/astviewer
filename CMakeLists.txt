@@ -10,6 +10,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/clang-query)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/externalpackages)
+include_directories(${PROJECT_SOURCE_DIR}/externalpackages/qspinner)
+
 set(QSOURCES
   src/clang-query/Query.cpp
   src/clang-query/QueryParser.cpp
@@ -42,7 +45,7 @@ add_format_target(format-all
 
 add_tidy_target(tidy-run
   "Clang-tidy run on astviewer translation units"
-  SOURCES ${PSOURCES} ${LSOURCES}
+  SOURCES ${QSOURCES} ${UISOURCES}
   EXCLUDES "external"
 )
 
@@ -54,7 +57,7 @@ add_tidy_fix_target(tidy-core-fix
 )
 
 add_library(query ${QSOURCES})
-add_library(astui ${UISOURCES})
+add_library(astui ${UISOURCES} ${QSpinner_SOURCES})
 target_link_libraries(astui Qt5::Widgets Qt5::Concurrent ${CLANG_LIBS})
 
 
@@ -68,17 +71,3 @@ add_custom_target(executable
   COMMENT "Target to compile astviewer executable"
   DEPENDS astviewer${EXE_SUFFIX}
 )
-
-
-
-
-
-
-
-
-
-#enable_testing()
-#add_subdirectory(test)
-
-## Original link ordering:
-#target_link_libraries(astviewer${EXE_SUFFIX} -ledit -lLLVMLineEditor -lLLVMSupport -ledit -lpthread -lclangAST -lclangASTMatchers -lclangBasic -lclangDynamicASTMatchers -lclangFrontend -lclangQuery -lclangTooling -lLLVMLineEditor -ledit -lclangDynamicASTMatchers -lclangASTMatchers -lclangFrontend -lclangParse -lLLVMMCParser -lclangSerialization -lclangSema -lclangEdit -lclangAnalysis -lLLVMBitReader -lLLVMProfileData -lclangDriver -lLLVMOption -lclangFormat -lclangToolingCore -lclangAST -lclangRewrite -lclangLex -lclangBasic -lLLVMCore -lLLVMMC -lLLVMSupport -lrt -ldl -ltinfo -lpthread -lz -lm -lLLVMDemangle)

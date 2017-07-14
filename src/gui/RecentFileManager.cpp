@@ -24,6 +24,11 @@ RecentFileManager::RecentFileManager(QObject* parent) :
 
 void RecentFileManager::setTopLevelMenu(QMenu* top_menu) {
   menu_target = top_menu;
+  if(files.empty()) {
+    menu_target->setEnabled(false);
+    menu_target->update();
+    return;
+  }
   auto first = menu_target->actions().at(0);
   for (auto& file_string : files) {
     createAction(first, file_string);
@@ -52,7 +57,7 @@ void RecentFileManager::updateRecentFiles(QString file) {
   const auto strippedName = [] (QString name) {
     return QFileInfo(name).fileName();
   };
-  int counter = 0;
+  size_t counter = 0;
   for (auto& f : files) {
     auto action = recentFileActions[counter];
     action->setText(strippedName(f));

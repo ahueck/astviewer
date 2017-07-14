@@ -38,7 +38,7 @@ bool CommandInput::eventFilter(QObject* obj, QEvent* e) {
     // put line as grey text one above a new command prompt
     qDebug() << "enter pressed";
     auto text = this->toPlainText();
-    this->clear();
+    //this->clear();
     emit commandEntered(text);
 
     return true;
