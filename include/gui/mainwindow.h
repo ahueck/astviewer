@@ -11,6 +11,7 @@ namespace astviewer {
   class ClangToolSession;
   class CommandInput;
   class FileLoader;
+  class RecentFileManager;
 }
 
 class QLabel;
@@ -32,21 +33,17 @@ public slots:
 	void loadFile(const QString&);
 	void loadFileFinished(QString, QString);
 
-private slots:
-  void openRecentFile();
-
 signals:
   void selectedTU(const QString&);
   void selectedCompilationDB(const QString&);
+  void fileLoaded(QString);
 
 private:
-  static constexpr size_t num_recent_files = 6;
-  static constexpr const char* recent_files_id = "recent_files";
 	Ui::MainWindow *ui;
 	QLabel* label_status;
 	astviewer::CommandInput* in;
 	astviewer::FileLoader* loader;
-	QList<QAction*> recentFileActions;
+	astviewer::RecentFileManager* file_manager;
 };
 
 #endif // MAINWINDOW_H

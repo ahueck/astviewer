@@ -21,7 +21,9 @@ set(UISOURCES
   include/gui/mainwindow.h
   src/gui/CommandInput.cpp
   include/gui/CommandInput.h
-  
+  src/gui/RecentFileManager.cpp
+  include/gui/RecentFileManager.h
+    
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
 
