@@ -31,6 +31,10 @@
 # Build folder
 build*/
 
+# Compilation Database and others
+compile_commands.json
+CMakeLists.txt.user
+
 # bin folder
 bin/
 
