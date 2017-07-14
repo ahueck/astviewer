@@ -22,7 +22,7 @@ private:
   QMenu* menu_target;
   QList<QAction*> recentFileActions;
   QStringList files;
-  static constexpr size_t num_recent_files = 6;
+  static constexpr int num_recent_files = 6;
   static constexpr const char* recent_files_id = "recent_files";
 
 public:

@@ -40,27 +40,26 @@ void RecentFileManager::openRecentFile() {
 
 void RecentFileManager::updateRecentFiles(QString file) {
   qDebug() << file;
-  auto rm_result = files.removeAll(file);
+  files.removeAll(file);
   files.prepend(file);
   handleHistory();
 
-  const auto diff = files.size() - this->recentFileActions.size();
-  if (diff > 0) {
+  if (files.size() > recentFileActions.size()) {
     auto first = menu_target->actions().at(0);
     createAction(first, "ph");
   }
 
-  int counter = 0;
   const auto strippedName = [] (QString name) {
     return QFileInfo(name).fileName();
   };
+  int counter = 0;
   for (auto& f : files) {
-    qDebug() << "Update: " << strippedName(f);
     auto action = recentFileActions[counter];
     action->setText(strippedName(f));
     action->setData(f);
     ++counter;
   }
+  menu_target->setEnabled(true);
   menu_target->update();
 }
 
@@ -83,7 +82,13 @@ void RecentFileManager::handleHistory() {
 }
 
 void RecentFileManager::clearRecentFiles() {
-
+  this->files.clear();
+  for(auto action : recentFileActions) {
+    delete action;
+  }
+  recentFileActions.clear();
+  menu_target->update();
+  menu_target->setEnabled(false);
 }
 
 RecentFileManager::~RecentFileManager() {
