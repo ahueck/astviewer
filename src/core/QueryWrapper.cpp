@@ -5,41 +5,35 @@
  *      Author: ahueck
  */
 
-#include "core/QueryWrapper.h"
+#include <core/QueryWrapper.h>
 
-#include "clang/Frontend/ASTUnit.h"
-//#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
+#include <clang-query/Query.h>
+#include <clang-query/QueryParser.h>
+#include <clang-query/QuerySession.h>
 
-#include "clang-query/Query.h"
-#include "clang-query/QueryParser.h"
-#include "clang-query/QuerySession.h"
+#include <util/Util.h>
 
-#include <QtConcurrent>
-#include <QFuture>
-#include <QFutureWatcher>
-#include <QObject>
-#include <QDebug>
+#include <clang/Frontend/ASTUnit.h>
+#include <llvm/ADT/StringRef.h>
+//#include <clang/Tooling/Tooling.h>
 
 namespace astviewer {
 
-using namespace clang::tooling;
 using namespace clang::query;
 
-QueryWrapper::QueryWrapper(QObject* parent) : QObject(parent),  qs(nullptr), watcher(new QFutureWatcher<QString>(this)) {
-  connect(&watcher, SIGNAL(finished()), this, SLOT(queryFinished()));
+QueryWrapper::QueryWrapper(QObject* parent) : ToolWrapper(parent),  qs(nullptr) {
+
 }
 
-void QueryWrapper::createSession(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
-  qs = std::unique_ptr<QuerySession>(new QuerySession(AST_vec));
+void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
+  qs = make_unique<QuerySession>(AST_vec);
 }
 
-void QueryWrapper::run(const QString& cmd) {
-  // Not really threadsafe because "qs" is shared
+void QueryWrapper::execute(const QString& cmd) {
   QuerySession& qsession = *qs.get();
   auto func = [cmd, &qsession]() -> QString {
     auto file_std = cmd.toStdString();
-    StringRef file_ref(file_std);
+    llvm::StringRef file_ref(file_std);
 
     QueryRef Q = QueryParser::parse(file_ref, qsession);
 
@@ -49,14 +43,7 @@ void QueryWrapper::run(const QString& cmd) {
 
     return QString::fromStdString(out.str());
   };
-  QFuture<QString> run = QtConcurrent::run(func);
-  watcher.setFuture(run);
-}
-
-void QueryWrapper::queryFinished() {
-  auto result = watcher.future().result();
-  qDebug() << "Query is finished";
-  emit queryResult(result);
+  this->run(func);
 }
 
 QueryWrapper::~QueryWrapper() {

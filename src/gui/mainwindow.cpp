@@ -5,6 +5,8 @@
 #include "gui/RecentFileManager.h"
 #include "util/QLogHandler.h"
 #include "util/Util.h"
+#include "util/FileLoader.h"
+#include "util/ProcessHandler.h"
 #include "core/ClangToolSession.h"
 
 #include <QFileDialog>

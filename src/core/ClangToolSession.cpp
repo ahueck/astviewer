@@ -39,7 +39,7 @@ void ClangToolSession::loadTU(const QString& file) {
   tool = std::unique_ptr<ClangTool>(new ClangTool(*db.get(), ref));
 
   tool->buildASTs(AST_vec);
-  query.createSession(AST_vec);
+  query.init(AST_vec);
   qDebug() << file;
 }
 
@@ -50,7 +50,7 @@ void ClangToolSession::loadCompilationDB(const QString& file) {
 
 void ClangToolSession::commandInput(const QString& in) {
   qDebug() <<"Received command: " << in;
-  this->query.run(in);
+  this->query.execute(in);
   //emit matchedAST(this->query.run(in));
 }
 

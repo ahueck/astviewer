@@ -30,7 +30,16 @@ set(UISOURCES
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
 
+  src/util/ProcessHandler.cpp
+  include/util/ProcessHandler.h
+
+  src/util/FileLoader.cpp
+  include/util/FileLoader.h
+
   include/util/Util.h
+  
+  src/core/ToolWrapper.cpp
+  include/core/ToolWrapper.h
   
   src/core/ClangToolSession.cpp
   include/core/ClangToolSession.h

@@ -8,42 +8,28 @@
 #ifndef SRC_CORE_QUERYWRAPPER_H_
 #define SRC_CORE_QUERYWRAPPER_H_
 
-#include <qobject.h>
-#include <QString>
-#include <qfuturewatcher.h>
-
-#include <memory>
+#include <core/ToolWrapper.h>
 
 namespace clang {
-class ASTUnit;
 namespace query {
 class QuerySession;
-}
-namespace tooling {
-class ClangTool;
 }
 }
 
 namespace astviewer {
 
-class QueryWrapper : public QObject {
+class QueryWrapper : public ToolWrapper {
   Q_OBJECT
 
 private:
+  // TODO make QuerySession per command execution?
   std::unique_ptr<clang::query::QuerySession> qs;
-  QFutureWatcher<QString> watcher;
 
 public:
   QueryWrapper(QObject* parent = 0);
-  void createSession(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec);
-  void run(const QString& command);
+  void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
+  void execute(const QString& command) override;
   virtual ~QueryWrapper();
-
-private slots:
-  void queryFinished();
-
-signals:
-  void queryResult(QString);
 };
 
 } /* namespace astviewer */
