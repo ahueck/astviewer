@@ -21,8 +21,7 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), label_status(nullptr), in(
-        nullptr), loader(new astviewer::FileLoader(this)), file_manager(
+    QMainWindow(parent), ui(new Ui::MainWindow),  loader(new astviewer::FileLoader(this)), file_manager(
         new astviewer::RecentFileManager(this)), p_handler(
         new astviewer::ProcessHandler(this)) {
   ui->setupUi(this);

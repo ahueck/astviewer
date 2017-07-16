@@ -36,12 +36,12 @@ protected:
   }
 
 public:
-  ToolWrapper(QObject* parent = 0);
+  ToolWrapper(QObject* parent = nullptr);
 
   virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
   virtual void execute(const QString& command) = 0;
 
-  virtual ~ToolWrapper();
+  ~ToolWrapper() override;
 
 signals:
   void queryResult(QString);

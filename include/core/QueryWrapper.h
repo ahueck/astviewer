@@ -26,10 +26,10 @@ private:
   std::unique_ptr<clang::query::QuerySession> qs;
 
 public:
-  QueryWrapper(QObject* parent = 0);
+  QueryWrapper(QObject* parent = nullptr);
   void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
   void execute(const QString& command) override;
-  virtual ~QueryWrapper();
+  ~QueryWrapper() override;
 };
 
 } /* namespace astviewer */

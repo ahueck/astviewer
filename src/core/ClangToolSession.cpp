@@ -10,6 +10,8 @@
 #include <clang/Frontend/ASTUnit.h>
 #include <clang/Tooling/Tooling.h>
 
+#include <util/Util.h>
+
 #include <QDebug>
 
 namespace astviewer {
@@ -35,7 +37,7 @@ void ClangToolSession::loadTU(const QString& file) {
     // emit loaded CompDB
   }
   llvm::ArrayRef<std::string> ref(file_std);
-  tool = std::unique_ptr<ClangTool>(new ClangTool(*db.get(), ref));
+  tool = astviewer::make_unique<ClangTool>(*db.get(), ref);
 
   tool->buildASTs(AST_vec);
   query.init(AST_vec);
@@ -58,8 +60,6 @@ void ClangToolSession::queryResult(QString matched_ast) {
   emit matchedAST(matched_ast);
 }
 
-ClangToolSession::~ClangToolSession() {
-
-}
+ClangToolSession::~ClangToolSession() = default;
 
 } /* namespace astviewer */

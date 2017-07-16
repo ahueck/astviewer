@@ -14,7 +14,7 @@
 namespace astviewer {
 
 ProcessHandler::ProcessHandler(QObject* parent) :
-    QObject(parent), spinner(0, false, false), status(nullptr) {
+    QObject(parent), spinner(nullptr, false, false) {
   spinner.setLineLength(5);
   spinner.setInnerRadius(5);
 }
@@ -75,8 +75,6 @@ void ProcessHandler::processFinished() {
   }
 }
 
-ProcessHandler::~ProcessHandler() {
-
-}
+ProcessHandler::~ProcessHandler() = default;
 
 } /* namespace astviewer */

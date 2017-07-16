@@ -21,8 +21,8 @@ FileLoader::FileLoader(QObject* parent) :
 }
 
 void FileLoader::clear() {
-  file = {""};
-  file_content = {""};
+  file = "";
+  file_content = "";
 }
 
 void FileLoader::read(QString file) {
@@ -39,8 +39,6 @@ void FileLoader::fileRead() {
   emit fileLoaded(file, file_content);
 }
 
-FileLoader::~FileLoader() {
-
-}
+FileLoader::~FileLoader() = default;
 
 } /* namespace astviewer */

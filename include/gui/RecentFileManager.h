@@ -19,16 +19,16 @@ namespace astviewer {
 class RecentFileManager : public QObject {
 Q_OBJECT
 private:
-  QMenu* menu_target;
+  QMenu* menu_target{nullptr};
   QList<QAction*> recentFileActions;
   QStringList files;
   static constexpr int num_recent_files = 6;
   static constexpr const char* recent_files_id = "recent_files";
 
 public:
-  RecentFileManager(QObject* parent = 0);
+  RecentFileManager(QObject* parent = nullptr);
   void setTopLevelMenu(QMenu* top_menu);
-  virtual ~RecentFileManager();
+  ~RecentFileManager() override;
 
 public slots:
   void updateRecentFiles(QString);

@@ -25,8 +25,6 @@ void ToolWrapper::queryFinished() {
   emit queryResult(result);
 }
 
-ToolWrapper::~ToolWrapper() {
-
-}
+ToolWrapper::~ToolWrapper() = default;
 
 } /* namespace astviewer */

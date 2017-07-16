@@ -35,7 +35,7 @@ private:
 
 public:
   ClangToolSession();
-  virtual ~ClangToolSession();
+  ~ClangToolSession() override;
 
 public slots:
   void loadTU(const QString&);

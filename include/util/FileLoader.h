@@ -25,13 +25,13 @@ private:
 
 public:
 
-  FileLoader(QObject* parent = 0);
+  FileLoader(QObject* parent = nullptr);
 
   void clear();
 
   void read(QString file);
 
-  virtual ~FileLoader();
+  ~FileLoader() override;
 
 signals:
   void fileLoading();

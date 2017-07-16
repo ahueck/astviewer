@@ -20,10 +20,10 @@ class QLabel;
 class MainWindow: public QMainWindow {
 Q_OBJECT
 public:
-	explicit MainWindow(QWidget *parent = 0);
+	explicit MainWindow(QWidget *parent = nullptr);
 	void registerInput(astviewer::CommandInput*);
 	void registerClangTool(astviewer::ClangToolSession*);
-	~MainWindow();
+	~MainWindow() override;
 
 public slots:
 	void openTU();
@@ -38,8 +38,9 @@ signals:
 
 private:
 	Ui::MainWindow *ui;
-	QLabel* label_status;
-	astviewer::CommandInput* in;
+	QLabel* label_status{nullptr};
+	astviewer::CommandInput* in{
+        nullptr};
 	astviewer::FileLoader* loader;
 	astviewer::RecentFileManager* file_manager;
 	astviewer::ProcessHandler* p_handler;

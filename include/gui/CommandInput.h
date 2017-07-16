@@ -15,9 +15,9 @@ namespace astviewer {
 class CommandInput: public QTextEdit {
   Q_OBJECT
 public:
-  CommandInput(QWidget* parent = 0);
+  CommandInput(QWidget* parent = nullptr);
   bool eventFilter(QObject *, QEvent *e) override;
-  virtual ~CommandInput();
+  ~CommandInput() override;
 
 public slots:
   //void commandFinished();

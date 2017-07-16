@@ -105,7 +105,7 @@ int main(int argc, const char **argv) {
   qInstallMessageHandler(myMessageOutput);
   QApplication a(argc, const_cast<char**>(argv));
   ClangToolSession session;
-  CommandInput* inputWidget = new CommandInput();
+  auto* inputWidget = new CommandInput();
   MainWindow w;
   w.registerInput(inputWidget);
   w.registerClangTool(&session);

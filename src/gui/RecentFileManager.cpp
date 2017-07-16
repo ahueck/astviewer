@@ -17,7 +17,7 @@
 namespace astviewer {
 
 RecentFileManager::RecentFileManager(QObject* parent) :
-    QObject(parent), menu_target(nullptr) {
+    QObject(parent) {
   QSettings settings("sc", "astviewer");
   files = settings.value(recent_files_id).toStringList();
   handleHistory();

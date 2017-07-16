@@ -27,10 +27,10 @@ private:
   WaitingSpinnerWidget spinner;
   QWidgetList widgets;
   QList<QAction*> actions;
-  QStatusBar* status;
+  QStatusBar* status{nullptr};
 
 public:
-  ProcessHandler(QObject* parent = 0);
+  ProcessHandler(QObject* parent = nullptr);
 
   void setStatus(QStatusBar* status);
 
@@ -44,7 +44,7 @@ public:
 
   void clear();
 
-  virtual ~ProcessHandler();
+  ~ProcessHandler() override;
 
 public slots:
   void processStarted(QString msg);

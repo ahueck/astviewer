@@ -31,7 +31,7 @@ public:
 
 void outputMessage(QtMsgType type,const QMessageLogContext &context, const QString &msg);
 
-virtual ~QLogHandler() = default;
+~QLogHandler() override = default;
 
 signals:
 void doLog(const QString& message);

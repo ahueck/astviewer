@@ -55,7 +55,6 @@ bool CommandInput::eventFilter(QObject* obj, QEvent* e) {
   return QObject::eventFilter(obj, e);
 }
 
-CommandInput::~CommandInput() {
-}
+CommandInput::~CommandInput() = default;
 
 } /* namespace astviewer */
