@@ -5,11 +5,10 @@
  *      Author: ahueck
  */
 
-#include "core/ClangToolSession.h"
+#include <core/ClangToolSession.h>
 
-#include "clang/Frontend/ASTUnit.h"
-//#include "clang/Tooling/CommonOptionsParser.h"
-#include "clang/Tooling/Tooling.h"
+#include <clang/Frontend/ASTUnit.h>
+#include <clang/Tooling/Tooling.h>
 
 #include <QDebug>
 

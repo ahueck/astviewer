@@ -8,7 +8,7 @@
 #ifndef SRC_CORE_CLANGTOOLSESSION_H_
 #define SRC_CORE_CLANGTOOLSESSION_H_
 
-#include "QueryWrapper.h"
+#include <core/QueryWrapper.h>
 
 #include <QObject>
 

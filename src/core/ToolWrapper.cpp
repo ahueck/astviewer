@@ -7,7 +7,6 @@
 
 #include <core/ToolWrapper.h>
 
-
 #include <QtConcurrent>
 #include <QFuture>
 #include <QObject>

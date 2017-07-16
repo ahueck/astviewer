@@ -8,8 +8,8 @@
 #ifndef SRC_GUI_RECENTFILEMANAGER_H_
 #define SRC_GUI_RECENTFILEMANAGER_H_
 
-#include <qlist.h>
-#include <qobject.h>
+#include <QList>
+#include <QObject>
 
 class QMenu;
 class QAction;

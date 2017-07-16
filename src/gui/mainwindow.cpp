@@ -1,13 +1,15 @@
-#include "gui/mainwindow.h"
-#include "ui_mainwindow.h"
+#include <gui/mainwindow.h>
+#include <ui_mainwindow.h>
 
-#include "gui/CommandInput.h"
-#include "gui/RecentFileManager.h"
-#include "util/QLogHandler.h"
-#include "util/Util.h"
-#include "util/FileLoader.h"
-#include "util/ProcessHandler.h"
-#include "core/ClangToolSession.h"
+#include <gui/CommandInput.h>
+#include <gui/RecentFileManager.h>
+
+#include <core/ClangToolSession.h>
+
+#include <util/FileLoader.h>
+#include <util/ProcessHandler.h>
+#include <util/QLogHandler.h>
+#include <util/Util.h>
 
 #include <QFileDialog>
 #include <QPointer>
@@ -17,7 +19,6 @@
 #include <QFuture>
 #include <QFutureWatcher>
 
-#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), label_status(nullptr), in(
@@ -26,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
         new astviewer::ProcessHandler(this)) {
   ui->setupUi(this);
   p_handler->setStatus(ui->statusBar);
-  p_handler->addActions({ui->actionOpen_File, ui->actionOpen_DB});
+  p_handler->addActions({ ui->actionOpen_File, ui->actionOpen_DB });
 
   /*
    label_status = new QLabel(this);
@@ -100,19 +101,19 @@ void MainWindow::loadFileFinished(QString file, QString content) {
   ui->plainTextEditSrc->clear();
   ui->plainTextEditSrc->insertPlainText(content);
   /*
-  ui->actionOpen_File->setEnabled(true);
-  ui->actionOpen_DB->setEnabled(true);
-  in->setEnabled(true);
-  */
+   ui->actionOpen_File->setEnabled(true);
+   ui->actionOpen_DB->setEnabled(true);
+   in->setEnabled(true);
+   */
   emit fileLoaded(file);
 }
 
 void MainWindow::loadFile(const QString& file) {
   /*
-  ui->actionOpen_File->setEnabled(false);
-  ui->actionOpen_DB->setEnabled(false);
-  in->setEnabled(false);
-  */
+   ui->actionOpen_File->setEnabled(false);
+   ui->actionOpen_DB->setEnabled(false);
+   in->setEnabled(false);
+   */
   p_handler->processStarted("Read file: " + file);
   loader->read(file);
 }

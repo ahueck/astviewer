@@ -8,7 +8,7 @@
 #ifndef SRC_GUI_COMMANDINPUT_H_
 #define SRC_GUI_COMMANDINPUT_H_
 
-#include <qtextedit.h>
+#include <QTextEdit>
 
 namespace astviewer {
 

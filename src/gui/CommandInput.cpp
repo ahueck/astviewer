@@ -5,9 +5,10 @@
  *      Author: ahueck
  */
 
-#include "gui/CommandInput.h"
+#include <gui/CommandInput.h>
 
-#include <qevent.h>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QDebug>
 
 namespace astviewer {

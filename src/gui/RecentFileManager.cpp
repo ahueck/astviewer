@@ -5,12 +5,13 @@
  *      Author: ahueck
  */
 
-#include "gui/RecentFileManager.h"
+#include <gui/RecentFileManager.h>
 
-#include <qmenu.h>
-#include <qaction.h>
-#include <qsettings.h>
+#include <QAction>
 #include <QFileInfo>
+#include <QMenu>
+#include <QSettings>
+
 #include <QDebug>
 
 namespace astviewer {
