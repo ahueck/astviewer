@@ -12,7 +12,6 @@
 namespace astviewer {
 
 void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context, const QString &msg) {
-  QString log_string;
   const auto time = QDateTime::currentDateTime().toString("hh:mm:ss");
   const auto format = tr("%0 %4: %1:%3 -> '%2'\n")
                           .arg(time,
@@ -20,26 +19,26 @@ void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context
                                 msg
                               )
                           .arg(context.line);
+  QString msg_type = "";
   switch (type) {
   case QtDebugMsg:
-    log_string.append(format.arg("Debug"));
+    msg_type = "Debug";
     break;
   case QtInfoMsg:
-    log_string.append(format.arg("Info"));
+    msg_type = "Info";
     break;
   case QtWarningMsg:
-    log_string.append(format.arg("Warning"));
+    msg_type = "Warning";
     break;
-
   case QtCriticalMsg:
-    log_string.append(format.arg("Critical"));
+    msg_type = "Critical";
     break;
   case QtFatalMsg:
-    log_string.append(format.arg("Fatal"));
+    msg_type = "Fatal";
     break;
   }
 
-  emit doLog(log_string);
+  emit doLog(format.arg(msg_type));
 }
 
 } /* namespace astviewer */
