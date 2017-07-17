@@ -7,15 +7,14 @@
 
 #include <core/QueryWrapper.h>
 
+#include <util/Util.h>
+
 #include <clang-query/Query.h>
 #include <clang-query/QueryParser.h>
 #include <clang-query/QuerySession.h>
 
-#include <util/Util.h>
-
 #include <clang/Frontend/ASTUnit.h>
 #include <llvm/ADT/StringRef.h>
-//#include <clang/Tooling/Tooling.h>
 
 namespace astviewer {
 

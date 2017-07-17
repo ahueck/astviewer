@@ -8,7 +8,6 @@
 #ifndef SRC_CORE_CLANGTOOLSESSION_H_
 #define SRC_CORE_CLANGTOOLSESSION_H_
 
-#include <core/QueryWrapper.h>
 
 #include <QObject>
 
@@ -25,16 +24,18 @@ class CompilationDatabase;
 
 namespace astviewer {
 
+class ToolWrapper;
+
 class ClangToolSession :public QObject {
 Q_OBJECT
 private:
-  QueryWrapper query;
+  std::unique_ptr<ToolWrapper> clang_tool;
   std::unique_ptr<clang::tooling::ClangTool> tool;
   std::unique_ptr<clang::tooling::CompilationDatabase> db;
   std::vector<std::unique_ptr<clang::ASTUnit>> AST_vec;
 
 public:
-  ClangToolSession();
+  ClangToolSession(std::unique_ptr<ToolWrapper> wrapper);
   ~ClangToolSession() override;
 
 public slots:

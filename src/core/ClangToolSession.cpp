@@ -6,18 +6,19 @@
  */
 
 #include <core/ClangToolSession.h>
-
-#include <clang/Frontend/ASTUnit.h>
-#include <clang/Tooling/Tooling.h>
-
+#include <core/ToolWrapper.h>
+#include <core/QueryWrapper.h>
 #include <util/Util.h>
 
 #include <QDebug>
 
+#include <clang/Frontend/ASTUnit.h>
+#include <clang/Tooling/Tooling.h>
+
 namespace astviewer {
 
-ClangToolSession::ClangToolSession() : query(this) {
- connect(&query, SIGNAL(queryResult(QString)), this, SLOT(queryResult(QString)));
+ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper) : clang_tool(std::move(wrapper)) {
+ connect(clang_tool.get(), SIGNAL(queryResult(QString)), this, SLOT(queryResult(QString)));
 }
 
 void ClangToolSession::loadTU(const QString& file) {
@@ -40,7 +41,7 @@ void ClangToolSession::loadTU(const QString& file) {
   tool = astviewer::make_unique<ClangTool>(*db.get(), ref);
 
   tool->buildASTs(AST_vec);
-  query.init(AST_vec);
+  clang_tool->init(AST_vec);
   qDebug() << file;
 }
 
@@ -51,7 +52,7 @@ void ClangToolSession::loadCompilationDB(const QString& file) {
 
 void ClangToolSession::commandInput(const QString& in) {
   qDebug() <<"Received command: " << in;
-  this->query.execute(in);
+  clang_tool->execute(in);
   //emit matchedAST(this->query.run(in));
 }
 
