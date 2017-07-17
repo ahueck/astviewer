@@ -32,11 +32,13 @@ public:
   virtual ~TaskManager();
 
 public slots:
+  void commitCommand(Command);
   void selectedTU(QString);
   void commandFinished(Command);
 
 signals:
   void commandExecute(Command);
+  void taskDone(Command);
   /*
   void lockUI();
   void unlockUI();

@@ -14,6 +14,7 @@ TaskManager::TaskManager() {
 }
 
 void TaskManager::registerTask(Task* t) {
+  // TODO register only for certain commands
   auto result = connect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
   connect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
   if(result) {
@@ -27,6 +28,13 @@ void TaskManager::deregisterTask(Task* t) {
   if(result) {
     --registered_task;
   }
+}
+
+void TaskManager::commitCommand(Command cmd) {
+	auto id = cmd.id;
+	this->command_tracker[id] = registered_task;
+
+	emit commandExecute(cmd);
 }
 
 void TaskManager::selectedTU(QString tu_path) {

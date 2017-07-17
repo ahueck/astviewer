@@ -5,7 +5,7 @@
  *      Author: ahueck
  */
 
-#include "Task.h"
+#include <core/Task.h>
 
 #include <QDebug>
 
