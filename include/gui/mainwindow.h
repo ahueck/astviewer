@@ -8,11 +8,11 @@ class MainWindow;
 }
 
 namespace astviewer {
-  class ClangToolSession;
-  class CommandInput;
-  class FileLoader;
-  class RecentFileManager;
-  class ProcessHandler;
+class ClangToolSession;
+class CommandInput;
+class FileLoader;
+class RecentFileManager;
+class ProcessHandler;
 }
 
 class QLabel;
@@ -20,16 +20,16 @@ class QLabel;
 class MainWindow: public QMainWindow {
 Q_OBJECT
 public:
-	explicit MainWindow(QWidget *parent = nullptr);
-	void registerInput(astviewer::CommandInput*);
-	void registerClangTool(astviewer::ClangToolSession*);
-	~MainWindow() override;
+  explicit MainWindow(QWidget *parent = nullptr);
+  void registerInput(astviewer::CommandInput*);
+  void registerClangTool(astviewer::ClangToolSession*);
+  ~MainWindow() override;
 
 public slots:
-	void openTU();
-	void openCompilationDB();
-	void loadFile(const QString&);
-	void loadFileFinished(QString, QString);
+  void openTU();
+  void openCompilationDB();
+  void loadFile(const QString&);
+  void loadFileFinished(QString, QString);
 
 signals:
   void selectedTU(const QString&);
@@ -37,13 +37,12 @@ signals:
   void fileLoaded(QString);
 
 private:
-	Ui::MainWindow *ui;
-	QLabel* label_status{nullptr};
-	astviewer::CommandInput* in{
-        nullptr};
-	astviewer::FileLoader* loader;
-	astviewer::RecentFileManager* file_manager;
-	astviewer::ProcessHandler* p_handler;
+  Ui::MainWindow *ui;
+  QLabel* label_status { nullptr };
+  astviewer::CommandInput* in { nullptr };
+  astviewer::FileLoader* loader;
+  astviewer::RecentFileManager* file_manager;
+  astviewer::ProcessHandler* p_handler;
 };
 
 #endif // MAINWINDOW_H

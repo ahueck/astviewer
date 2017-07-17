@@ -18,7 +18,7 @@ static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpM
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     using astviewer::QLogHandler;
-    QLogHandler::instance()->outputMessage(type, context, msg);
+    QLogHandler::instance().outputMessage(type, context, msg);
 }
 
 int main(int argc, const char **argv) {

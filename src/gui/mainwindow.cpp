@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
    */
 
   // Logging:
-  QObject::connect(astviewer::QLogHandler::instance().data(),
+  QObject::connect(&astviewer::QLogHandler::instance(),
       SIGNAL(doLog(const QString&)), ui->logBrowser,
       SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
 

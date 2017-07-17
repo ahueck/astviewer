@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef SRC_GUI_RECENTFILEMANAGER_H_
-#define SRC_GUI_RECENTFILEMANAGER_H_
+#ifndef INCLUDE_GUI_RECENTFILEMANAGER_H_
+#define INCLUDE_GUI_RECENTFILEMANAGER_H_
 
 #include <QList>
 #include <QObject>
@@ -16,10 +16,10 @@ class QAction;
 
 namespace astviewer {
 
-class RecentFileManager : public QObject {
+class RecentFileManager: public QObject {
 Q_OBJECT
 private:
-  QMenu* menu_target{nullptr};
+  QMenu* menu_target { nullptr };
   QList<QAction*> recentFileActions;
   QStringList files;
   static constexpr int num_recent_files = 6;
@@ -47,4 +47,4 @@ private:
 
 } /* namespace astviewer */
 
-#endif /* SRC_GUI_RECENTFILEMANAGER_H_ */
+#endif /* INCLUDE_GUI_RECENTFILEMANAGER_H_ */

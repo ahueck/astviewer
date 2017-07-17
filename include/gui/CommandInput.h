@@ -5,15 +5,15 @@
  *      Author: ahueck
  */
 
-#ifndef SRC_GUI_COMMANDINPUT_H_
-#define SRC_GUI_COMMANDINPUT_H_
+#ifndef INCLUDE_GUI_COMMANDINPUT_H_
+#define INCLUDE_GUI_COMMANDINPUT_H_
 
 #include <QTextEdit>
 
 namespace astviewer {
 
 class CommandInput: public QTextEdit {
-  Q_OBJECT
+Q_OBJECT
 public:
   CommandInput(QWidget* parent = nullptr);
   bool eventFilter(QObject *, QEvent *e) override;
@@ -29,4 +29,4 @@ signals:
 
 } /* namespace astviewer */
 
-#endif /* SRC_GUI_COMMANDINPUT_H_ */
+#endif /* INCLUDE_GUI_COMMANDINPUT_H_ */

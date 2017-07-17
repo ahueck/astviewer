@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef SRC_CORE_QUERYWRAPPER_H_
-#define SRC_CORE_QUERYWRAPPER_H_
+#ifndef INCLUDE_CORE_QUERYWRAPPER_H_
+#define INCLUDE_CORE_QUERYWRAPPER_H_
 
 #include <core/ToolWrapper.h>
 
@@ -34,4 +34,4 @@ public:
 
 } /* namespace astviewer */
 
-#endif /* SRC_CORE_QUERYWRAPPER_H_ */
+#endif /* INCLUDE_CORE_QUERYWRAPPER_H_ */

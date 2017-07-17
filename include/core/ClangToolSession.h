@@ -5,9 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef SRC_CORE_CLANGTOOLSESSION_H_
-#define SRC_CORE_CLANGTOOLSESSION_H_
-
+#ifndef INCLUDE_CORE_CLANGTOOLSESSION_H_
+#define INCLUDE_CORE_CLANGTOOLSESSION_H_
 
 #include <QObject>
 
@@ -26,7 +25,7 @@ namespace astviewer {
 
 class ToolWrapper;
 
-class ClangToolSession :public QObject {
+class ClangToolSession: public QObject {
 Q_OBJECT
 private:
   std::unique_ptr<ToolWrapper> clang_tool;
@@ -54,4 +53,4 @@ signals:
 
 } /* namespace astviewer */
 
-#endif /* SRC_CORE_CLANGTOOLSESSION_H_ */
+#endif /* INCLUDE_CORE_CLANGTOOLSESSION_H_ */
