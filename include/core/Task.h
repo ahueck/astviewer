@@ -17,20 +17,20 @@ namespace astviewer {
 class Task : public QObject{
 Q_OBJECT
 private:
-  Command current;
+  // TODO: List of commands to handle
+  // Command current;
 public:
   Task();
   virtual ~Task();
 protected:
-  virtual void fileLoad() { emitDone(); }
-  virtual void fileStore() { emitDone(); }
-  virtual void sourceSelection() { emitDone(); }
-  virtual void commandInput() { emitDone(); }
+  virtual void fileLoad(Command cmd) { emitDone(cmd); }
+  virtual void fileStore(Command cmd) { emitDone(cmd); }
+  virtual void sourceSelection(Command cmd) { emitDone(cmd); }
+  virtual void commandInput(Command cmd) { emitDone(cmd); }
 
-  virtual void emitDone() {
-    auto CMD = current;
-    this->current = {};
-    emit commandFinished(CMD);
+  virtual void emitDone(Command current) {
+    // TODO Bookkeeping of commands in queue
+    emit commandFinished(current);
   }
 
 public slots:

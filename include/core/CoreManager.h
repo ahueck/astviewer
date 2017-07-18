@@ -25,17 +25,25 @@ class CoreManager : public QObject {
 Q_OBJECT
 private:
 	TaskManager tm;
-	ProcessHandler pm;
+	StatusHandler pm;
 	CommandInput* input{nullptr};
 	MainWindow* win{nullptr};
 	ClangToolSession* session{nullptr};
-
+	// QMap<QString, QVariantList> lockGroups; -> lockGroups to iterate over and setEnabled(true|false); for now handled by signal and slots
 	// Connect TaskManager with ProcessHandler to generically show status messages (commandExecute and taskDone)
 	// Connect a Task with this (to handle unlocking of GUI elements and pass data appropriately) and add to TaskManager
 
 public:
-	CoreManager();
+	CoreManager(MainWindow* win);
 	virtual ~CoreManager();
+
+public slots:
+  void selectedTU(QString);
+  void handleFinished(Command);
+
+signals:
+  void loadFile(Command);
+  void lockFileLoad(bool);
 };
 
 } /* namespace astviewer */

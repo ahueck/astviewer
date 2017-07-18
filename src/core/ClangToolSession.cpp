@@ -21,9 +21,10 @@ ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper) : clang
  connect(clang_tool.get(), SIGNAL(queryResult(QString)), this, SLOT(queryResult(QString)));
 }
 
-void ClangToolSession::loadTU(const QString& file) {
+void ClangToolSession::fileLoad(Command cmd) {
   using clang::tooling::CompilationDatabase;
   using clang::tooling::ClangTool;
+  auto file = cmd.input;
   auto file_std = file.toStdString();
   StringRef file_ref(file_std);
   if(this->db == nullptr) {
@@ -43,16 +44,12 @@ void ClangToolSession::loadTU(const QString& file) {
   tool->buildASTs(AST_vec);
   clang_tool->init(AST_vec);
   qDebug() << file;
+  Task::fileLoad(cmd);
 }
 
-void ClangToolSession::loadCompilationDB(const QString& file) {
-  using clang::tooling::CompilationDatabase;
-  qDebug() << "Loading Compilation DB not supported!";
-}
-
-void ClangToolSession::commandInput(const QString& in) {
-  qDebug() <<"Received command: " << in;
-  clang_tool->execute(in);
+void ClangToolSession::commandInput(Command cmd) {
+  qDebug() <<"Received command: " << cmd.input;
+  clang_tool->execute(cmd.input);
   //emit matchedAST(this->query.run(in));
 }
 

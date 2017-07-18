@@ -30,8 +30,17 @@ set(UISOURCES
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
 
-  src/util/ProcessHandler.cpp
-  include/util/ProcessHandler.h
+  src/util/StatusHandler.cpp
+  include/util/StatusHandler.h
+
+  src/core/CoreManager.cpp
+  include/core/CoreManager.h
+
+  src/core/TaskManager.cpp
+  include/core/TaskManager.h
+
+  src/core/Task.cpp
+  include/core/Task.h
 
   src/util/FileLoader.cpp
   include/util/FileLoader.h
