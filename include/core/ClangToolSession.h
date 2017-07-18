@@ -43,7 +43,7 @@ public:
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
 
-public slots:
+private slots:
   void queryResult(Command matched_ast);
   void loadedTU();
 };

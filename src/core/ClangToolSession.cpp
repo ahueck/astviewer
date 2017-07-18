@@ -47,7 +47,8 @@ void ClangToolSession::fileLoad(Command cmd) {
     tool->buildASTs(AST_vec);
     clang_tool->init(AST_vec);
   };
-
+  QFuture<Command> result = QtConcurrent::run(f);
+  loader.setFuture(result);
 }
 
 void ClangToolSession::commandInput(Command cmd) {
