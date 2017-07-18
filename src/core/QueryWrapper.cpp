@@ -28,10 +28,10 @@ void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   qs = make_unique<QuerySession>(AST_vec);
 }
 
-void QueryWrapper::execute(const QString& cmd) {
+void QueryWrapper::execute(Command cmd) {
   QuerySession& qsession = *qs.get();
-  auto func = [cmd, &qsession]() -> QString {
-    auto file_std = cmd.toStdString();
+  auto func = [cmd, &qsession]() -> Command {
+    auto file_std = cmd.input;
     llvm::StringRef file_ref(file_std);
 
     QueryRef Q = QueryParser::parse(file_ref, qsession);
@@ -39,8 +39,8 @@ void QueryWrapper::execute(const QString& cmd) {
     std::string out_str;
     llvm::raw_string_ostream out(out_str);
     Q->run(out, qsession);
-
-    return QString::fromStdString(out.str());
+    cmd.result = QString::fromStdString(out.str());
+    return cmd;
   };
   this->run(func);
 }

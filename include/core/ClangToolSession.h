@@ -10,6 +10,8 @@
 
 #include <core/Task.h>
 
+#include <QFutureWatcher>
+
 #include <memory>
 #include <vector>
 
@@ -32,6 +34,7 @@ private:
   std::unique_ptr<clang::tooling::ClangTool> tool;
   std::unique_ptr<clang::tooling::CompilationDatabase> db;
   std::vector<std::unique_ptr<clang::ASTUnit>> AST_vec;
+  QFutureWatcher<Command> loader;
 
 public:
   ClangToolSession(std::unique_ptr<ToolWrapper> wrapper);
@@ -39,6 +42,10 @@ public:
 
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
+
+public slots:
+  void queryResult(Command matched_ast);
+  void loadedTU();
 };
 
 } /* namespace astviewer */

@@ -17,20 +17,20 @@ Task::Task() {
 void Task::handleCommand(Command cmd) {
   using Command::CommandType;
 
-  this->current = cmd;
+  //this->current = cmd;
 
   switch(cmd.t) {
   case CommandType::file_load:
-    this->fileLoad();
+    this->fileLoad(cmd);
     break;
   case CommandType::file_store:
-    this->fileStore();
+    this->fileStore(cmd);
     break;
   case CommandType::query:
-    this->commandInput();
+    this->commandInput(cmd);
     break;
   case CommandType::selection:
-    this->sourceSelection();
+    this->sourceSelection(cmd);
     break;
   default:
     qDebug() << "Unsupported command type.";

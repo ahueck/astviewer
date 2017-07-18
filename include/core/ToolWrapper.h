@@ -8,6 +8,8 @@
 #ifndef INCLUDE_CORE_TOOLWRAPPER_H_
 #define INCLUDE_CORE_TOOLWRAPPER_H_
 
+#include <core/Command.h>
+
 #include <QtConcurrent>
 #include <QFutureWatcher>
 #include <QObject>
@@ -27,11 +29,11 @@ class ToolWrapper: public QObject {
 Q_OBJECT
 
 protected:
-  QFutureWatcher<QString> watcher;
+  QFutureWatcher<Command> watcher;
 
   template<typename F>
   void run(F function) {
-    QFuture<QString> run = QtConcurrent::run(function);
+    QFuture<Command> run = QtConcurrent::run(function);
     watcher.setFuture(run);
   }
 
@@ -39,12 +41,12 @@ public:
   ToolWrapper(QObject* parent = nullptr);
 
   virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
-  virtual void execute(const QString& command) = 0;
+  virtual void execute(Command command) = 0;
 
   ~ToolWrapper() override;
 
 signals:
-  void queryResult(QString);
+  void queryResult(Command);
 
 protected slots:
   virtual void queryFinished();
