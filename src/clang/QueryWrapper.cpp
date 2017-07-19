@@ -30,8 +30,8 @@ void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
 
 void QueryWrapper::execute(Command cmd) {
   QuerySession& qsession = *qs.get();
-  auto func = [cmd, &qsession]() -> Command {
-    auto file_std = cmd.input;
+  auto func = [&]() -> Command {
+    auto file_std = cmd.input.toStdString();
     llvm::StringRef file_ref(file_std);
 
     QueryRef Q = QueryParser::parse(file_ref, qsession);

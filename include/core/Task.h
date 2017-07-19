@@ -20,7 +20,7 @@ private:
   // TODO: List of commands to handle
   // Command current;
 public:
-  Task();
+  Task(QObject* parent = nullptr);
   virtual ~Task();
 protected:
   virtual void fileLoad(Command cmd) { emitDone(cmd); }

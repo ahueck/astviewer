@@ -4,8 +4,6 @@
 #include <gui/CommandInput.h>
 #include <gui/RecentFileManager.h>
 
-#include <core/ClangToolSession.h>
-
 #include <util/FileLoader.h>
 #include <util/ProcessHandler.h>
 #include <util/QLogHandler.h>
@@ -19,15 +17,10 @@
 #include <QFuture>
 #include <QFutureWatcher>
 
-
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow),  loader(new astviewer::FileLoader(this)), file_manager(
-        new astviewer::RecentFileManager(this)), p_handler(
-        new astviewer::ProcessHandler(this)) {
+    QMainWindow(parent), ui(new Ui::MainWindow),
+    recent_files(new astviewer::RecentFileManager(this)) {
   ui->setupUi(this);
-  p_handler->setStatus(ui->statusBar);
-  p_handler->addActions({ ui->actionOpen_File, ui->actionOpen_DB });
-
   /*
    label_status = new QLabel(this);
    label_status->setText("Status");
@@ -41,12 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
       SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
 
   // Recent file management:
-  file_manager->setTopLevelMenu(ui->menuRecent_File);
-  QObject::connect(this, SIGNAL(fileLoaded(QString)), file_manager,
+  recent_files->setTopLevelMenu(ui->menuRecent_File);
+  QObject::connect(this, SIGNAL(fileLoaded(QString)), recent_files,
       SLOT(updateRecentFiles(QString)));
-  QObject::connect(file_manager, SIGNAL(recentFileSelected(QString)), this,
-      SLOT(loadFile(QString)));
-  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), file_manager,
+  QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this,
+      SLOT(recentFileLoad(QString)));
+  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files,
       SLOT(clearRecentFiles()));
 
   // Open action -> file / db:
@@ -54,16 +47,18 @@ MainWindow::MainWindow(QWidget *parent) :
       SLOT(openTU()));
   QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this,
       SLOT(openCompilationDB()));
-  QObject::connect(this, SIGNAL(selectedTU(const QString&)), this,
-      SLOT(loadFile(const QString&)));
+
+  //QObject::connect(this, SIGNAL(selectedTU(const QString&)), this, SLOT(loadFile(const QString&)));
 
   // Processhandler -> file load done
-  QObject::connect(this, SIGNAL(fileLoaded(QString)), p_handler,
-      SLOT(processFinished()));
+  //QObject::connect(this, SIGNAL(fileLoaded(QString)), p_handler, SLOT(processFinished()));
 
   // this->loadFileFinished emits fileLoaded()
-  QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this,
-      SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
+  //QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this, SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
+}
+
+Ui::MainWindow* MainWindow::getUI() {
+  return this->ui;
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
@@ -84,37 +79,29 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
 }
 
 void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
-  QObject::connect(this, SIGNAL(selectedTU(const QString&)), session,
-      SLOT(loadTU(const QString&)));
-  QObject::connect(this, SIGNAL(selectedCompilationDB(const QString&)), session,
-      SLOT(loadCompilationDB(const QString&)));
+  /*
+   QObject::connect(this, SIGNAL(selectedTU(const QString&)), session,
+   SLOT(loadTU(const QString&)));
+   QObject::connect(this, SIGNAL(selectedCompilationDB(const QString&)), session,
+   SLOT(loadCompilationDB(const QString&)));
 
-  QObject::connect(in, SIGNAL(commandEntered(const QString&)), session,
-      SLOT(commandInput(const QString&)));
-  QObject::connect(session, SIGNAL(matchedAST(const QString&)),
-      ui->plainTextEditAST, SLOT(setPlainText(const QString&)));
+   QObject::connect(in, SIGNAL(commandEntered(const QString&)), session,
+   SLOT(commandInput(const QString&)));
+   QObject::connect(session, SIGNAL(matchedAST(const QString&)),
+   ui->plainTextEditAST, SLOT(setPlainText(const QString&)));
+   */
 }
 
-void MainWindow::loadFileFinished(QString file, QString content) {
-  qDebug() << "File finished loading: " << file;
-  ui->plainTextEditSrc->clear();
-  ui->plainTextEditSrc->insertPlainText(content);
-  /*
-   ui->actionOpen_File->setEnabled(true);
-   ui->actionOpen_DB->setEnabled(true);
-   in->setEnabled(true);
-   */
-  emit fileLoaded(file);
-}
+/*
+ void MainWindow::loadFileFinished(QString file, QString content) {
+ qDebug() << "File finished loading: " << file;
+ ui->plainTextEditSrc->clear();
+ ui->plainTextEditSrc->insertPlainText(content);
+ }
+ */
 
-void MainWindow::loadFile(const QString& file) {
-  /*
-   ui->actionOpen_File->setEnabled(false);
-   ui->actionOpen_DB->setEnabled(false);
-   in->setEnabled(false);
-   */
-  p_handler->processStarted("Read file: " + file);
-  loader->read(file);
+void MainWindow::recentFileLoad(QString recent_file) {
+  emit selectedTU(recent_file);
 }
 
 void MainWindow::openTU() {

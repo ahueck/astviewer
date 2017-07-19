@@ -26,7 +26,7 @@ private:
   size_t registered_task{0};
 
 public:
-  TaskManager();
+  TaskManager(QObject* parent = nullptr);
   void registerTask(Task* t);
   void deregisterTask(Task* t);
   virtual ~TaskManager();

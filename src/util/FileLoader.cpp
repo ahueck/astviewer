@@ -16,7 +16,7 @@
 namespace astviewer {
 
 FileLoader::FileLoader(QObject* parent) :
-    QObject(parent), watcher(this) {
+    Task(parent), watcher(this) {
   connect(&watcher, SIGNAL(finished()), this, SLOT(fileRead()));
 }
 

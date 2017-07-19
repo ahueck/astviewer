@@ -11,25 +11,23 @@
 
 namespace astviewer {
 
-Task::Task() {
+Task::Task(QObject* parent) :QObject(parent) {
 }
 
 void Task::handleCommand(Command cmd) {
-  using Command::CommandType;
-
   //this->current = cmd;
 
   switch(cmd.t) {
-  case CommandType::file_load:
+  case Command::CommandType::file_load:
     this->fileLoad(cmd);
     break;
-  case CommandType::file_store:
+  case Command::CommandType::file_store:
     this->fileStore(cmd);
     break;
-  case CommandType::query:
+  case Command::CommandType::query:
     this->commandInput(cmd);
     break;
-  case CommandType::selection:
+  case Command::CommandType::selection:
     this->sourceSelection(cmd);
     break;
   default:
@@ -38,7 +36,6 @@ void Task::handleCommand(Command cmd) {
   }
 }
 
-Task::~Task() {
-}
+Task::~Task() = default;
 
 } /* namespace astviewer */

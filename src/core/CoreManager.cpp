@@ -6,11 +6,19 @@
  */
 
 #include <core/CoreManager.h>
+#include <core/Command.h>
+#include <clang/ClangToolSession.h>
+#include <gui/CommandInput.h>
+
+#include <gui/mainwindow.h>
+
+#include <QDebug>
 
 namespace astviewer {
 
-CoreManager::CoreManager(MainWindow* win) : tm(this), pm(this), win(win) {
+CoreManager::CoreManager(MainWindow* win, CommandInput* in) : tm(this), pm(this), win(win), input(in) {
   QObject::connect(this, SIGNAL(loadFile(Command)), &tm, SLOT(commandExecute(Command)));
+  QObject::connect(this, SIGNAL(dispatchCommand(Command)), &tm, SLOT(commandExecute(Command)));
   QObject::connect(&tm, SIGNAL(commandFinished(Command)), this, SLOT(handleFinished(Command)));
   //QObject::connect(this, SIGNAL(loadFile(Command)), this, SLOT(fileLoad()));
 
@@ -20,32 +28,49 @@ CoreManager::CoreManager(MainWindow* win) : tm(this), pm(this), win(win) {
   list.push_back(QVariant(win->in));
   list.push_back(QVariant(win->ui->actionOpen_DB));
   */
-  QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->in, SLOT(setEnabled(bool)));
-  QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->ui->actionOpen_DB, SLOT(setEnabled(bool)));
-  QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->ui->actionOpen_File, SLOT(setEnabled(bool)));
+  QObject::connect(this, SIGNAL(lockFileLoad(bool)), input, SLOT(setEnabled(bool)));
+  //QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->getUI()->actionOpen_DB, SLOT(setEnabled(bool)));
+  //QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->getUI()->actionOpen_File, SLOT(setEnabled(bool)));
 
   // Build query locking
+
+  // Win & CommandInput:
+  QObject::connect(win, SIGNAL(selectedTU(QString)), this, SLOT(selectedTU(QString)));
+  QObject::connect(input, SIGNAL(commandEntered(QString)), this, SLOT(commandInput(QString)));
+  //QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this, SLOT(selectedTU(QString)));
 }
 
 void CoreManager::handleFinished(Command cmd) {
-  using Command::CommandType;
-
   switch(cmd.t) {
-  case CommandType::file_load:
+  case Command::CommandType::file_load:
     // unlock loadGUI;
-    pm.processFinished(cmd.id);
     emit lockFileLoad(true);
     break;
-  case CommandType::query:
-
+  case Command::CommandType::query:
+    emit lockFileLoad(true);
     break;
-  case CommandType::selection:
+  case Command::CommandType::selection:
 
     break;
   default:
     qDebug() << "Unsupported command type.";
-    break;
+    break; // or return;?
   }
+  pm.processFinished(cmd.id);
+}
+
+void CoreManager::commandInput(QString input_str) {
+  Command cmd;
+  cmd.t = Command::CommandType::query;
+  cmd.input = input_str;
+  pm.processStarted(tr("Executing query: %0").arg(input_str), cmd.id);
+
+  emit lockFileLoad(false);
+  emit dispatchCommand(cmd);
+}
+
+void CoreManager::selectedCompilationDB(QString db_path) {
+  qInfo() << "Not implemented";
 }
 
 void CoreManager::selectedTU(QString tu_path) {

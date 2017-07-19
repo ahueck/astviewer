@@ -1,6 +1,6 @@
 #include <core/ToolWrapper.h>
-#include <core/QueryWrapper.h>
-#include <core/ClangToolSession.h>
+#include <clang/QueryWrapper.h>
+#include <clang/ClangToolSession.h>
 #include <gui/mainwindow.h>
 #include <gui/CommandInput.h>
 #include <util/QLogHandler.h>

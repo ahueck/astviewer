@@ -6,25 +6,28 @@
  */
 
 #include <core/TaskManager.h>
+#include <core/Task.h>
 
 namespace astviewer {
 
-TaskManager::TaskManager() {
+TaskManager::TaskManager(QObject* parent) : QObject(parent) {
 
 }
 
 void TaskManager::registerTask(Task* t) {
   // TODO register only for certain commands
-  auto result = connect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
-  connect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
+  auto result = true;
+  /*auto result = */QObject::connect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
+  QObject::connect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
   if(result) {
     ++registered_task;
   }
 }
 
 void TaskManager::deregisterTask(Task* t) {
-  auto result = disconnect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
-  disconnect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
+  auto result = true;
+  /*auto result = */QObject::disconnect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
+  QObject::disconnect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
   if(result) {
     --registered_task;
   }
@@ -46,8 +49,6 @@ void TaskManager::commandFinished(Command cmd) {
 
 }
 
-TaskManager::~TaskManager() {
-
-}
+TaskManager::~TaskManager() = default;
 
 } /* namespace astviewer */

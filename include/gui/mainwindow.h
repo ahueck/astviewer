@@ -23,26 +23,22 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   void registerInput(astviewer::CommandInput*);
   void registerClangTool(astviewer::ClangToolSession*);
+  Ui::MainWindow* getUI();
   ~MainWindow() override;
 
-public slots:
+signals:
+  void selectedTU(QString);
+  void selectedCompilationDB(QString);
+
+protected slots:
   void openTU();
   void openCompilationDB();
-  void loadFile(const QString&);
-  void loadFileFinished(QString, QString);
-
-signals:
-  void selectedTU(const QString&);
-  void selectedCompilationDB(const QString&);
-  void fileLoaded(QString);
+  void recentFileLoad(QString);
 
 private:
   Ui::MainWindow *ui;
-  QLabel* label_status { nullptr };
   astviewer::CommandInput* in { nullptr };
-  astviewer::FileLoader* loader;
-  astviewer::RecentFileManager* file_manager;
-  astviewer::ProcessHandler* p_handler;
+  astviewer::RecentFileManager* recent_files;
 };
 
 #endif // MAINWINDOW_H

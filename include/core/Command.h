@@ -8,6 +8,9 @@
 #ifndef INCLUDE_CORE_COMMAND_H_
 #define INCLUDE_CORE_COMMAND_H_
 
+#include <QString>
+
+namespace astviewer {
 
 using cmd_id = size_t;
 
@@ -35,6 +38,6 @@ public:
   }
 };
 
-
+}
 
 #endif /* INCLUDE_CORE_COMMAND_H_ */
