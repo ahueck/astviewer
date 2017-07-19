@@ -23,6 +23,8 @@ CoreManager::CoreManager(MainWindow* win) : tm(this), pm(this), win(win) {
   QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->in, SLOT(setEnabled(bool)));
   QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->ui->actionOpen_DB, SLOT(setEnabled(bool)));
   QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->ui->actionOpen_File, SLOT(setEnabled(bool)));
+
+  // Build query locking
 }
 
 void CoreManager::handleFinished(Command cmd) {

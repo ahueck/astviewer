@@ -33,7 +33,6 @@ public:
 
 public slots:
   void commitCommand(Command);
-  void selectedTU(QString);
   void commandFinished(Command);
 
 signals:

@@ -37,26 +37,11 @@ void TaskManager::commitCommand(Command cmd) {
 	emit commandExecute(cmd);
 }
 
-void TaskManager::selectedTU(QString tu_path) {
-  Command cmd;
-  auto id = cmd.id;
-  this->command_tracker[id] = registered_task;
-  cmd.input = tu_path;
-  cmd.t = Command::CommandType::file_load;
-
-  emit commandExecute(cmd);
-}
-
 void TaskManager::commandFinished(Command cmd) {
   auto value = --command_tracker[cmd.id];
   this->command_tracker[cmd.id] = value;
   if(value == 0) {
-    using Command::CommandType;
-    switch(cmd.t) {
-    case CommandType::file_load:
-      // unlock GUI for file load
-      break;
-    }
+    emit taskDone(cmd);
   }
 
 }
