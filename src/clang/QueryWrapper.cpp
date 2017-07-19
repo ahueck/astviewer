@@ -5,13 +5,13 @@
  *      Author: ahueck
  */
 
-#include <core/QueryWrapper.h>
+#include <clang/QueryWrapper.h>
 
 #include <util/Util.h>
 
-#include <clang-query/Query.h>
-#include <clang-query/QueryParser.h>
-#include <clang-query/QuerySession.h>
+#include <clang/clang-query/Query.h>
+#include <clang/clang-query/QueryParser.h>
+#include <clang/clang-query/QuerySession.h>
 
 #include <clang/Frontend/ASTUnit.h>
 #include <llvm/ADT/StringRef.h>

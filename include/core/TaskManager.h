@@ -38,12 +38,6 @@ public slots:
 signals:
   void commandExecute(Command);
   void taskDone(Command);
-  /*
-  void lockUI();
-  void unlockUI();
-  void lockInput();
-  void unlockInput();
-  */
 };
 
 } /* namespace astviewer */

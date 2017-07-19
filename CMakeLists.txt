@@ -14,8 +14,8 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/externalpackages)
 include_directories(${PROJECT_SOURCE_DIR}/externalpackages/qspinner)
 
 set(QSOURCES
-  src/clang-query/Query.cpp
-  src/clang-query/QueryParser.cpp
+  src/clang/clang-query/Query.cpp
+  src/clang/clang-query/QueryParser.cpp
 )
 
 # needs headers for correct moc'ing and ui building
@@ -29,31 +29,26 @@ set(UISOURCES
     
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
-
-  src/util/StatusHandler.cpp
-  include/util/StatusHandler.h
-
-  src/core/CoreManager.cpp
-  include/core/CoreManager.h
-
-  src/core/TaskManager.cpp
-  include/core/TaskManager.h
-
-  src/core/Task.cpp
-  include/core/Task.h
-
   src/util/FileLoader.cpp
   include/util/FileLoader.h
-
+  src/util/StatusHandler.cpp
+  include/util/StatusHandler.h
   include/util/Util.h
+  
+  src/core/CoreManager.cpp
+  include/core/CoreManager.h
+  src/core/TaskManager.cpp
+  include/core/TaskManager.h
+  src/core/Task.cpp
+  include/core/Task.h
   
   src/core/ToolWrapper.cpp
   include/core/ToolWrapper.h
   
-  src/core/ClangToolSession.cpp
-  include/core/ClangToolSession.h
-  src/core/QueryWrapper.cpp
-  include/core/QueryWrapper.h
+  src/clang/ClangToolSession.cpp
+  include/clang/ClangToolSession.h
+  src/clang/QueryWrapper.cpp
+  include/clang/QueryWrapper.h
 )
 
 add_format_target(format-all
