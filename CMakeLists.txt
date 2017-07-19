@@ -8,6 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/clang)
 include_directories(${PROJECT_SOURCE_DIR}/include/clang/clang-query)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/externalpackages)

@@ -23,12 +23,15 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   void registerInput(astviewer::CommandInput*);
   void registerClangTool(astviewer::ClangToolSession*);
-  Ui::MainWindow* getUI();
   ~MainWindow() override;
 
 signals:
   void selectedTU(QString);
   void selectedCompilationDB(QString);
+
+public slots:
+  void setSource(QString);
+  void setClangAST(QString);
 
 protected slots:
   void openTU();
@@ -42,3 +45,4 @@ private:
 };
 
 #endif // MAINWINDOW_H
+

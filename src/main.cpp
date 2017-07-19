@@ -6,6 +6,8 @@
 #include <util/QLogHandler.h>
 #include <util/Util.h>
 
+#include <core/CoreManager.h>
+
 #include <QApplication>
 #include <QPointer>
 #include <QDebug>
@@ -37,6 +39,9 @@ int main(int argc, const char **argv) {
   MainWindow w;
   w.registerInput(inputWidget);
   w.registerClangTool(&session);
+
+  av::CoreManager cm(&w, inputWidget, &session);
+
   w.show();
 
   return a.exec();

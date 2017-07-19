@@ -9,6 +9,8 @@
 
 #include <QDateTime>
 
+#include <iostream>
+
 namespace astviewer {
 
 void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context, const QString &msg) {
@@ -38,7 +40,8 @@ void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context
     break;
   }
 
-  emit doLog(format.arg(msg_type));
+  std::cerr << (format.arg(msg_type)).toStdString() << std::endl;
+  //emit doLog(format.arg(msg_type));
 }
 
 } /* namespace astviewer */

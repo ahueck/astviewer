@@ -31,9 +31,10 @@ Q_OBJECT
 protected:
   QFutureWatcher<Command> watcher;
 
-  template<typename F>
-  void run(F function) {
-    QFuture<Command> run = QtConcurrent::run(function);
+  template<typename F, typename... Args>
+  void run(F function, Args&&... arguments) {
+    qDebug() << "Run Future";
+    QFuture<Command> run = QtConcurrent::run(function, std::forward<Args>(arguments)...);
     watcher.setFuture(run);
   }
 

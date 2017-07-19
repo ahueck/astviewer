@@ -9,6 +9,7 @@
 #include <core/Command.h>
 #include <clang/ClangToolSession.h>
 #include <gui/CommandInput.h>
+#include <util/FileLoader.h>
 
 #include <gui/mainwindow.h>
 
@@ -16,10 +17,10 @@
 
 namespace astviewer {
 
-CoreManager::CoreManager(MainWindow* win, CommandInput* in) : tm(this), pm(this), win(win), input(in) {
-  QObject::connect(this, SIGNAL(loadFile(Command)), &tm, SLOT(commandExecute(Command)));
-  QObject::connect(this, SIGNAL(dispatchCommand(Command)), &tm, SLOT(commandExecute(Command)));
-  QObject::connect(&tm, SIGNAL(commandFinished(Command)), this, SLOT(handleFinished(Command)));
+CoreManager::CoreManager(MainWindow* win, CommandInput* in, ClangToolSession* session) : tm(this), pm(this), win(win), input(in), session(session) {
+  QObject::connect(this, SIGNAL(loadFile(Command)), &tm, SLOT(commitCommand(Command)));
+  QObject::connect(this, SIGNAL(dispatchCommand(Command)), &tm, SLOT(commitCommand(Command)));
+  QObject::connect(&tm, SIGNAL(taskDone(Command)), this, SLOT(handleFinished(Command)));
   //QObject::connect(this, SIGNAL(loadFile(Command)), this, SLOT(fileLoad()));
 
   // BUild file load Locking:
@@ -38,12 +39,31 @@ CoreManager::CoreManager(MainWindow* win, CommandInput* in) : tm(this), pm(this)
   QObject::connect(win, SIGNAL(selectedTU(QString)), this, SLOT(selectedTU(QString)));
   QObject::connect(input, SIGNAL(commandEntered(QString)), this, SLOT(commandInput(QString)));
   //QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this, SLOT(selectedTU(QString)));
+
+  f_loader = new FileLoader(this);
+  QObject::connect(f_loader, SIGNAL(commandFinished(Command)), this, SLOT(sourceLoaded(Command)));
+  tm.registerTask(f_loader);
+
+  tm.registerTask(session);
+  QObject::connect(session, SIGNAL(commandFinished(Command)), this, SLOT(clangResult(Command)));
+}
+
+void CoreManager::clangResult(Command cmd) {
+  qDebug() << "Received clangResult";
+  switch(cmd.t) {
+  case Command::CommandType::query:
+    win->setClangAST(cmd.result);
+  }
+}
+
+void CoreManager::sourceLoaded(Command cmd) {
+  win->setSource(cmd.result);
 }
 
 void CoreManager::handleFinished(Command cmd) {
+  qDebug() << "Finished command: " << cmd.input;
   switch(cmd.t) {
   case Command::CommandType::file_load:
-    // unlock loadGUI;
     emit lockFileLoad(true);
     break;
   case Command::CommandType::query:
@@ -60,6 +80,7 @@ void CoreManager::handleFinished(Command cmd) {
 }
 
 void CoreManager::commandInput(QString input_str) {
+  qDebug() << "Read command for processing: " << input_str;
   Command cmd;
   cmd.t = Command::CommandType::query;
   cmd.input = input_str;
@@ -74,6 +95,7 @@ void CoreManager::selectedCompilationDB(QString db_path) {
 }
 
 void CoreManager::selectedTU(QString tu_path) {
+  qDebug() << "TU received: " << tu_path;
   Command cmd;
   cmd.t = Command::CommandType::file_load;
   cmd.input = tu_path;

@@ -40,6 +40,7 @@ public:
   ClangToolSession(std::unique_ptr<ToolWrapper> wrapper);
   ~ClangToolSession() override;
 
+protected:
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
 

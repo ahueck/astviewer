@@ -21,10 +21,10 @@ public:
 
 public slots:
   //void commandFinished();
-  void addToHistory(const QString&);
+  void addToHistory(QString);
 
 signals:
-  void commandEntered(const QString&);
+  void commandEntered(QString);
 };
 
 } /* namespace astviewer */

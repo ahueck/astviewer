@@ -15,10 +15,10 @@ namespace astviewer {
 
 CommandInput::CommandInput(QWidget* parent) : QTextEdit(parent) {
   installEventFilter(this);
-  QObject::connect(this, SIGNAL(commandEntered(QString&)), this, SLOT(addToHistory(QString&)));
+  QObject::connect(this, SIGNAL(commandEntered(QString)), this, SLOT(addToHistory(QString)));
 }
 
-void CommandInput::addToHistory(const QString& cmd) {
+void CommandInput::addToHistory(QString cmd) {
   qDebug() << "Add command to history: " << cmd;
 }
 

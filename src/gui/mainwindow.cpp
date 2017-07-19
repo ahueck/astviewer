@@ -35,8 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // Recent file management:
   recent_files->setTopLevelMenu(ui->menuRecent_File);
-  QObject::connect(this, SIGNAL(fileLoaded(QString)), recent_files,
-      SLOT(updateRecentFiles(QString)));
+  //FIXME recent file functionality not implemented here
+  //QObject::connect(this, SIGNAL(fileLoaded(QString)), recent_files,
+  //    SLOT(updateRecentFiles(QString)));
   QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this,
       SLOT(recentFileLoad(QString)));
   QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files,
@@ -55,10 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // this->loadFileFinished emits fileLoaded()
   //QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this, SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
-}
-
-Ui::MainWindow* MainWindow::getUI() {
-  return this->ui;
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
@@ -99,6 +96,16 @@ void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
  ui->plainTextEditSrc->insertPlainText(content);
  }
  */
+
+void MainWindow::setSource(QString source) {
+  ui->plainTextEditSrc->clear();
+  ui->plainTextEditSrc->insertPlainText(source);
+}
+
+void MainWindow::setClangAST(QString source) {
+  ui->plainTextEditAST->clear();
+  ui->plainTextEditAST->insertPlainText(source);
+}
 
 void MainWindow::recentFileLoad(QString recent_file) {
   emit selectedTU(recent_file);
