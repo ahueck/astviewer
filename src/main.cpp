@@ -38,7 +38,6 @@ int main(int argc, const char **argv) {
 
   MainWindow w;
   w.registerInput(inputWidget);
-  w.registerClangTool(&session);
 
   av::CoreManager cm(&w, inputWidget, &session);
 

@@ -16,13 +16,14 @@ class ProcessHandler;
 }
 
 class QLabel;
+class QStatusBar;
 
 class MainWindow: public QMainWindow {
 Q_OBJECT
 public:
   explicit MainWindow(QWidget *parent = nullptr);
   void registerInput(astviewer::CommandInput*);
-  void registerClangTool(astviewer::ClangToolSession*);
+  QStatusBar* getStatusbar();
   ~MainWindow() override;
 
 signals:

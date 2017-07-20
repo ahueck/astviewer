@@ -16,7 +16,7 @@ using cmd_id = size_t;
 
 class Command final {
 public:
-  enum class CommandType : cmd_id {
+  enum class CommandType : size_t {
     file_load = 1,
     file_store = 2,
     query = 4,

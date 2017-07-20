@@ -17,42 +17,59 @@
 
 namespace astviewer {
 
-CoreManager::CoreManager(MainWindow* win, CommandInput* in, ClangToolSession* session) : tm(this), pm(this), win(win), input(in), session(session) {
-  QObject::connect(this, SIGNAL(loadFile(Command)), &tm, SLOT(commitCommand(Command)));
-  QObject::connect(this, SIGNAL(dispatchCommand(Command)), &tm, SLOT(commitCommand(Command)));
-  QObject::connect(&tm, SIGNAL(taskDone(Command)), this, SLOT(handleFinished(Command)));
+CoreManager::CoreManager(MainWindow* win, CommandInput* in,
+    ClangToolSession* session) :
+    tm(this), pm(this), win(win), input(in), session(session) {
+
+  //pm.setStatus(win->getStatusbar());
+
+  QObject::connect(this, SIGNAL(loadFile(Command)), &tm,
+      SLOT(commitCommand(Command)));
+  QObject::connect(this, SIGNAL(dispatchCommand(Command)), &tm,
+      SLOT(commitCommand(Command)));
+  QObject::connect(&tm, SIGNAL(taskDone(Command)), this,
+      SLOT(handleFinished(Command)));
   //QObject::connect(this, SIGNAL(loadFile(Command)), this, SLOT(fileLoad()));
 
   // BUild file load Locking:
   /*
-  auto& list = lockGroups["file_load"];
-  list.push_back(QVariant(win->in));
-  list.push_back(QVariant(win->ui->actionOpen_DB));
-  */
-  QObject::connect(this, SIGNAL(lockFileLoad(bool)), input, SLOT(setEnabled(bool)));
+   auto& list = lockGroups["file_load"];
+   list.push_back(QVariant(win->in));
+   list.push_back(QVariant(win->ui->actionOpen_DB));
+   */
+  QObject::connect(this, SIGNAL(lockFileLoad(bool)), input,
+      SLOT(setEnabled(bool)));
   //QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->getUI()->actionOpen_DB, SLOT(setEnabled(bool)));
   //QObject::connect(this, SIGNAL(lockFileLoad(bool)), win->getUI()->actionOpen_File, SLOT(setEnabled(bool)));
 
   // Build query locking
 
   // Win & CommandInput:
-  QObject::connect(win, SIGNAL(selectedTU(QString)), this, SLOT(selectedTU(QString)));
-  QObject::connect(input, SIGNAL(commandEntered(QString)), this, SLOT(commandInput(QString)));
+  QObject::connect(win, SIGNAL(selectedTU(QString)), this,
+      SLOT(selectedTU(QString)));
+  QObject::connect(input, SIGNAL(commandEntered(QString)), this,
+      SLOT(commandInput(QString)));
   //QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this, SLOT(selectedTU(QString)));
 
   f_loader = new FileLoader(this);
-  QObject::connect(f_loader, SIGNAL(commandFinished(Command)), this, SLOT(sourceLoaded(Command)));
+  QObject::connect(f_loader, SIGNAL(commandFinished(Command)), this,
+      SLOT(sourceLoaded(Command)));
   tm.registerTask(f_loader);
 
   tm.registerTask(session);
-  QObject::connect(session, SIGNAL(commandFinished(Command)), this, SLOT(clangResult(Command)));
+  QObject::connect(session, SIGNAL(commandFinished(Command)), this,
+      SLOT(clangResult(Command)));
 }
 
 void CoreManager::clangResult(Command cmd) {
   qDebug() << "Received clangResult";
-  switch(cmd.t) {
+  switch (cmd.t) {
   case Command::CommandType::query:
     win->setClangAST(cmd.result);
+    break;
+  default:
+    qDebug() << "Not implemented";
+    qDebug() << cmd.id << " " << cmd.input;
   }
 }
 
@@ -62,7 +79,7 @@ void CoreManager::sourceLoaded(Command cmd) {
 
 void CoreManager::handleFinished(Command cmd) {
   qDebug() << "Finished command: " << cmd.input;
-  switch(cmd.t) {
+  switch (cmd.t) {
   case Command::CommandType::file_load:
     emit lockFileLoad(true);
     break;
@@ -104,17 +121,17 @@ void CoreManager::selectedTU(QString tu_path) {
 
   // lock loadGUI;
   /*
-  auto& list = lockGroups["file_load"];
-  for(auto& variant : list) {
-    if(variant.canConvert<QWidget>()) {
-      auto* widget = variant.value<QWidget*>();
-      widget->setEnabled(false);
-    } else if(variant.canConvert<QAction>()) {
-      auto* widget = variant.value<QAction*>();
-      widget->setEnabled(false);
-    }
-  }
-  */
+   auto& list = lockGroups["file_load"];
+   for(auto& variant : list) {
+   if(variant.canConvert<QWidget>()) {
+   auto* widget = variant.value<QWidget*>();
+   widget->setEnabled(false);
+   } else if(variant.canConvert<QAction>()) {
+   auto* widget = variant.value<QAction*>();
+   widget->setEnabled(false);
+   }
+   }
+   */
   emit lockFileLoad(false);
   emit loadFile(cmd);
 }

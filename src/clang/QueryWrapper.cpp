@@ -28,15 +28,20 @@ QueryWrapper::QueryWrapper(QObject* parent) : ToolWrapper(parent),  qs(nullptr) 
 
 void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   qDebug() << "Init tool. #ASTs: " << AST_vec.size();
-  qs = make_unique<QuerySession>(AST_vec);
+  if(qs == nullptr) {
+    qDebug() << "Is nullptr";
+    qs = make_unique<QuerySession>(AST_vec);
+  } else {
+    qs->ASTs = decltype(qs->ASTs)(AST_vec);
+  }
 }
 
 void QueryWrapper::execute(Command cmd) {
   qDebug() << "Execute query request: " << cmd.input;
   //QuerySession& qsession = *qs.get();
-  auto func = [&]() -> Command {
+  auto func = [&, cmd]() -> Command {
     Command c = cmd;
-    auto file_std = cmd.input.toStdString();
+    auto file_std = c.input.toStdString();
     llvm::StringRef file_ref(file_std);
 
     QueryRef Q = QueryParser::parse(file_ref, *this->qs.get());
@@ -54,3 +59,5 @@ void QueryWrapper::execute(Command cmd) {
 QueryWrapper::~QueryWrapper() = default;
 
 } /* namespace astviewer */
+
+

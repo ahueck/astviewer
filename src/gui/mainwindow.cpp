@@ -75,27 +75,9 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
   ui->gridLayout->addWidget(in, 0, 0, 1, 1);
 }
 
-void MainWindow::registerClangTool(astviewer::ClangToolSession* session) {
-  /*
-   QObject::connect(this, SIGNAL(selectedTU(const QString&)), session,
-   SLOT(loadTU(const QString&)));
-   QObject::connect(this, SIGNAL(selectedCompilationDB(const QString&)), session,
-   SLOT(loadCompilationDB(const QString&)));
-
-   QObject::connect(in, SIGNAL(commandEntered(const QString&)), session,
-   SLOT(commandInput(const QString&)));
-   QObject::connect(session, SIGNAL(matchedAST(const QString&)),
-   ui->plainTextEditAST, SLOT(setPlainText(const QString&)));
-   */
+QStatusBar* MainWindow::getStatusbar() {
+  return ui->statusBar;
 }
-
-/*
- void MainWindow::loadFileFinished(QString file, QString content) {
- qDebug() << "File finished loading: " << file;
- ui->plainTextEditSrc->clear();
- ui->plainTextEditSrc->insertPlainText(content);
- }
- */
 
 void MainWindow::setSource(QString source) {
   ui->plainTextEditSrc->clear();
