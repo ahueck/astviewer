@@ -31,7 +31,7 @@ void CoreManager::init(MainWindow* win, CommandInput* input) {
   win->registerWithManager(this);
   pm.setStatus(win->getStatusbar());
   /*QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
-      SLOT(selectedCompilationDB(QString)));*/
+   SLOT(selectedCompilationDB(QString)));*/
 
   // CommandInput:
   QObject::connect(input, SIGNAL(commandEntered(QString)), this,
@@ -97,12 +97,9 @@ void CoreManager::clangResult(Command cmd) {
 }
 
 void CoreManager::sourceLoaded(Command cmd) {
-  if(cmd.t == Command::CommandType::file_load) {
-    qDebug() << "Finished file load: " << cmd.input;
-    // FIXME this filter needs to be erased once TaskManager handles groups.
-    win->setSource(cmd.result);
-    win->fileLoadFinished(cmd.input);
-  }
+  qDebug() << "Finished file load: " << cmd.input;
+  win->setSource(cmd.result);
+  win->fileLoadFinished(cmd.input);
 }
 
 void CoreManager::commandInput(QString input_str) {

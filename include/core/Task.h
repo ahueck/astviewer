@@ -22,21 +22,18 @@ private:
 public:
   Task(QObject* parent = nullptr);
   virtual ~Task();
-protected:
-  virtual void fileLoad(Command cmd) { emitDone(cmd); }
-  virtual void fileStore(Command cmd) { emitDone(cmd); }
-  virtual void sourceSelection(Command cmd) { emitDone(cmd); }
-  virtual void commandInput(Command cmd) { emitDone(cmd); }
 
-  virtual void emitDone(Command current) {
-    // TODO Bookkeeping of commands in queue
-    emit commandFinished(current);
-  }
+protected:
+  virtual void fileLoad(Command cmd);
+  virtual void fileStore(Command cmd);
+  virtual void sourceSelection(Command cmd);
+  virtual void commandInput(Command cmd);
 
 public slots:
   virtual void handleCommand(Command);
 signals:
   void commandFinished(Command);
+  void commandSkipped(Command);
 };
 
 } /* namespace astviewer */

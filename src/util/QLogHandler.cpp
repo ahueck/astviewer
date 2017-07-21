@@ -41,7 +41,7 @@ void QLogHandler::outputMessage(QtMsgType type,const QMessageLogContext &context
   }
 
   std::cerr << (format.arg(msg_type)).toStdString() << std::endl;
-  //emit doLog(format.arg(msg_type));
+  emit doLog(format.arg(msg_type));
 }
 
 } /* namespace astviewer */

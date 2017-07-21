@@ -19,6 +19,7 @@ void TaskManager::registerTask(Task* t) {
   auto result = true;
   /*auto result = */QObject::connect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
   QObject::connect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
+  QObject::connect(t, SIGNAL(commandSkipped(Command)), this, SLOT(commandFinished(Command)));
   if(result) {
     ++registered_task;
   }
@@ -28,6 +29,7 @@ void TaskManager::deregisterTask(Task* t) {
   auto result = true;
   /*auto result = */QObject::disconnect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
   QObject::disconnect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
+  QObject::disconnect(t, SIGNAL(commandSkipped(Command)), this, SLOT(commandFinished(Command)));
   if(result) {
     --registered_task;
   }

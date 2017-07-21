@@ -11,13 +11,27 @@
 
 namespace astviewer {
 
-Task::Task(QObject* parent) :QObject(parent) {
+Task::Task(QObject* parent) :
+    QObject(parent) {
+}
+
+void Task::fileLoad(Command cmd) {
+  emit commandSkipped(cmd);
+}
+void Task::fileStore(Command cmd) {
+  emit commandSkipped(cmd);
+}
+void Task::sourceSelection(Command cmd) {
+  emit commandSkipped(cmd);
+}
+void Task::commandInput(Command cmd) {
+  emit commandSkipped(cmd);
 }
 
 void Task::handleCommand(Command cmd) {
   //this->current = cmd;
 
-  switch(cmd.t) {
+  switch (cmd.t) {
   case Command::CommandType::file_load:
     this->fileLoad(cmd);
     break;
@@ -32,6 +46,7 @@ void Task::handleCommand(Command cmd) {
     break;
   default:
     qDebug() << "Unsupported command type.";
+    emit commandSkipped(cmd);
     break;
   }
 }
