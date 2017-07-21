@@ -19,7 +19,7 @@
 
 namespace astviewer {
 
-ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper) : Task(nullptr), clang_tool(std::move(wrapper)) {
+ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent) : Task(parent), clang_tool(std::move(wrapper)) {
  connect(clang_tool.get(), SIGNAL(queryResult(Command)), this, SLOT(queryResult(Command)));
  connect(&loader, SIGNAL(finished()), this, SLOT(loadedTU()));
 }

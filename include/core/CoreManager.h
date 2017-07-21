@@ -19,42 +19,54 @@ class MainWindow;
 namespace astviewer {
 
 class CommandInput;
-class ClangToolSession;
-class CommandInput;
-class FileLoader;
+
+// QMap<QString, QVariantList> lockGroups; -> lockGroups to iterate over and setEnabled(true|false); for now handled by signal and slots
+// Connect TaskManager with ProcessHandler to generically show status messages (commandExecute and taskDone)
 
 class CoreManager : public QObject {
 Q_OBJECT
 protected:
 	TaskManager tm;
 	StatusHandler pm;
-  MainWindow* win{nullptr};
+
+	MainWindow* win{nullptr};
 	CommandInput* input{nullptr};
-	ClangToolSession* session{nullptr};
-	FileLoader* f_loader{nullptr};
-	// QMap<QString, QVariantList> lockGroups; -> lockGroups to iterate over and setEnabled(true|false); for now handled by signal and slots
-	// Connect TaskManager with ProcessHandler to generically show status messages (commandExecute and taskDone)
-	// Connect a Task with this (to handle unlocking of GUI elements and pass data appropriately) and add to TaskManager
+
+	Task* clang_session{nullptr};
+	Task* f_loader{nullptr};
 
 public:
-	CoreManager(MainWindow* win, CommandInput* in, ClangToolSession* session);
+	CoreManager();
+	void init(MainWindow* win, CommandInput* input);
 	virtual ~CoreManager();
 
-public slots:
-  void selectedTU(QString);
-  void selectedCompilationDB(QString);
-  void commandInput(QString);
+protected:
+	virtual void createFileLoader();
+	virtual void createClangSession() = 0;
+	virtual void connectFileLoader();
+	virtual void connectClangSession();
+
+protected slots:
+  // General TaskMangaer related connection:
   void handleFinished(Command);
+  // SPecific Task connection (clang tooling and file IO tasks)
   void sourceLoaded(Command);
   void clangResult(Command);
+  // CommandInput "console" connections:
+  void commandInput(QString);
+  // File IO through GUI mainwindow
+  void selectedTU(QString);
+  void selectedCompilationDB(QString);
 
 signals:
-  void loadFile(Command);
-  void dispatchCommand(Command);
-  void lockFileLoad(bool);
+  //void dispatchCommand(Command);
+  void fileLoadUnlock(bool);
+  void queryUnlock(bool);
+  void selectionUnlock(bool);
 };
 
 } /* namespace astviewer */
 
 #endif /* INCLUDE_CORE_COREMANAGER_H_ */
+
 

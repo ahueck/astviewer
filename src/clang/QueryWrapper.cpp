@@ -29,7 +29,6 @@ QueryWrapper::QueryWrapper(QObject* parent) : ToolWrapper(parent),  qs(nullptr) 
 void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   qDebug() << "Init tool. #ASTs: " << AST_vec.size();
   if(qs == nullptr) {
-    qDebug() << "Is nullptr";
     qs = make_unique<QuerySession>(AST_vec);
   } else {
     qs->ASTs = decltype(qs->ASTs)(AST_vec);

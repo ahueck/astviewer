@@ -37,7 +37,7 @@ private:
   QFutureWatcher<Command> loader;
 
 public:
-  ClangToolSession(std::unique_ptr<ToolWrapper> wrapper);
+  ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent = nullptr);
   ~ClangToolSession() override;
 
 protected:

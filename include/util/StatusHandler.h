@@ -11,8 +11,7 @@
 #include <QObject>
 #include <QString>
 
-#include <waitingspinnerwidget.h>
-
+class WaitingSpinnerWidget;
 class QStatusBar;
 
 namespace astviewer {
@@ -21,7 +20,7 @@ class StatusHandler: public QObject {
 Q_OBJECT
 
 private:
-  WaitingSpinnerWidget spinner;
+  WaitingSpinnerWidget* spinner;
   QStatusBar* status{nullptr};
 
 public:

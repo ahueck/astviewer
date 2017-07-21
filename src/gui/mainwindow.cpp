@@ -1,6 +1,8 @@
 #include <gui/mainwindow.h>
 #include <ui_mainwindow.h>
 
+#include <core/CoreManager.h>
+
 #include <gui/CommandInput.h>
 #include <gui/RecentFileManager.h>
 
@@ -18,15 +20,9 @@
 #include <QFutureWatcher>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow),
-    recent_files(new astviewer::RecentFileManager(this)) {
+    QMainWindow(parent), ui(new Ui::MainWindow), recent_files(
+        new astviewer::RecentFileManager(this)) {
   ui->setupUi(this);
-  /*
-   label_status = new QLabel(this);
-   label_status->setText("Status");
-   ui->statusBar->addPermanentWidget(label_status);
-   ui->statusBar->showMessage("Testing a message here");
-   */
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
@@ -35,9 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   // Recent file management:
   recent_files->setTopLevelMenu(ui->menuRecent_File);
-  //FIXME recent file functionality not implemented here
-  //QObject::connect(this, SIGNAL(fileLoaded(QString)), recent_files,
-  //    SLOT(updateRecentFiles(QString)));
   QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this,
       SLOT(recentFileLoad(QString)));
   QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files,
@@ -48,19 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
       SLOT(openTU()));
   QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this,
       SLOT(openCompilationDB()));
-
-  //QObject::connect(this, SIGNAL(selectedTU(const QString&)), this, SLOT(loadFile(const QString&)));
-
-  // Processhandler -> file load done
-  //QObject::connect(this, SIGNAL(fileLoaded(QString)), p_handler, SLOT(processFinished()));
-
-  // this->loadFileFinished emits fileLoaded()
-  //QObject::connect(loader, SIGNAL(fileLoaded(QString, QString)), this, SLOT(loadFileFinished(QString, QString)), Qt::QueuedConnection);
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
   this->in = in;
-  in->setParent(ui->tabInput);
+  //in->setParent(ui->tabInput);
 
   in->setObjectName(QStringLiteral("textInput"));
 
@@ -75,6 +60,15 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
   ui->gridLayout->addWidget(in, 0, 0, 1, 1);
 }
 
+void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
+
+  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_DB,
+      SLOT(setEnabled(bool)));
+  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_File,
+      SLOT(setEnabled(bool)));
+
+}
+
 QStatusBar* MainWindow::getStatusbar() {
   return ui->statusBar;
 }
@@ -87,6 +81,10 @@ void MainWindow::setSource(QString source) {
 void MainWindow::setClangAST(QString source) {
   ui->plainTextEditAST->clear();
   ui->plainTextEditAST->insertPlainText(source);
+}
+
+void MainWindow::fileLoadFinished(QString file) {
+  recent_files->updateRecentFiles(file);
 }
 
 void MainWindow::recentFileLoad(QString recent_file) {

@@ -8,21 +8,21 @@ class MainWindow;
 }
 
 namespace astviewer {
-class ClangToolSession;
 class CommandInput;
-class FileLoader;
 class RecentFileManager;
-class ProcessHandler;
+class CoreManager;
 }
 
 class QLabel;
 class QStatusBar;
+class QWidget;
 
 class MainWindow: public QMainWindow {
 Q_OBJECT
 public:
   explicit MainWindow(QWidget *parent = nullptr);
   void registerInput(astviewer::CommandInput*);
+  void registerWithManager(astviewer::CoreManager*);
   QStatusBar* getStatusbar();
   ~MainWindow() override;
 
@@ -33,6 +33,7 @@ signals:
 public slots:
   void setSource(QString);
   void setClangAST(QString);
+  void fileLoadFinished(QString);
 
 protected slots:
   void openTU();
@@ -42,7 +43,7 @@ protected slots:
 private:
   Ui::MainWindow *ui;
   astviewer::CommandInput* in { nullptr };
-  astviewer::RecentFileManager* recent_files;
+  astviewer::RecentFileManager* recent_files { nullptr };
 };
 
 #endif // MAINWINDOW_H
