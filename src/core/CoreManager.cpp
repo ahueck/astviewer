@@ -18,7 +18,7 @@ namespace astviewer {
 
 CoreManager::CoreManager() :
     tm(this), pm(this) {
-  QObject::connect(&tm, SIGNAL(taskDone(Command)), this,
+  QObject::connect(&tm, SIGNAL(taskFinished(Command)), this,
       SLOT(handleFinished(Command)));
 }
 
@@ -113,7 +113,7 @@ void CoreManager::commandInput(QString input_str) {
   emit queryUnlock(false);
   //emit dispatchCommand(cmd);
   qDebug() << "Commit command";
-  tm.commitCommand(cmd);
+  tm.commit(cmd);
 }
 
 void CoreManager::selectedCompilationDB(QString db_path) {
@@ -130,7 +130,7 @@ void CoreManager::selectedTU(QString tu_path) {
 
   emit fileLoadUnlock(false);
   //emit dispatchCommand(cmd);
-  tm.commitCommand(cmd);
+  tm.commit(cmd);
 }
 
 CoreManager::~CoreManager() = default;

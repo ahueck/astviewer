@@ -17,9 +17,9 @@ TaskManager::TaskManager(QObject* parent) : QObject(parent) {
 void TaskManager::registerTask(Task* t) {
   // TODO register only for certain commands
   auto result = true;
-  /*auto result = */QObject::connect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
-  QObject::connect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
-  QObject::connect(t, SIGNAL(commandSkipped(Command)), this, SLOT(commandFinished(Command)));
+  /*auto result = */QObject::connect(this, SIGNAL(execute(Command)), t, SLOT(handleCommand(Command)));
+    QObject::connect(t, SIGNAL(commandFinished(Command)), this, SLOT(finished(Command)));
+    QObject::connect(t, SIGNAL(commandSkipped(Command)), this, SLOT(finished(Command)));
   if(result) {
     ++registered_task;
   }
@@ -27,26 +27,26 @@ void TaskManager::registerTask(Task* t) {
 
 void TaskManager::deregisterTask(Task* t) {
   auto result = true;
-  /*auto result = */QObject::disconnect(this, SIGNAL(commandExecute(Command)), t, SLOT(handleCommand(Command)));
-  QObject::disconnect(t, SIGNAL(commandFinished(Command)), this, SLOT(commandFinished(Command)));
-  QObject::disconnect(t, SIGNAL(commandSkipped(Command)), this, SLOT(commandFinished(Command)));
+  /*auto result = */QObject::disconnect(this, SIGNAL(execute(Command)), t, SLOT(handleCommand(Command)));
+  QObject::disconnect(t, SIGNAL(commandFinished(Command)), this, SLOT(finished(Command)));
+  QObject::disconnect(t, SIGNAL(commandSkipped(Command)), this, SLOT(finished(Command)));
   if(result) {
     --registered_task;
   }
 }
 
-void TaskManager::commitCommand(Command cmd) {
+void TaskManager::commit(Command cmd) {
 	auto id = cmd.id;
 	this->command_tracker[id] = registered_task;
 
-	emit commandExecute(cmd);
+	emit execute(cmd);
 }
 
-void TaskManager::commandFinished(Command cmd) {
+void TaskManager::finished(Command cmd) {
   auto value = --command_tracker[cmd.id];
   this->command_tracker[cmd.id] = value;
   if(value == 0) {
-    emit taskDone(cmd);
+    emit taskFinished(cmd);
   }
 
 }

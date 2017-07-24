@@ -32,12 +32,12 @@ public:
   virtual ~TaskManager();
 
 public slots:
-  void commitCommand(Command);
-  void commandFinished(Command);
+  void commit(Command);
+  void finished(Command);
 
 signals:
-  void commandExecute(Command);
-  void taskDone(Command);
+  void execute(Command);
+  void taskFinished(Command);
 };
 
 } /* namespace astviewer */

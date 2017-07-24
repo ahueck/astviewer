@@ -96,6 +96,10 @@ void MainWindow::openTU() {
       tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
   qDebug() << "Selected TU file " << file;
 
+  if(file == "") {
+    return;
+  }
+
   emit selectedTU(file);
 }
 
@@ -104,6 +108,10 @@ void MainWindow::openCompilationDB() {
       tr("Open Compilation Database"), QString(),
       tr("Compilation Database (*.json)"));
   qDebug() << "Selected DB file " << file;
+
+  if(file == "") {
+    return;
+  }
 
   emit selectedCompilationDB(file);
 }

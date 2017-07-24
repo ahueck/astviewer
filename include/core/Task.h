@@ -30,7 +30,9 @@ protected:
   virtual void commandInput(Command cmd);
 
 public slots:
-  virtual void handleCommand(Command);signals:
+  virtual void handleCommand(Command);
+
+signals:
   void commandFinished(Command);
   void commandSkipped(Command);
 };
