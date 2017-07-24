@@ -9,14 +9,9 @@
 #define INCLUDE_CORE_TOOLWRAPPER_H_
 
 #include <core/Command.h>
-#include <core/Task.h>
+#include <core/FutureTask.h>
 
-#include <QtConcurrent>
-#include <QFutureWatcher>
 #include <QObject>
-#include <QString>
-
-#include <QDebug>
 
 #include <memory>
 
@@ -26,19 +21,8 @@ class ASTUnit;
 
 namespace astviewer {
 
-class ToolWrapper: public Task {
+class ToolWrapper: public FutureTask {
 Q_OBJECT
-
-protected:
-  QFutureWatcher<Command> watcher;
-
-  template<typename F, typename ... Args>
-  void run(F function, Args&&... arguments) {
-    qDebug() << "Run Future";
-    QFuture<Command> run = QtConcurrent::run(function,
-        std::forward<Args>(arguments)...);
-    watcher.setFuture(run);
-  }
 
 public:
   explicit ToolWrapper(QObject* parent = nullptr);
@@ -46,9 +30,6 @@ public:
   virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
 
   virtual ~ToolWrapper();
-
-protected slots:
-  void queryFinished();
 };
 
 } /* namespace astviewer */

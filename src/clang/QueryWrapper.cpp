@@ -38,8 +38,7 @@ void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
 void QueryWrapper::commandInput(Command cmd) {
   qDebug() << "Execute query request: " << cmd.input;
   //QuerySession& qsession = *qs.get();
-  auto func = [&, cmd]() -> Command {
-    Command c = cmd;
+  auto query = [&](Command c) -> Command {
     auto file_std = c.input.toStdString();
     llvm::StringRef file_ref(file_std);
 
@@ -52,7 +51,7 @@ void QueryWrapper::commandInput(Command cmd) {
     c.result = QString::fromStdString(out.str());
     return c;
   };
-  this->run(func);
+  run(query, cmd);
 }
 
 QueryWrapper::~QueryWrapper() = default;

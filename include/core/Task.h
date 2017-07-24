@@ -10,15 +10,15 @@
 
 #include <core/Command.h>
 
+#include <QtConcurrent>
+#include <QFutureWatcher>
 #include <QObject>
+
 
 namespace astviewer {
 
 class Task: public QObject {
 Q_OBJECT
-private:
-  // TODO: List of commands to handle
-  // Command current;
 public:
   explicit Task(QObject* parent = nullptr);
   virtual ~Task();

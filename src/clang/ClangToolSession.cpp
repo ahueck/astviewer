@@ -7,7 +7,6 @@
 
 #include <clang/ClangToolSession.h>
 #include <core/ToolWrapper.h>
-#include <clang/QueryWrapper.h>
 #include <util/Util.h>
 
 #include <QDebug>
@@ -19,16 +18,15 @@
 
 namespace astviewer {
 
-ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent) : Task(parent), clang_tool(std::move(wrapper)) {
+ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent) : FutureTask(parent), clang_tool(std::move(wrapper)) {
  connect(clang_tool.get(), SIGNAL(commandFinished(Command)), this, SLOT(queryResult(Command)));
- connect(&loader, SIGNAL(finished()), this, SLOT(loadedTU()));
 }
 
 void ClangToolSession::fileLoad(Command cmd) {
   using clang::tooling::CompilationDatabase;
   using clang::tooling::ClangTool;
 
-  auto f = [&, cmd]() -> Command {
+  auto f = [&](Command cmd) -> Command {
     auto file = cmd.input;
     auto file_std = file.toStdString();
     StringRef file_ref(file_std);
@@ -50,8 +48,7 @@ void ClangToolSession::fileLoad(Command cmd) {
     clang_tool->init(AST_vec);
     return cmd;
   };
-  QFuture<Command> result = QtConcurrent::run(f);
-  loader.setFuture(result);
+  run(f, cmd);
 }
 
 void ClangToolSession::commandInput(Command cmd) {
@@ -63,12 +60,6 @@ void ClangToolSession::commandInput(Command cmd) {
 void ClangToolSession::queryResult(Command matched_ast) {
   qDebug() << "Query result received";
   emit commandFinished(matched_ast);
-}
-
-void ClangToolSession::loadedTU() {
-  qDebug() << "Loaded TU";
-  auto result = loader.future().result();
-  emit commandFinished(result);
 }
 
 ClangToolSession::~ClangToolSession() = default;

@@ -37,6 +37,8 @@ set(UI_SOURCES
   include/core/TaskManager.h
   src/core/Task.cpp
   include/core/Task.h
+  src/core/FutureTask.cpp
+  include/core/FutureTask.h
   
   src/core/ToolWrapper.cpp
   include/core/ToolWrapper.h
