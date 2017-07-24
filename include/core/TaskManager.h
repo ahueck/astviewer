@@ -37,7 +37,7 @@ public slots:
 
 signals:
   void execute(Command);
-  void taskFinished(Command);
+  void tasksFinished(Command);
 };
 
 } /* namespace astviewer */

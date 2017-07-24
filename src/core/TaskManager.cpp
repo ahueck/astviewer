@@ -46,7 +46,7 @@ void TaskManager::finished(Command cmd) {
   auto value = --command_tracker[cmd.id];
   this->command_tracker[cmd.id] = value;
   if(value == 0) {
-    emit taskFinished(cmd);
+    emit tasksFinished(cmd);
   }
 
 }

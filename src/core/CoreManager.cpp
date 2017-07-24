@@ -18,7 +18,7 @@ namespace astviewer {
 
 CoreManager::CoreManager() :
     tm(this), pm(this) {
-  QObject::connect(&tm, SIGNAL(taskFinished(Command)), this,
+  QObject::connect(&tm, SIGNAL(tasksFinished(Command)), this,
       SLOT(handleFinished(Command)));
 }
 
