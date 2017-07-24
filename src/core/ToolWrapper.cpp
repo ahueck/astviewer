@@ -15,14 +15,14 @@
 namespace astviewer {
 
 ToolWrapper::ToolWrapper(QObject* parent) :
-    QObject(parent) {
+    Task(parent) {
   connect(&watcher, SIGNAL(finished()), this, SLOT(queryFinished()));
 }
 
 void ToolWrapper::queryFinished() {
   qDebug() << "Query is finished";
   auto result = watcher.future().result();
-  emit queryResult(result);
+  emit commandFinished(result);
 }
 
 ToolWrapper::~ToolWrapper() = default;

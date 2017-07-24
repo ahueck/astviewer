@@ -20,7 +20,7 @@
 namespace astviewer {
 
 ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent) : Task(parent), clang_tool(std::move(wrapper)) {
- connect(clang_tool.get(), SIGNAL(queryResult(Command)), this, SLOT(queryResult(Command)));
+ connect(clang_tool.get(), SIGNAL(commandFinished(Command)), this, SLOT(queryResult(Command)));
  connect(&loader, SIGNAL(finished()), this, SLOT(loadedTU()));
 }
 
@@ -56,7 +56,7 @@ void ClangToolSession::fileLoad(Command cmd) {
 
 void ClangToolSession::commandInput(Command cmd) {
   qDebug() <<"Received command: " << cmd.input;
-  clang_tool->execute(cmd);
+  clang_tool->handleCommand(cmd);
   //emit matchedAST(this->query.run(in));
 }
 

@@ -35,7 +35,7 @@ void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   }
 }
 
-void QueryWrapper::execute(Command cmd) {
+void QueryWrapper::commandInput(Command cmd) {
   qDebug() << "Execute query request: " << cmd.input;
   //QuerySession& qsession = *qs.get();
   auto func = [&, cmd]() -> Command {

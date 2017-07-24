@@ -28,7 +28,7 @@ private:
 public:
   explicit QueryWrapper(QObject* parent = nullptr);
   void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
-  void execute(Command) override;
+  void commandInput(Command cmd) override;
   ~QueryWrapper() override;
 };
 

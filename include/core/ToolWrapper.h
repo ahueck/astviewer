@@ -9,6 +9,7 @@
 #define INCLUDE_CORE_TOOLWRAPPER_H_
 
 #include <core/Command.h>
+#include <core/Task.h>
 
 #include <QtConcurrent>
 #include <QFutureWatcher>
@@ -25,7 +26,7 @@ class ASTUnit;
 
 namespace astviewer {
 
-class ToolWrapper: public QObject {
+class ToolWrapper: public Task {
 Q_OBJECT
 
 protected:
@@ -43,16 +44,11 @@ public:
   explicit ToolWrapper(QObject* parent = nullptr);
 
   virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
-  virtual void execute(Command command) = 0;
 
-  ~ToolWrapper() override;
-
-signals:
-  void queryResult(Command);
+  virtual ~ToolWrapper();
 
 protected slots:
-  virtual void queryFinished();
-
+  void queryFinished();
 };
 
 } /* namespace astviewer */
