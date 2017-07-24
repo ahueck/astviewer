@@ -8,18 +8,14 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include/clang-query)
+include_directories(${PROJECT_SOURCE_DIR}/include/clang)
+include_directories(${PROJECT_SOURCE_DIR}/include/clang/clang-query)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/externalpackages)
 include_directories(${PROJECT_SOURCE_DIR}/externalpackages/qspinner)
 
-set(QSOURCES
-  src/clang-query/Query.cpp
-  src/clang-query/QueryParser.cpp
-)
-
 # needs headers for correct moc'ing and ui building
-set(UISOURCES
+set(UI_SOURCES
   src/gui/mainwindow.cpp
   include/gui/mainwindow.h
   src/gui/CommandInput.cpp
@@ -29,22 +25,40 @@ set(UISOURCES
     
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
-
-  src/util/ProcessHandler.cpp
-  include/util/ProcessHandler.h
-
   src/util/FileLoader.cpp
   include/util/FileLoader.h
-
+  src/util/StatusHandler.cpp
+  include/util/StatusHandler.h
   include/util/Util.h
+  
+  src/core/CoreManager.cpp
+  include/core/CoreManager.h
+  src/core/TaskManager.cpp
+  include/core/TaskManager.h
+  src/core/Task.cpp
+  include/core/Task.h
+  src/core/FutureTask.cpp
+  include/core/FutureTask.h
   
   src/core/ToolWrapper.cpp
   include/core/ToolWrapper.h
   
-  src/core/ClangToolSession.cpp
-  include/core/ClangToolSession.h
-  src/core/QueryWrapper.cpp
-  include/core/QueryWrapper.h
+  ${QSpinner_SOURCES}
+)
+
+set(CLANG_UI_SOURCES
+  src/clang/ClangToolSession.cpp
+  include/clang/ClangToolSession.h
+  src/clang/QueryWrapper.cpp
+  include/clang/QueryWrapper.h
+  
+  include/QueryApp.h
+  src/QueryApp.cpp
+)
+
+set(CLANG_QUERY_SOURCES
+  src/clang/clang-query/Query.cpp
+  src/clang/clang-query/QueryParser.cpp
 )
 
 add_format_target(format-all
@@ -54,20 +68,21 @@ add_format_target(format-all
 
 add_tidy_target(tidy-run
   "Clang-tidy run on astviewer translation units"
-  SOURCES ${QSOURCES} ${UISOURCES}
-  EXCLUDES "external"
+  SOURCES ${CLANG_UI_SOURCES} ${UI_SOURCES}
+  EXCLUDES "externalpackages"
 )
 
 add_tidy_fix_target(tidy-core-fix
   "Clang-tidy run with fixes on astviewer translation units"
-  SOURCES ${QSOURCES}
-  EXCLUDES "external"
+  SOURCES ${CLANG_UI_SOURCES} ${UI_SOURCES}
+  EXCLUDES "externalpackages"
   OTHER -checks=-*,modernize-*,llvm-header-guard,llvm-namespace-comment,google-explicit-constructor
 )
 
-add_library(query ${QSOURCES})
-add_library(astui ${UISOURCES} ${QSpinner_SOURCES})
-target_link_libraries(astui Qt5::Widgets Qt5::Concurrent ${CLANG_LIBS})
+add_library(query ${CLANG_UI_SOURCES} ${CLANG_QUERY_SOURCES})
+add_library(astui ${UI_SOURCES})
+target_link_libraries(astui Qt5::Widgets Qt5::Concurrent)
+target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
 
 
 add_executable(astviewer${EXE_SUFFIX} src/main.cpp)

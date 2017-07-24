@@ -25,7 +25,7 @@ RecentFileManager::RecentFileManager(QObject* parent) :
 
 void RecentFileManager::setTopLevelMenu(QMenu* top_menu) {
   menu_target = top_menu;
-  if(files.empty()) {
+  if (files.empty()) {
     menu_target->setEnabled(false);
     menu_target->update();
     return;
@@ -45,7 +45,6 @@ void RecentFileManager::openRecentFile() {
 }
 
 void RecentFileManager::updateRecentFiles(QString file) {
-  qDebug() << file;
   files.removeAll(file);
   files.prepend(file);
   handleHistory();
@@ -89,7 +88,7 @@ void RecentFileManager::handleHistory() {
 
 void RecentFileManager::clearRecentFiles() {
   this->files.clear();
-  for(auto action : recentFileActions) {
+  for (auto action : recentFileActions) {
     delete action;
   }
   recentFileActions.clear();

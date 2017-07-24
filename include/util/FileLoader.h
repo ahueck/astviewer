@@ -8,37 +8,22 @@
 #ifndef INCLUDE_UTIL_FILELOADER_H_
 #define INCLUDE_UTIL_FILELOADER_H_
 
-#include <util/Util.h>
+#include <core/FutureTask.h>
+#include <core/Command.h>
 
-#include <QFutureWatcher>
 #include <QObject>
 #include <QString>
 
 namespace astviewer {
 
-class FileLoader: public QObject {
+class FileLoader: public FutureTask {
 Q_OBJECT
-private:
-  QFutureWatcher<QString> watcher;
-  QString file;
-  QString file_content;
-
 public:
+  explicit FileLoader(QObject* parent = nullptr);
 
-  FileLoader(QObject* parent = nullptr);
-
-  void clear();
-
-  void read(QString file);
+  void fileLoad(Command) override;
 
   ~FileLoader() override;
-
-signals:
-  void fileLoading();
-  void fileLoaded(QString, QString);
-
-private slots:
-  void fileRead();
 };
 
 } /* namespace astviewer */

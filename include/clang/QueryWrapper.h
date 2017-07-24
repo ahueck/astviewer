@@ -26,9 +26,9 @@ private:
   std::unique_ptr<clang::query::QuerySession> qs;
 
 public:
-  QueryWrapper(QObject* parent = nullptr);
+  explicit QueryWrapper(QObject* parent = nullptr);
   void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
-  void execute(const QString& command) override;
+  void commandInput(Command cmd) override;
   ~QueryWrapper() override;
 };
 

@@ -8,7 +8,7 @@
 #ifndef INCLUDE_CORE_CLANGTOOLSESSION_H_
 #define INCLUDE_CORE_CLANGTOOLSESSION_H_
 
-#include <QObject>
+#include <core/FutureTask.h>
 
 #include <memory>
 #include <vector>
@@ -25,7 +25,7 @@ namespace astviewer {
 
 class ToolWrapper;
 
-class ClangToolSession: public QObject {
+class ClangToolSession: public FutureTask {
 Q_OBJECT
 private:
   std::unique_ptr<ToolWrapper> clang_tool;
@@ -34,21 +34,15 @@ private:
   std::vector<std::unique_ptr<clang::ASTUnit>> AST_vec;
 
 public:
-  ClangToolSession(std::unique_ptr<ToolWrapper> wrapper);
+  explicit ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent = nullptr);
   ~ClangToolSession() override;
 
-public slots:
-  void loadTU(const QString&);
-  void loadCompilationDB(const QString&);
-  void commandInput(const QString&);
+protected:
+  void fileLoad(Command cmd) override;
+  void commandInput(Command cmd) override;
 
 private slots:
-  void queryResult(QString);
-public:
-signals:
-  void matchedAST(const QString&);
-  void inputCompletition(QStringList);
-
+  void queryResult(Command matched_ast);
 };
 
 } /* namespace astviewer */

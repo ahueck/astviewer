@@ -1,13 +1,10 @@
-#include <core/ToolWrapper.h>
-#include <core/QueryWrapper.h>
-#include <core/ClangToolSession.h>
+#include <QueryApp.h>
+
 #include <gui/mainwindow.h>
 #include <gui/CommandInput.h>
 #include <util/QLogHandler.h>
-#include <util/Util.h>
 
 #include <QApplication>
-#include <QPointer>
 #include <QDebug>
 
 #include <clang/Tooling/CommonOptionsParser.h>
@@ -29,14 +26,12 @@ int main(int argc, const char **argv) {
 
   QApplication a(argc, const_cast<char**>(argv));
 
-  std::unique_ptr<av::ToolWrapper> ctool = av::make_unique<av::QueryWrapper>();
-  av::ClangToolSession session(std::move(ctool));
-
-  auto* inputWidget = new av::CommandInput();
-
+  QueryApp app;
   MainWindow w;
-  w.registerInput(inputWidget);
-  w.registerClangTool(&session);
+  av::CommandInput inputWidget;
+  w.registerInput(&inputWidget);
+  app.init(&w, &inputWidget);
+
   w.show();
 
   return a.exec();

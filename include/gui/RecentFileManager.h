@@ -26,7 +26,7 @@ private:
   static constexpr const char* recent_files_id = "recent_files";
 
 public:
-  RecentFileManager(QObject* parent = nullptr);
+  explicit RecentFileManager(QObject* parent = nullptr);
   void setTopLevelMenu(QMenu* top_menu);
   ~RecentFileManager() override;
 
