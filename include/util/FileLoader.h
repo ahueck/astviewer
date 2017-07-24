@@ -23,8 +23,7 @@ private:
   QFutureWatcher<Command> watcher;
 
 public:
-
-  FileLoader(QObject* parent = nullptr);
+  explicit FileLoader(QObject* parent = nullptr);
 
   void fileLoad(Command) override;
 

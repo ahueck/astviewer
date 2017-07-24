@@ -17,16 +17,16 @@ namespace astviewer {
 
 class Task;
 
-class TaskManager : public QObject {
+class TaskManager: public QObject {
 Q_OBJECT
 
 private:
   using cmd_counter = size_t;
   QMap<cmd_id, cmd_counter> command_tracker;
-  size_t registered_task{0};
+  size_t registered_task { 0 };
 
 public:
-  TaskManager(QObject* parent = nullptr);
+  explicit TaskManager(QObject* parent = nullptr);
   void registerTask(Task* t);
   void deregisterTask(Task* t);
   virtual ~TaskManager();

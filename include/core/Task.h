@@ -14,13 +14,13 @@
 
 namespace astviewer {
 
-class Task : public QObject{
+class Task: public QObject {
 Q_OBJECT
 private:
   // TODO: List of commands to handle
   // Command current;
 public:
-  Task(QObject* parent = nullptr);
+  explicit Task(QObject* parent = nullptr);
   virtual ~Task();
 
 protected:
@@ -30,8 +30,7 @@ protected:
   virtual void commandInput(Command cmd);
 
 public slots:
-  virtual void handleCommand(Command);
-signals:
+  virtual void handleCommand(Command);signals:
   void commandFinished(Command);
   void commandSkipped(Command);
 };

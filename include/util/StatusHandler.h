@@ -21,10 +21,10 @@ Q_OBJECT
 
 private:
   WaitingSpinnerWidget* spinner;
-  QStatusBar* status{nullptr};
+  QStatusBar* status { nullptr };
 
 public:
-  StatusHandler(QObject* parent = nullptr);
+  explicit StatusHandler(QObject* parent = nullptr);
 
   void setStatus(QStatusBar* status);
 
