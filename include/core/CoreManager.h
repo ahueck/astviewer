@@ -45,6 +45,7 @@ protected:
 	virtual void createClangSession() = 0;
 	virtual void connectFileLoader();
 	virtual void connectClangSession();
+	virtual void postInit();
 
 protected slots:
   // General TaskMangaer related connection:
@@ -63,6 +64,7 @@ signals:
   void fileLoadUnlock(bool);
   void queryUnlock(bool);
   void selectionUnlock(bool);
+  void compilationDbUnlock(bool);
 };
 
 } /* namespace astviewer */

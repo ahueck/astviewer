@@ -10,6 +10,8 @@
 
 #include <core/FutureTask.h>
 
+#include <QStringList>
+
 #include <memory>
 #include <vector>
 
@@ -32,17 +34,24 @@ private:
   std::unique_ptr<clang::tooling::ClangTool> tool;
   std::unique_ptr<clang::tooling::CompilationDatabase> db;
   std::vector<std::unique_ptr<clang::ASTUnit>> AST_vec;
+  bool reloaded_db { false };
 
 public:
-  explicit ClangToolSession(std::unique_ptr<ToolWrapper> wrapper, QObject* parent = nullptr);
+  explicit ClangToolSession(std::unique_ptr<ToolWrapper> wrapper,
+      QObject* parent = nullptr);
   ~ClangToolSession() override;
 
 protected:
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
+  void compilationDb(Command cmd) override;
+  void futureFinished() override;
 
 private slots:
   void queryResult(Command matched_ast);
+
+signals:
+  void compilationDataBaseChanged(QStringList);
 };
 
 } /* namespace astviewer */

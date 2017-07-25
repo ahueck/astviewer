@@ -16,6 +16,9 @@ class CoreManager;
 class QLabel;
 class QStatusBar;
 class QWidget;
+class QListView;
+class QModelIndex;
+class QStringListModel;
 
 class MainWindow: public QMainWindow {
 Q_OBJECT
@@ -29,21 +32,25 @@ public:
 signals:
   void selectedTU(QString);
   void selectedCompilationDB(QString);
+  void selectedDbListItem(QString);
 
 public slots:
   void setSource(QString);
   void setClangAST(QString);
   void fileLoadFinished(QString);
+  void updateDbView(QStringList);
 
 protected slots:
   void openTU();
   void openCompilationDB();
   void recentFileLoad(QString);
+  void clickedDBView(const QModelIndex& index);
 
 private:
   Ui::MainWindow *ui;
   astviewer::CommandInput* in { nullptr };
   astviewer::RecentFileManager* recent_files { nullptr };
+  QStringListModel* dbViewModel{nullptr};
 };
 
 #endif // MAINWINDOW_H

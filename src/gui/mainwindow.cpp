@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
         new astviewer::RecentFileManager(this)) {
   ui->setupUi(this);
 
+  dbViewModel = new QStringListModel(this);
+  this->ui->listViewCompDB->setModel(dbViewModel);
+
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
       SIGNAL(doLog(const QString&)), ui->logBrowser,
@@ -40,11 +43,15 @@ MainWindow::MainWindow(QWidget *parent) :
       SLOT(openTU()));
   QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this,
       SLOT(openCompilationDB()));
+
+  QObject::connect(ui->listViewCompDB,
+      SIGNAL(doubleClicked(const QModelIndex&)), this,
+      SLOT(clickedDBView(const QModelIndex&)));
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
   this->in = in;
-  //in->setParent(ui->tabInput);
+//in->setParent(ui->tabInput);
 
   in->setObjectName(QStringLiteral("textInput"));
 
@@ -72,6 +79,15 @@ QStatusBar* MainWindow::getStatusbar() {
   return ui->statusBar;
 }
 
+void MainWindow::updateDbView(QStringList list) {
+  dbViewModel->setStringList(list);
+}
+
+void MainWindow::clickedDBView(const QModelIndex& index) {
+  QString item_text = index.data(Qt::DisplayRole).toString();
+  emit selectedDbListItem(item_text);
+}
+
 void MainWindow::setSource(QString source) {
   ui->plainTextEditSrc->clear();
   ui->plainTextEditSrc->insertPlainText(source);
@@ -96,7 +112,7 @@ void MainWindow::openTU() {
       tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
   qDebug() << "Selected TU file " << file;
 
-  if(file == "") {
+  if (file == "") {
     return;
   }
 
@@ -109,7 +125,7 @@ void MainWindow::openCompilationDB() {
       tr("Compilation Database (*.json)"));
   qDebug() << "Selected DB file " << file;
 
-  if(file == "") {
+  if (file == "") {
     return;
   }
 
