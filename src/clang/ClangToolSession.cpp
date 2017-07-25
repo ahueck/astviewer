@@ -61,10 +61,31 @@ void ClangToolSession::fileLoad(Command cmd) {
   run(f, cmd);
 }
 
+void ClangToolSession::compilationDb(Command cmd) {
+  using clang::tooling::CompilationDatabase;
+  auto f = [&](Command cmd) -> Command {
+    auto path_abs = QFileInfo(cmd.input).absolutePath();
+    auto path_std = path_abs.toStdString();
+    StringRef folder(path_std);
+
+    std::string er;
+    db = CompilationDatabase::loadFromDirectory(folder, er);
+    if(db == nullptr || !er.empty()) {
+      qDebug() << "Could not load compilation db of file: "
+      << cmd.input
+      << "Reason: " << QString::fromStdString(er);
+      return cmd; // FIXME return failed command
+    }
+    reloaded_db = true;
+    return cmd;
+  };
+  run(f, cmd);
+}
+
 void ClangToolSession::commandInput(Command cmd) {
   qDebug() << "Received command: " << cmd.input;
   clang_tool->handleCommand(cmd);
-  //emit matchedAST(this->query.run(in));
+//emit matchedAST(this->query.run(in));
 }
 
 void ClangToolSession::queryResult(Command matched_ast) {

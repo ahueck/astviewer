@@ -44,6 +44,7 @@ public:
 protected:
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
+  void compilationDb(Command cmd) override;
   void futureFinished() override;
 
 private slots:

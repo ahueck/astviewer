@@ -64,6 +64,7 @@ signals:
   void fileLoadUnlock(bool);
   void queryUnlock(bool);
   void selectionUnlock(bool);
+  void compilationDbUnlock(bool);
 };
 
 } /* namespace astviewer */

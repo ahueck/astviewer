@@ -28,6 +28,8 @@ void CoreManager::init(MainWindow* win, CommandInput* input) {
   // Win:
   QObject::connect(win, SIGNAL(selectedTU(QString)), this,
       SLOT(selectedTU(QString)));
+  QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
+      SLOT(selectedCompilationDB(QString)));
   QObject::connect(win, SIGNAL(selectedDbListItem(QString)), this,
       SLOT(selectedTU(QString)));
   win->registerWithManager(this);
@@ -64,6 +66,9 @@ void CoreManager::handleFinished(Command cmd) {
     break;
   case Command::CommandType::selection:
     emit selectionUnlock(true);
+    break;
+  case Command::CommandType::compilationDb:
+    emit fileLoadUnlock(true);
     break;
   default:
     qDebug() << "Unsupported command type.";
@@ -120,7 +125,15 @@ void CoreManager::commandInput(QString input_str) {
 }
 
 void CoreManager::selectedCompilationDB(QString db_path) {
-  qInfo() << "Not implemented";
+  Command cmd;
+  cmd.t = Command::CommandType::compilationDb;
+  cmd.input = db_path;
+  pm.processStarted(tr("Loading compile commands: %0").arg(db_path), cmd.id);
+
+  emit fileLoadUnlock(false);
+  //emit dispatchCommand(cmd);
+  tm.commit(cmd);
+
 }
 
 void CoreManager::selectedTU(QString tu_path) {

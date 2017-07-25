@@ -25,6 +25,7 @@ protected:
   virtual void fileStore(Command cmd);
   virtual void sourceSelection(Command cmd);
   virtual void commandInput(Command cmd);
+  virtual void compilationDb(Command cmd);
 
 public slots:
   virtual void handleCommand(Command);

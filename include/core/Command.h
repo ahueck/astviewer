@@ -19,7 +19,7 @@ class Command final {
 public:
   enum class CommandType
     : size_t {
-      file_load = 1, file_store = 2, query = 4, selection = 8
+      file_load = 1, file_store = 2, query = 4, selection = 8, compilationDb = 16
   };
 
   cmd_id id;
@@ -50,6 +50,9 @@ inline QString commandType2Str(const Command::CommandType type) {
     break;
   case Command::CommandType::selection:
     return "Selection";
+    break;
+  case Command::CommandType::compilationDb:
+    return "Compilation DB";
     break;
   default:
     return "UNKNOWN";

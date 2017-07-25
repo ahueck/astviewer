@@ -18,13 +18,20 @@ Task::Task(QObject* parent) :
 void Task::fileLoad(Command cmd) {
   emit commandSkipped(cmd);
 }
+
 void Task::fileStore(Command cmd) {
   emit commandSkipped(cmd);
 }
+
 void Task::sourceSelection(Command cmd) {
   emit commandSkipped(cmd);
 }
+
 void Task::commandInput(Command cmd) {
+  emit commandSkipped(cmd);
+}
+
+void Task::compilationDb(Command cmd) {
   emit commandSkipped(cmd);
 }
 
@@ -43,6 +50,9 @@ void Task::handleCommand(Command cmd) {
     break;
   case Command::CommandType::selection:
     this->sourceSelection(cmd);
+    break;
+  case Command::CommandType::compilationDb:
+    this->compilationDb(cmd);
     break;
   default:
     qDebug() << "Unsupported command type.";
