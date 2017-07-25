@@ -96,6 +96,7 @@ void MainWindow::setSource(QString source) {
 void MainWindow::setClangAST(QString source) {
   ui->plainTextEditAST->clear();
   ui->plainTextEditAST->insertPlainText(source);
+  ui->plainTextEditAST->ensureCursorVisible();
 }
 
 void MainWindow::fileLoadFinished(QString file) {
