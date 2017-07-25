@@ -28,6 +28,8 @@ void CoreManager::init(MainWindow* win, CommandInput* input) {
   // Win:
   QObject::connect(win, SIGNAL(selectedTU(QString)), this,
       SLOT(selectedTU(QString)));
+  QObject::connect(win, SIGNAL(selectedDbListItem(QString)), this,
+      SLOT(selectedTU(QString)));
   win->registerWithManager(this);
   pm.setStatus(win->getStatusbar());
   /*QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
@@ -48,6 +50,7 @@ void CoreManager::init(MainWindow* win, CommandInput* input) {
   createClangSession();
   connectFileLoader();
   connectClangSession();
+  postInit();
 }
 
 void CoreManager::handleFinished(Command cmd) {
@@ -131,6 +134,10 @@ void CoreManager::selectedTU(QString tu_path) {
   emit fileLoadUnlock(false);
   //emit dispatchCommand(cmd);
   tm.commit(cmd);
+}
+
+void CoreManager::postInit() {
+
 }
 
 CoreManager::~CoreManager() = default;

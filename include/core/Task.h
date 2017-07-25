@@ -10,10 +10,7 @@
 
 #include <core/Command.h>
 
-#include <QtConcurrent>
-#include <QFutureWatcher>
 #include <QObject>
-
 
 namespace astviewer {
 
