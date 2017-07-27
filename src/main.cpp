@@ -2,6 +2,7 @@
 
 #include <gui/mainwindow.h>
 #include <gui/CommandInput.h>
+#include <gui/CompletionInput.h>
 #include <util/QLogHandler.h>
 
 #include <QApplication>
@@ -28,7 +29,7 @@ int main(int argc, const char **argv) {
 
   QueryApp app;
   MainWindow w;
-  av::CommandInput inputWidget;
+  av::CompletionInput inputWidget;
   w.registerInput(&inputWidget);
   app.init(&w, &inputWidget);
 

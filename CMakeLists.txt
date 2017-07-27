@@ -20,6 +20,8 @@ set(UI_SOURCES
   include/gui/mainwindow.h
   src/gui/CommandInput.cpp
   include/gui/CommandInput.h
+  src/gui/CompletionInput.cpp
+  include/gui/CompletionInput.h
   src/gui/RecentFileManager.cpp
   include/gui/RecentFileManager.h
     
