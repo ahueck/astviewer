@@ -56,6 +56,9 @@ set(CLANG_UI_SOURCES
   
   include/QueryApp.h
   src/QueryApp.cpp
+  
+  include/clang/QueryCompleterModel.h
+  src/clang/QueryCompleterModel.cpp
 )
 
 set(CLANG_QUERY_SOURCES

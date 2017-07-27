@@ -16,12 +16,15 @@
 #include <QAbstractItemModel>
 #include <QScrollBar>
 #include <QStringListModel>
- #include <QFileSystemModel>
+#include <QFileSystemModel>
+
+#include <clang/QueryCompleterModel.h>
 
 namespace astviewer {
 
 CompletionInput::CompletionInput(QWidget* parent) :
     CommandInput(parent) {
+  /*
   auto c = new QCompleter(this);
   QFileSystemModel* qm = new QFileSystemModel(this);
   qm->setRootPath(QDir::currentPath());
@@ -31,7 +34,8 @@ CompletionInput::CompletionInput(QWidget* parent) :
   l << "anyOf";
   auto m = new QStringListModel(l, c);
   c->setModel(m);
-  this->setCompleter(c);
+  */
+  this->setCompleter(new QueryCompleterModel(this));
 }
 
 void CompletionInput::completionEvent(QKeyEvent* e) {
@@ -42,6 +46,13 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
     tc.select(QTextCursor::WordUnderCursor);
     return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
+
+  /*
+  static int count = 0;
+  auto input_ = reinterpret_cast<QueryCompleterModel*>(this->input_completer);
+  input_->m->setStringList(input_->m->stringList() << QString::number(++count));
+  //setModel(m);
+   */
 
   if (completionPrefix != input_completer->completionPrefix()) {
     input_completer->setCompletionPrefix(completionPrefix);
