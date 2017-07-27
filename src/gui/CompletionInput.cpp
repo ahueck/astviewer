@@ -16,17 +16,20 @@
 #include <QAbstractItemModel>
 #include <QScrollBar>
 #include <QStringListModel>
+ #include <QFileSystemModel>
 
 namespace astviewer {
 
 CompletionInput::CompletionInput(QWidget* parent) :
     CommandInput(parent) {
   auto c = new QCompleter(this);
-  QStringList l("simple");
-  l << "sinner";
+  QFileSystemModel* qm = new QFileSystemModel(this);
+  qm->setRootPath(QDir::currentPath());
+  QStringList l("has");
+  l << "hasAncestor";
+  l << "allOf";
+  l << "anyOf";
   auto m = new QStringListModel(l, c);
-  c->setCaseSensitivity(Qt::CaseInsensitive);
-  c->setWrapAround(false);
   c->setModel(m);
   this->setCompleter(c);
 }
@@ -37,7 +40,7 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
   QString completionPrefix = [&]() {
     QTextCursor tc = textCursor();
     tc.select(QTextCursor::WordUnderCursor);
-    return tc.selectedText();
+    return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
 
   if (completionPrefix != input_completer->completionPrefix()) {
@@ -45,6 +48,7 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
     input_completer->popup()->setCurrentIndex(
         input_completer->completionModel()->index(0, 0));
   }
+
   QRect cr = cursorRect();
   cr.setWidth(
       input_completer->popup()->sizeHintForColumn(0)
@@ -57,10 +61,10 @@ void CompletionInput::keyPressEvent(QKeyEvent* e) {
     const bool is_shortcut = ((e->modifiers() & Qt::ControlModifier)
         && e->key() == Qt::Key_Space);
     auto pop = input_completer->popup();
+
     if (!pop->isVisible()) {
       if (is_shortcut) {
         completionEvent(e);
-        return;
       }
     } else {
       if (is_shortcut) {
@@ -72,7 +76,13 @@ void CompletionInput::keyPressEvent(QKeyEvent* e) {
           pop->clicked(pop->currentIndex());
           return;
         }
+        completionEvent(e);
       }
+    }
+    if(pop->isVisible() && input_completer->completionCount() == 1) {
+      CommandInput::keyPressEvent(e);
+      pop->clicked(pop->currentIndex());
+      return;
     }
   }
   CommandInput::keyPressEvent(e);
@@ -96,9 +106,12 @@ void CompletionInput::setCompleter(QCompleter* c) {
 
   input_completer = c;
 
+  input_completer->setParent(this);
   input_completer->setWidget(this);
   input_completer->setCompletionMode(QCompleter::PopupCompletion);
   input_completer->setCaseSensitivity(Qt::CaseSensitive);
+  input_completer->setWrapAround(false);
+  input_completer->setFilterMode(Qt::MatchStartsWith);
   QObject::connect(input_completer, SIGNAL(activated(QString)), this,
       SLOT(insertCompletion(QString)));
 }
@@ -107,12 +120,16 @@ void CompletionInput::insertCompletion(const QString& completion) {
   if (input_completer->widget() != this) {
     return;
   }
+  qDebug() << completion;
+  qDebug() << input_completer->completionPrefix();
   QTextCursor tc = textCursor();
   int extra = completion.length()
       - input_completer->completionPrefix().length();
-  //tc.movePosition(QTextCursor::Left);
+  qDebug() << extra;
+  tc.movePosition(QTextCursor::Left);
   tc.movePosition(QTextCursor::EndOfWord);
   tc.insertText(completion.right(extra));
+  qDebug() << completion.right(extra);
   setTextCursor(tc);
 }
 
