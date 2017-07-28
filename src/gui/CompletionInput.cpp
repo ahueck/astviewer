@@ -47,12 +47,12 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
     return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
 
-  /*
+
   static int count = 0;
   auto input_ = reinterpret_cast<QueryCompleterModel*>(this->input_completer);
   input_->m->setStringList(input_->m->stringList() << QString::number(++count));
   //setModel(m);
-   */
+
 
   if (completionPrefix != input_completer->completionPrefix()) {
     input_completer->setCompletionPrefix(completionPrefix);

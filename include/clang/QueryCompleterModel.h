@@ -10,7 +10,9 @@
 
 #include <QCompleter>
 
+#include <QDebug>
 class QStringListModel;
+#include <QStringListModel>
 
 namespace astviewer {
 
@@ -22,7 +24,21 @@ public:
   QueryCompleterModel(QObject* parent = nullptr);
   virtual ~QueryCompleterModel();
 
-  void setCompletionPrefix(const QString &prefix);
+  QStringList splitPath(const QString &path) const
+  {
+    m->setStringList(m->stringList() << "hello");
+      qDebug() << path;
+      return QStringList();
+  }
+
+  QString pathFromIndex(const QModelIndex &index) const
+  {
+      // needed to use original value when value is selected
+    qDebug() << index;
+      return index.data().toString();
+  }
+
+  //void setCompletionPrefix(const QString &prefix);
 };
 
 } /* namespace astviewer */

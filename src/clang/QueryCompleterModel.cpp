@@ -21,10 +21,10 @@ QueryCompleterModel::QueryCompleterModel(QObject* parent) : QCompleter(parent) {
   setModel(m);
 }
 
-void QueryCompleterModel::setCompletionPrefix(const QString &prefix) {
-  qDebug() << prefix;
-  QCompleter::setCompletionPrefix(prefix);
-}
+//void QueryCompleterModel::setCompletionPrefix(const QString &prefix) {
+//  qDebug() << prefix;
+//  QCompleter::setCompletionPrefix(prefix);
+//}
 
 QueryCompleterModel::~QueryCompleterModel() = default;
 
