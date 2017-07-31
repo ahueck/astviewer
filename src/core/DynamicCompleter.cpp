@@ -25,7 +25,7 @@ void DynamicCompleter::setDynModel(DynamicStringListModel* m) {
 void DynamicCompleter::updateCompletion(const QString& line, const QString& prefix, int cursor_pos) {
   qDebug() << "Update internal model with prefix: " << prefix;
   dyn_model->updateModelList(line, prefix, cursor_pos);
-  QCompleter::setCompletionPrefix(prefix);
+  QCompleter::setCompletionPrefix(prefix.left(cursor_pos));
 }
 
 DynamicCompleter::~DynamicCompleter() = default;

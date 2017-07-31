@@ -9,11 +9,14 @@
 #define INCLUDE_CLANG_QUERYCOMPLETERLIST_H_
 
 #include <core/DynamicStringListModel.h>
-#include <clang/clang-query/QuerySession.h>
+
+namespace clang {
+namespace query {
+class QuerySession;
+}
+}
 
 namespace astviewer {
-
-class QueryWrapper;
 
 class QueryCompleterList: public DynamicStringListModel {
 Q_OBJECT

@@ -36,17 +36,20 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
     tc.select(QTextCursor::WordUnderCursor);
     return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
-
-  if (completionPrefix != input_completer->completionPrefix()) {
-    QString completionLine = [&]() {
-      tc.select(QTextCursor::LineUnderCursor);
-      return tc.selectedText() + e->text();
-    }();
-
-    input_completer->updateCompletion(completionLine, completionPrefix, tc.positionInBlock());
-    input_completer->popup()->setCurrentIndex(
+  qDebug() << "Under cursor: " << completionPrefix;
+  //if (completionPrefix != input_completer->completionPrefix()) {
+  QString completionLine = [&]() {
+    tc.select(QTextCursor::LineUnderCursor);
+    return tc.selectedText() + e->text();
+  }();
+  qDebug() << "Line under cursor: " << completionLine;
+  tc = textCursor();
+  qDebug() << "Cursor data:" << tc.positionInBlock() << tc.position();
+  input_completer->updateCompletion(completionLine, completionPrefix,
+      tc.positionInBlock() + e->text().length());
+  input_completer->popup()->setCurrentIndex(
         input_completer->completionModel()->index(0, 0));
-  }
+  //}
 
   QRect cr = cursorRect();
   cr.setWidth(
@@ -113,12 +116,20 @@ void CompletionInput::insertCompletion(const QString& completion) {
   if (input_completer->widget() != this) {
     return;
   }
+  qDebug() << "Insert completion with: " << completion;
   QTextCursor tc = textCursor();
   int extra = completion.length()
       - input_completer->completionPrefix().length();
-  tc.movePosition(QTextCursor::Left);
-  tc.movePosition(QTextCursor::EndOfWord);
+  qDebug() << input_completer->completionPrefix() << " -> Extra: " << extra;
+  //tc.movePosition(QTextCursor::Left);
+  qDebug() << "Pos after left: " << tc.positionInBlock();
+  //tc.movePosition(QTextCursor::EndOfWord);
+
+  qDebug() << "To insert: " << completion.right(extra);
   tc.insertText(completion.right(extra));
+  qDebug() << "Pos after insert: " << tc.positionInBlock();
+  tc.movePosition(QTextCursor::EndOfWord);
+  qDebug() << "Pos after end: " << tc.positionInBlock();
   setTextCursor(tc);
 }
 
