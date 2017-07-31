@@ -55,6 +55,11 @@ void QueryWrapper::commandInput(Command cmd) {
   run(query, cmd);
 }
 
+void QueryWrapper::futureFinished() {
+  emit sessionChanged(qs.get());
+  ToolWrapper::futureFinished();
+}
+
 QueryWrapper::~QueryWrapper() = default;
 
 } /* namespace astviewer */

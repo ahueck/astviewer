@@ -26,17 +26,6 @@ namespace astviewer {
 
 CompletionInput::CompletionInput(QWidget* parent) :
     CommandInput(parent) {
-  /*
-  auto c = new QCompleter(this);
-  QFileSystemModel* qm = new QFileSystemModel(this);
-  qm->setRootPath(QDir::currentPath());
-  QStringList l("has");
-  l << "hasAncestor";
-  l << "allOf";
-  l << "anyOf";
-  auto m = new QStringListModel(l, c);
-  c->setModel(m);
-  */
 }
 
 void CompletionInput::completionEvent(QKeyEvent* e) {
@@ -48,22 +37,13 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
     return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
 
-  QString completionLine = [&]() {
-    tc.select(QTextCursor::LineUnderCursor);
-    return tc.selectedText() + e->text();
-  }();
-
-
-  /*
-  static int count = 0;
-  auto input_ = reinterpret_cast<QueryCompleterModel*>(this->input_completer);
-  input_->m->setStringList(input_->m->stringList() << QString::number(++count));
-  //setModel(m);
-*/
-
   if (completionPrefix != input_completer->completionPrefix()) {
+    QString completionLine = [&]() {
+      tc.select(QTextCursor::LineUnderCursor);
+      return tc.selectedText() + e->text();
+    }();
+
     input_completer->updateCompletion(completionLine, completionPrefix, tc.positionInBlock());
-    //input_completer->setCompletionPrefix(completionPrefix);
     input_completer->popup()->setCurrentIndex(
         input_completer->completionModel()->index(0, 0));
   }
