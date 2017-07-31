@@ -18,11 +18,13 @@ class QAbstractItemModel;
 
 namespace astviewer {
 
+class DynamicCompleter;
+
 class CompletionInput: public CommandInput {
 Q_OBJECT
 
 protected:
-  QCompleter* input_completer { nullptr };
+  DynamicCompleter* input_completer { nullptr };
 
 public:
   CompletionInput(QWidget* parent = nullptr);
@@ -33,8 +35,7 @@ protected:
   void completionEvent(QKeyEvent*);
 
 public slots:
-  void setCompleter(QCompleter*);
-  void updateCompleterModel(QAbstractItemModel*);
+  void setCompleter(DynamicCompleter*);
 
 protected slots:
   void insertCompletion(const QString&);

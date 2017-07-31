@@ -27,7 +27,7 @@ public:
   virtual ~DynamicCompleter();
 
 public slots:
-  void updateCompletion(const QString&);
+  void updateCompletion(const QString&, const QString&, int cursor_pos = 0);
 };
 
 } /* namespace astviewer */

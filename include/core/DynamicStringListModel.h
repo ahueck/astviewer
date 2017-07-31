@@ -22,7 +22,7 @@ public:
   virtual ~DynamicStringListModel();
 
 public slots:
-  virtual void updateModelList(const QString&);
+  virtual void updateModelList(const QString& line, const QString& prefix, int cursor_pos = 0);
 
 signals:
   void modelUpdated(bool);

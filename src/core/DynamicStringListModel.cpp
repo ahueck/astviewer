@@ -7,13 +7,15 @@
 
 #include <core/DynamicStringListModel.h>
 
+#include <QtDebug>
+
 namespace astviewer {
 
 DynamicStringListModel::DynamicStringListModel(QObject* parent) :QStringListModel(parent) {
 
 }
 
-void DynamicStringListModel::updateModelList(const QString& prefix) {
+void DynamicStringListModel::updateModelList(const QString& line, const QString& prefix, int cursor_pos) {
   emit modelUpdated(false);
 }
 

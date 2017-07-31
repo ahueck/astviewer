@@ -18,7 +18,9 @@
 #include <QStringListModel>
 #include <QFileSystemModel>
 
-#include <clang/QueryCompleterModel.h>
+//#include <clang/QueryCompleterModel.h>
+
+#include <core/DynamicCompleter.h>
 
 namespace astviewer {
 
@@ -35,27 +37,33 @@ CompletionInput::CompletionInput(QWidget* parent) :
   auto m = new QStringListModel(l, c);
   c->setModel(m);
   */
-  this->setCompleter(new QueryCompleterModel(this));
 }
 
 void CompletionInput::completionEvent(QKeyEvent* e) {
   static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
 
+  QTextCursor tc = textCursor();
   QString completionPrefix = [&]() {
-    QTextCursor tc = textCursor();
     tc.select(QTextCursor::WordUnderCursor);
     return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
   }();
 
+  QString completionLine = [&]() {
+    tc.select(QTextCursor::LineUnderCursor);
+    return tc.selectedText() + e->text();
+  }();
 
+
+  /*
   static int count = 0;
   auto input_ = reinterpret_cast<QueryCompleterModel*>(this->input_completer);
   input_->m->setStringList(input_->m->stringList() << QString::number(++count));
   //setModel(m);
-
+*/
 
   if (completionPrefix != input_completer->completionPrefix()) {
-    input_completer->setCompletionPrefix(completionPrefix);
+    input_completer->updateCompletion(completionLine, completionPrefix, tc.positionInBlock());
+    //input_completer->setCompletionPrefix(completionPrefix);
     input_completer->popup()->setCurrentIndex(
         input_completer->completionModel()->index(0, 0));
   }
@@ -99,13 +107,7 @@ void CompletionInput::keyPressEvent(QKeyEvent* e) {
   CommandInput::keyPressEvent(e);
 }
 
-void CompletionInput::updateCompleterModel(QAbstractItemModel* model) {
-  if (input_completer != nullptr) {
-    input_completer->setModel(model);
-  }
-}
-
-void CompletionInput::setCompleter(QCompleter* c) {
+void CompletionInput::setCompleter(DynamicCompleter* c) {
   if (c == nullptr) {
     return;
   }
@@ -131,16 +133,12 @@ void CompletionInput::insertCompletion(const QString& completion) {
   if (input_completer->widget() != this) {
     return;
   }
-  qDebug() << completion;
-  qDebug() << input_completer->completionPrefix();
   QTextCursor tc = textCursor();
   int extra = completion.length()
       - input_completer->completionPrefix().length();
-  qDebug() << extra;
   tc.movePosition(QTextCursor::Left);
   tc.movePosition(QTextCursor::EndOfWord);
   tc.insertText(completion.right(extra));
-  qDebug() << completion.right(extra);
   setTextCursor(tc);
 }
 

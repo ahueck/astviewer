@@ -4,6 +4,10 @@
 #include <gui/CommandInput.h>
 #include <gui/CompletionInput.h>
 #include <util/QLogHandler.h>
+#include <core/DynamicCompleter.h>
+#include <core/DynamicStringListModel.h>
+
+#include <clang/QueryCompleterList.h>
 
 #include <QApplication>
 #include <QDebug>
@@ -28,10 +32,8 @@ int main(int argc, const char **argv) {
   QApplication a(argc, const_cast<char**>(argv));
 
   QueryApp app;
-  MainWindow w;
-  av::CompletionInput inputWidget;
-  w.registerInput(&inputWidget);
-  app.init(&w, &inputWidget);
+  MainWindow w;;
+  app.init(&w);
 
   w.show();
 

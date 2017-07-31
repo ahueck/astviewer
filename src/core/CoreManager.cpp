@@ -22,9 +22,8 @@ CoreManager::CoreManager() :
       SLOT(handleFinished(Command)));
 }
 
-void CoreManager::init(MainWindow* win, CommandInput* input) {
+void CoreManager::init(MainWindow* win) {
   this->win = win;
-  this->input = input;
   // Win:
   QObject::connect(win, SIGNAL(selectedTU(QString)), this,
       SLOT(selectedTU(QString)));
@@ -37,18 +36,8 @@ void CoreManager::init(MainWindow* win, CommandInput* input) {
   /*QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
    SLOT(selectedCompilationDB(QString)));*/
 
-  // CommandInput:
-  QObject::connect(input, SIGNAL(commandEntered(QString)), this,
-      SLOT(commandInput(QString)));
-  QObject::connect(this, SIGNAL(fileLoadUnlock(bool)), input,
-      SLOT(setEnabled(bool)));
-  QObject::connect(this, SIGNAL(queryUnlock(bool)), input,
-      SLOT(setEnabled(bool)));
-  QObject::connect(this, SIGNAL(queryUnlock(bool)), input,
-      SLOT(setEnabled(bool)));
-  win->registerInput(input);
-
   createFileLoader();
+  createInputWidget();
   createClangSession();
   connectFileLoader();
   connectClangSession();

@@ -30,6 +30,9 @@ public:
   void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
   void commandInput(Command cmd) override;
   ~QueryWrapper() override;
+
+signals:
+  void sessionChanged(clang::query::QuerySession*);
 };
 
 } /* namespace astviewer */
