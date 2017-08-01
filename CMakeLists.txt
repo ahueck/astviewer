@@ -30,7 +30,10 @@ set(UI_SOURCES
   src/util/StatusHandler.cpp
   include/util/StatusHandler.h
   include/util/Util.h
-  
+
+  include/gui/CompilationDbDelegate.h
+  src/gui/CompilationDbDelegate.cpp
+
   src/core/CoreManager.cpp
   include/core/CoreManager.h
   src/core/TaskManager.cpp
@@ -39,7 +42,7 @@ set(UI_SOURCES
   include/core/Task.h
   src/core/FutureTask.cpp
   include/core/FutureTask.h
-  
+
   src/core/ToolWrapper.cpp
   include/core/ToolWrapper.h
   

@@ -13,7 +13,7 @@
 // FIXME does not link properly without this:
 static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
 
-void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+void avLoggingOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     using astviewer::QLogHandler;
     QLogHandler::instance().outputMessage(type, context, msg);
 }
@@ -22,7 +22,7 @@ int main(int argc, const char **argv) {
   namespace av = astviewer;
   llvm::sys::PrintStackTraceOnErrorSignal(argv[0]);
 
-  qInstallMessageHandler(myMessageOutput);
+  qInstallMessageHandler(avLoggingOutput);
 
   QApplication a(argc, const_cast<char**>(argv));
 

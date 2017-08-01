@@ -5,6 +5,8 @@
 
 #include <gui/CommandInput.h>
 #include <gui/RecentFileManager.h>
+#include <gui/CompilationDbDelegate.h>
+
 
 #include <util/FileLoader.h>
 #include <util/QLogHandler.h>
@@ -25,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   dbViewModel = new QStringListModel(this);
   this->ui->listViewCompDB->setModel(dbViewModel);
+  auto delegate = new astviewer::CompilationDbDelegate(this->ui->listViewCompDB);
+  this->ui->listViewCompDB->setItemDelegate(delegate);
+
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
