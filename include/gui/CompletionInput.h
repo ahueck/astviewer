@@ -32,7 +32,7 @@ public:
 
 protected:
   void keyPressEvent(QKeyEvent*) override;
-  void completionEvent(QKeyEvent*);
+  void completionEvent(QKeyEvent*, bool = false);
 
 public slots:
   void setCompleter(DynamicCompleter*);

@@ -28,27 +28,29 @@ CompletionInput::CompletionInput(QWidget* parent) :
     CommandInput(parent) {
 }
 
-void CompletionInput::completionEvent(QKeyEvent* e) {
+void CompletionInput::completionEvent(QKeyEvent* e, bool filter) {
   static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+
+  QString key_text = filter ? "" : e->text();
 
   QTextCursor tc = textCursor();
   QString completionPrefix = [&]() {
     tc.select(QTextCursor::WordUnderCursor);
-    return tc.selectedText() + e->text(); // FIXME maybe buggy: e->text?
-  }();
+    return tc.selectedText() + key_text; // FIXME maybe buggy: e->text?
+    }();
   qDebug() << "Under cursor: " << completionPrefix;
   //if (completionPrefix != input_completer->completionPrefix()) {
   QString completionLine = [&]() {
     tc.select(QTextCursor::LineUnderCursor);
-    return tc.selectedText() + e->text();
+    return tc.selectedText() + key_text;
   }();
   qDebug() << "Line under cursor: " << completionLine;
   tc = textCursor();
   qDebug() << "Cursor data:" << tc.positionInBlock() << tc.position();
   input_completer->updateCompletion(completionLine, completionPrefix,
-      tc.positionInBlock() + e->text().length());
+      tc.positionInBlock() + key_text.length());
   input_completer->popup()->setCurrentIndex(
-        input_completer->completionModel()->index(0, 0));
+      input_completer->completionModel()->index(0, 0));
   //}
 
   QRect cr = cursorRect();
@@ -59,14 +61,14 @@ void CompletionInput::completionEvent(QKeyEvent* e) {
 }
 
 void CompletionInput::keyPressEvent(QKeyEvent* e) {
+  const bool is_shortcut = ((e->modifiers() & Qt::ControlModifier)
+      && e->key() == Qt::Key_Space) || e->key() == Qt::Key_Tab;
   if (input_completer) {
-    const bool is_shortcut = ((e->modifiers() & Qt::ControlModifier)
-        && e->key() == Qt::Key_Space);
     auto pop = input_completer->popup();
 
     if (!pop->isVisible()) {
       if (is_shortcut) {
-        completionEvent(e);
+        completionEvent(e, true);
       }
     } else {
       if (is_shortcut) {
@@ -81,13 +83,17 @@ void CompletionInput::keyPressEvent(QKeyEvent* e) {
         completionEvent(e);
       }
     }
-    if(pop->isVisible() && input_completer->completionCount() == 1) {
-      CommandInput::keyPressEvent(e);
+    if (pop->isVisible() && input_completer->completionCount() == 1) {
+      if (!is_shortcut) {
+        CommandInput::keyPressEvent(e);
+      }
       pop->clicked(pop->currentIndex());
       return;
     }
   }
-  CommandInput::keyPressEvent(e);
+  if (!is_shortcut) {
+    CommandInput::keyPressEvent(e);
+  }
 }
 
 void CompletionInput::setCompleter(DynamicCompleter* c) {
