@@ -11,6 +11,11 @@
 #include <gui/mainwindow.h>
 #include <util/Util.h>
 
+#include <gui/CompletionInput.h>
+#include <core/DynamicCompleter.h>
+#include <core/DynamicStringListModel.h>
+#include <clang/QueryCompleterList.h>
+
 #include <QStringList>
 
 QueryApp::QueryApp() :
@@ -18,8 +23,30 @@ QueryApp::QueryApp() :
 
 }
 
+void QueryApp::createInputWidget() {
+  using namespace astviewer;
+  CompletionInput* input = new CompletionInput();
+  c = new DynamicCompleter(input);
+  m = new QueryCompleterList(c);
+  c->setDynModel(m);
+  input->setCompleter(c);
+
+  // CommandInput:
+  QObject::connect(input, SIGNAL(commandEntered(QString)), this,
+      SLOT(commandInput(QString)));
+  QObject::connect(this, SIGNAL(fileLoadUnlock(bool)), input,
+      SLOT(setEnabled(bool)));
+  QObject::connect(this, SIGNAL(queryUnlock(bool)), input,
+      SLOT(setEnabled(bool)));
+  QObject::connect(this, SIGNAL(queryUnlock(bool)), input,
+      SLOT(setEnabled(bool)));
+  win->registerInput(input);
+}
+
 void QueryApp::createClangSession() {
-  std::unique_ptr<av::ToolWrapper> ctool = av::make_unique<av::QueryWrapper>();
+  auto ctool = av::make_unique<av::QueryWrapper>();
+  connect(ctool.get(), SIGNAL(sessionChanged(clang::query::QuerySession*)), m,
+        SLOT(updateSession(clang::query::QuerySession*)));
   auto clang_tool = new av::ClangToolSession(std::move(ctool), this);
   this->clang_session = clang_tool;
   connect(clang_tool, SIGNAL(compilationDataBaseChanged(QStringList)), win,

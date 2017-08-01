@@ -37,11 +37,12 @@ protected:
 
 public:
 	CoreManager();
-	void init(MainWindow* win, CommandInput* input);
+	void init(MainWindow* win);
 	virtual ~CoreManager();
 
 protected:
 	virtual void createFileLoader();
+	virtual void createInputWidget() = 0;
 	virtual void createClangSession() = 0;
 	virtual void connectFileLoader();
 	virtual void connectClangSession();

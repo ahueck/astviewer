@@ -33,6 +33,7 @@ void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   } else {
     qs->ASTs = decltype(qs->ASTs)(AST_vec);
   }
+  emit sessionChanged(qs.get());
 }
 
 void QueryWrapper::commandInput(Command cmd) {
@@ -52,6 +53,11 @@ void QueryWrapper::commandInput(Command cmd) {
     return c;
   };
   run(query, cmd);
+}
+
+void QueryWrapper::futureFinished() {
+  emit sessionChanged(qs.get());
+  ToolWrapper::futureFinished();
 }
 
 QueryWrapper::~QueryWrapper() = default;

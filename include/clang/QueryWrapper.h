@@ -18,8 +18,8 @@ class QuerySession;
 
 namespace astviewer {
 
-class QueryWrapper : public ToolWrapper {
-  Q_OBJECT
+class QueryWrapper: public ToolWrapper {
+Q_OBJECT
 
 private:
   // TODO make QuerySession per command execution?
@@ -30,6 +30,12 @@ public:
   void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
   void commandInput(Command cmd) override;
   ~QueryWrapper() override;
+
+protected slots:
+  void futureFinished() override;
+
+signals:
+  void sessionChanged(clang::query::QuerySession*);
 };
 
 } /* namespace astviewer */

@@ -12,10 +12,20 @@
 
 namespace av = astviewer;
 
+namespace astviewer {
+class QueryCompleterList;
+class DynamicCompleter;
+}
+
 class QueryApp: public av::CoreManager {
 Q_OBJECT
+private:
+  av::QueryCompleterList* m { nullptr };
+  av::DynamicCompleter* c { nullptr };
+
 public:
   QueryApp();
+  void createInputWidget() override;
   void createClangSession() override;
   virtual ~QueryApp();
 };

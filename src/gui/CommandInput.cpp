@@ -10,29 +10,35 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QAbstractItemModel>
+#include <QScrollBar>
+#include <QCompleter>
+#include <QKeyEvent>
+#include <QAbstractItemView>
+#include <QtDebug>
+#include <QApplication>
+#include <QModelIndex>
+#include <QAbstractItemModel>
+#include <QScrollBar>
+#include <QStringListModel>
 
 namespace astviewer {
 
-CommandInput::CommandInput(QWidget* parent) : QTextEdit(parent) {
-  installEventFilter(this);
-  QObject::connect(this, SIGNAL(commandEntered(QString)), this, SLOT(addToHistory(QString)));
+CommandInput::CommandInput(QWidget* parent) :
+    QTextEdit(parent) {
+  //installEventFilter(this);
+  QObject::connect(this, SIGNAL(commandEntered(QString)), this,
+      SLOT(addToHistory(QString)));
 }
 
 void CommandInput::addToHistory(QString cmd) {
   qDebug() << "Add command to history: " << cmd;
 }
 
-bool CommandInput::eventFilter(QObject* obj, QEvent* e) {
-  auto type = e->type();
-  if(QEvent::KeyPress != type) {
-    return QObject::eventFilter(obj, e);;
-  }
-  auto key_event = static_cast<QKeyEvent*>(e);
-  auto key = key_event->key();
-  switch(key) {
+void CommandInput::keyPressEvent(QKeyEvent* key) {
+  switch (key->key()) {
   case Qt::Key_Enter:
-  case Qt::Key_Return:
-  {
+  case Qt::Key_Return: {
     // TODO:
     // fetch line
     // emit line to ClangToolSession
@@ -41,8 +47,7 @@ bool CommandInput::eventFilter(QObject* obj, QEvent* e) {
     auto text = this->toPlainText();
     //this->clear();
     emit commandEntered(text);
-
-    return true;
+    return;
   }
   case Qt::Key_Up:
     // TODO put history item to prompt
@@ -52,7 +57,7 @@ bool CommandInput::eventFilter(QObject* obj, QEvent* e) {
     break;
   }
 
-  return QObject::eventFilter(obj, e);
+  QTextEdit::keyPressEvent(key);
 }
 
 CommandInput::~CommandInput() = default;
