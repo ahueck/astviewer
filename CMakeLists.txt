@@ -20,8 +20,15 @@ set(UI_SOURCES
   include/gui/mainwindow.h
   src/gui/CommandInput.cpp
   include/gui/CommandInput.h
+  src/gui/CompletionInput.cpp
+  include/gui/CompletionInput.h
   src/gui/RecentFileManager.cpp
   include/gui/RecentFileManager.h
+  
+  src/core/DynamicCompleter.cpp
+  include/core/DynamicCompleter.h
+  src/core/DynamicStringListModel.cpp
+  include/core/DynamicStringListModel.h
     
   src/util/QLogHandler.cpp
   include/util/QLogHandler.h
@@ -54,6 +61,8 @@ set(CLANG_UI_SOURCES
   include/clang/ClangToolSession.h
   src/clang/QueryWrapper.cpp
   include/clang/QueryWrapper.h
+  src/clang/QueryCompleterList.cpp
+  include/clang/QueryCompleterList.h
   
   include/QueryApp.h
   src/QueryApp.cpp

@@ -10,14 +10,19 @@
 
 #include <QTextEdit>
 
+class QCompleter;
+
 namespace astviewer {
 
 class CommandInput: public QTextEdit {
 Q_OBJECT
 public:
   explicit CommandInput(QWidget* parent = nullptr);
-  bool eventFilter(QObject *, QEvent *e) override;
+  //bool eventFilter(QObject *, QEvent *e) override;
   ~CommandInput() override;
+
+protected:
+  void keyPressEvent(QKeyEvent*) override;
 
 public slots:
   //void commandFinished();
