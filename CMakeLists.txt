@@ -40,6 +40,9 @@ set(UI_SOURCES
 
   include/gui/CompilationDbDelegate.h
   src/gui/CompilationDbDelegate.cpp
+  
+  include/gui/LineTextEdit.h
+  src/gui/LineTextEdit.cpp
 
   src/core/CoreManager.cpp
   include/core/CoreManager.h

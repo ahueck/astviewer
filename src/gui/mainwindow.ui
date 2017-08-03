@@ -17,19 +17,25 @@
    <layout class="QHBoxLayout" name="centralHLayout">
     <item>
      <widget class="QSplitter" name="centralSplitterH">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="widgetLeft" native="true">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>150</width>
+         <width>100</width>
          <height>0</height>
         </size>
        </property>
@@ -102,8 +108,14 @@
           <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideLeft</enum>
+          </property>
+          <property name="resizeMode">
+           <enum>QListView::Fixed</enum>
+          </property>
           <property name="wordWrap">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -111,14 +123,14 @@
       </widget>
       <widget class="QWidget" name="widgetRight" native="true">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>4</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>450</width>
+         <width>600</width>
          <height>0</height>
         </size>
        </property>
@@ -207,9 +219,6 @@
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <widget class="QPlainTextEdit" name="plainTextEditSrc"/>
-                </item>
                </layout>
               </widget>
               <widget class="QWidget" name="widgetAST" native="true">
@@ -236,19 +245,6 @@
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPlainTextEdit" name="plainTextEditAST">
-                  <property name="acceptDrops">
-                   <bool>false</bool>
-                  </property>
-                  <property name="undoRedoEnabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>

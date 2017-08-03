@@ -11,6 +11,7 @@ namespace astviewer {
 class CommandInput;
 class RecentFileManager;
 class CoreManager;
+class LineTextEdit;
 }
 
 class QLabel;
@@ -50,7 +51,9 @@ private:
   Ui::MainWindow *ui;
   astviewer::CommandInput* in { nullptr };
   astviewer::RecentFileManager* recent_files { nullptr };
-  QStringListModel* dbViewModel{nullptr};
+  astviewer::LineTextEdit* src_view { nullptr };
+  astviewer::LineTextEdit* ast_view { nullptr };
+  QStringListModel* dbViewModel { nullptr };
 };
 
 #endif // MAINWINDOW_H

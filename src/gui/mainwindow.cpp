@@ -6,7 +6,7 @@
 #include <gui/CommandInput.h>
 #include <gui/RecentFileManager.h>
 #include <gui/CompilationDbDelegate.h>
-
+#include <gui/LineTextEdit.h>
 
 #include <util/FileLoader.h>
 #include <util/QLogHandler.h>
@@ -27,8 +27,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
   dbViewModel = new QStringListModel(this);
   this->ui->listViewCompDB->setModel(dbViewModel);
-  auto delegate = new astviewer::CompilationDbDelegate(this->ui->listViewCompDB);
+  auto delegate = new astviewer::CompilationDbDelegate(
+      this->ui->listViewCompDB);
   this->ui->listViewCompDB->setItemDelegate(delegate);
+
+  src_view = new astviewer::LineTextEdit(ui->widgetSrc);
+  src_view->setObjectName(QStringLiteral("plainTextEditSrc"));
+  ui->verticalLayout->addWidget(src_view);
+
+  ast_view = new astviewer::LineTextEdit(ui->widgetAST);
+  ast_view->setObjectName(QStringLiteral("plainTextEditAST"));
+  ast_view->setAcceptDrops(false);
+  ast_view->setUndoRedoEnabled(false);
+  ast_view->setReadOnly(true);
+  ast_view->showLine(false);
+
+  ui->verticalLayout_2->addWidget(ast_view);
 
 
   // Logging:
@@ -69,6 +83,8 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
   in->setMaximumSize(QSize(16777215, 400));
 
   ui->gridLayout->addWidget(in, 0, 0, 1, 1);
+
+  in->setFocus(Qt::FocusReason::OtherFocusReason);
 }
 
 void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
@@ -94,14 +110,14 @@ void MainWindow::clickedDBView(const QModelIndex& index) {
 }
 
 void MainWindow::setSource(QString source) {
-  ui->plainTextEditSrc->clear();
-  ui->plainTextEditSrc->insertPlainText(source);
+  src_view->clear();
+  src_view->insertPlainText(source);
 }
 
 void MainWindow::setClangAST(QString source) {
-  ui->plainTextEditAST->clear();
-  ui->plainTextEditAST->insertPlainText(source);
-  ui->plainTextEditAST->ensureCursorVisible();
+  ast_view->clear();
+  ast_view->insertPlainText(source);
+  ast_view->ensureCursorVisible();
 }
 
 void MainWindow::fileLoadFinished(QString file) {
