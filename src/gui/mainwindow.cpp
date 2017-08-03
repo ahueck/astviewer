@@ -41,9 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ast_view->setUndoRedoEnabled(false);
   ast_view->setReadOnly(true);
   ast_view->showLine(false);
-
   ui->verticalLayout_2->addWidget(ast_view);
-
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
