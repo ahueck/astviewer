@@ -15,6 +15,8 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <llvm/Support/Signals.h>
 
+
+
 // FIXME does not link properly without this:
 static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
 
@@ -36,6 +38,30 @@ int main(int argc, const char **argv) {
   app.init(&w);
 
   w.show();
+
+//  QApplication a(argc, const_cast<char**>(argv));
+//  QList<QTextEdit::ExtraSelection> selections;
+//  // create QTextEdit, with lot of text in it
+//  QTextEdit w("Alice and Bob (and Eve). ");
+//  for(int i=0;i<10;++i) w.setText(w.toPlainText() + w.toPlainText());
+//
+//  // prepare variables for highlights
+//    QTextCharFormat fmt;
+//    fmt.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+//    fmt.setUnderlineColor(Qt::red);
+//  //fmt.setBackground(QBrush(QColor(230,230,230)));
+//
+//  // highlight all text in parenthesis
+//  QTextCursor cursor = w.textCursor();
+//  while( !(cursor = w.document()->find(QRegExp("\\([^)]*\\)"), cursor)).isNull()) {
+//      QTextEdit::ExtraSelection sel = { cursor, fmt };
+//      selections.append(sel);
+//  }
+//
+//  // set, show, go!
+//  w.setExtraSelections(selections);
+//  w.show();
+//  return a.exec();
 
   return a.exec();
 }

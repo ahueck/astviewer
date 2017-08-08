@@ -10,15 +10,19 @@
 
 #include <QTextEdit>
 
-class QCompleter;
+class QSyntaxHighlighter;
 
 namespace astviewer {
 
 class CommandInput: public QTextEdit {
 Q_OBJECT
+protected:
+QSyntaxHighlighter* highlighter {nullptr};
+
 public:
-  explicit CommandInput(QWidget* parent = nullptr);
+  CommandInput(QWidget* parent = nullptr);
   //bool eventFilter(QObject *, QEvent *e) override;
+  void setHighlighter(QSyntaxHighlighter* h);
   ~CommandInput() override;
 
 protected:
@@ -27,6 +31,9 @@ protected:
 public slots:
   //void commandFinished();
   void addToHistory(QString);
+
+protected slots:
+  void updateHighlights();
 
 signals:
   void commandEntered(QString);

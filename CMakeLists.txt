@@ -44,6 +44,12 @@ set(UI_SOURCES
   include/gui/LineTextEdit.h
   src/gui/LineTextEdit.cpp
 
+  include/gui/TextBlockUserData.h
+  src/gui/TextBlockUserData.cpp
+
+  include/gui/Highlighter.h
+  src/gui/Highlighter.cpp
+
   src/core/CoreManager.cpp
   include/core/CoreManager.h
   src/core/TaskManager.cpp

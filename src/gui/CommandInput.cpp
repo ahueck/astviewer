@@ -7,20 +7,13 @@
 
 #include <gui/CommandInput.h>
 
+#include <gui/TextBlockUserData.h>
+
+#include <QSyntaxHighlighter>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QDebug>
-#include <QAbstractItemModel>
-#include <QScrollBar>
-#include <QCompleter>
-#include <QKeyEvent>
-#include <QAbstractItemView>
-#include <QtDebug>
-#include <QApplication>
-#include <QModelIndex>
-#include <QAbstractItemModel>
-#include <QScrollBar>
-#include <QStringListModel>
+#include <QWidget>
 
 namespace astviewer {
 
@@ -29,6 +22,61 @@ CommandInput::CommandInput(QWidget* parent) :
   //installEventFilter(this);
   QObject::connect(this, SIGNAL(commandEntered(QString)), this,
       SLOT(addToHistory(QString)));
+  QObject::connect(this, SIGNAL(cursorPositionChanged()), this,
+      SLOT(updateHighlights()));
+}
+
+void CommandInput::setHighlighter(QSyntaxHighlighter* h) {
+  highlighter = h;
+  if (highlighter) {
+    highlighter->setParent(this);
+    highlighter->setDocument(this->document());
+  }
+}
+
+void CommandInput::updateHighlights() {
+  auto cursor = textCursor();
+  auto user = userDataOf(cursor.block());
+
+  auto match = user->matchParenthesisCursor(cursor);
+  QList<QTextEdit::ExtraSelection> paren_selection;
+  switch (match) {
+  case TextBlockUserData::MatchType::NoMatch: {
+    qDebug() << "No matching brackets found";
+    break;
+  }
+  case TextBlockUserData::MatchType::Match: {
+    QTextEdit::ExtraSelection selection;
+
+    qDebug() << "Applying format (" << cursor.selectionStart() << "/"
+        << cursor.selectionEnd() << ")"
+        << (selection.format.fontWeight() == QFont::Bold);
+
+    selection.format.setBackground(Qt::lightGray);
+
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+    selection.cursor.setPosition(cursor.selectionStart());
+    selection.cursor.setPosition(selection.cursor.position() + 1,
+        QTextCursor::KeepAnchor);
+    paren_selection.push_back(selection);
+
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+    selection.cursor.setPosition(cursor.selectionEnd());
+    selection.cursor.setPosition(selection.cursor.position() - 1,
+        QTextCursor::KeepAnchor);
+    paren_selection.push_back(selection);
+    break;
+  }
+  case TextBlockUserData::MatchType::Mismatch: {
+    break;
+  }
+  default:
+    qDebug() << "Unknown bracket matching result";
+    return;
+  }
+  this->setExtraSelections(paren_selection);
 }
 
 void CommandInput::addToHistory(QString cmd) {

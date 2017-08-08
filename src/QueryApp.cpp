@@ -9,6 +9,7 @@
 #include <clang/ClangToolSession.h>
 #include <clang/QueryWrapper.h>
 #include <gui/mainwindow.h>
+#include <gui/Highlighter.h>
 #include <util/Util.h>
 
 #include <gui/CompletionInput.h>
@@ -25,11 +26,13 @@ QueryApp::QueryApp() :
 
 void QueryApp::createInputWidget() {
   using namespace astviewer;
-  CompletionInput* input = new CompletionInput();
+  auto* input = new CommandInput();
+  auto h = new Highlighter(input);
+  input->setHighlighter(h);
   c = new DynamicCompleter(input);
   m = new QueryCompleterList(c);
   c->setDynModel(m);
-  input->setCompleter(c);
+  //input->setCompleter(c);
 
   // CommandInput:
   QObject::connect(input, SIGNAL(commandEntered(QString)), this,
