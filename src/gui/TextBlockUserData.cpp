@@ -52,14 +52,13 @@ TextBlockUserData::MatchType TextBlockUserData::matchParenthesisCursor(
 
   auto iter = match(pos, Parenthesis::Type::Opened);
   if (iter != std::end(parens)) {
-    // match a closing bracket (forward)
-    return matchParenthesis< Parenthesis::Type::Opened >(cursor, iter);
-    //return matchOpenParenthesis(cursor, iter);
+    const auto pos = std::distance(std::begin(parens), iter);
+    return matchParenthesis<Parenthesis::Type::Opened>(cursor, pos);
   } else {
     iter = match(pos - 1, Parenthesis::Type::Closed);
     if (iter != std::end(parens)) {
-      // match a opening bracket (backward)
-      return matchParenthesis< Parenthesis::Type::Closed >(cursor, iter);
+      const auto pos = std::distance(std::begin(parens), iter);
+      return matchParenthesis<Parenthesis::Type::Closed>(cursor, pos);
     }
   }
 

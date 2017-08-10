@@ -10,6 +10,8 @@
 
 #include <qtextobject.h>
 
+#include <QDebug>
+
 namespace astviewer {
 
 struct Parenthesis;
@@ -42,8 +44,8 @@ struct Parenthesis {
   }
 
   static bool pair(const Parenthesis& open, const Parenthesis& closed) {
-    const auto o = Parenthesis::isOpened(open.p) ? open.p : closed.p;
-    const auto c = Parenthesis::isClosed(open.p) ? open.p : closed.p;
+    const auto o = open.p;
+    const auto c = closed.p;
     if ((o == QLatin1Char('{') && c != QLatin1Char('}'))
         || (o == QLatin1Char('(') && c != QLatin1Char(')'))
         || (o == QLatin1Char('[') && c != QLatin1Char(']'))) {
@@ -82,33 +84,29 @@ public:
 
 protected:
   template<typename Parenthesis::Type P_Type>
-  MatchType matchParenthesis(QTextCursor& cursor,
-      const Parenthesis* p_to_match) {
+  MatchType matchParenthesis(QTextCursor& cursor, const int parenthesis_index) {
     using Search_Trait = detail::search<P_Type>;
+    const auto dir = Search_Trait::search_direction;
 
     auto candidate_block = cursor.block();
     auto user = userDataOf(candidate_block);
-    auto parens = user->parentheses();
-    auto current_p = p_to_match;
+    auto paren_vec = user->parentheses();
 
-    const auto d = Search_Trait::search_direction;
+    const auto p_to_match = std::next(std::begin(paren_vec), parenthesis_index);
+    auto current_p = std::next(p_to_match, dir);
 
-    std::advance(current_p, d);
-
-    int depth = 0;
+    int depth { 0 };
     while (true) {
-      if (Search_Trait::isEndOf(current_p, parens)) {
-        bool brackets_found = false;
+      if (Search_Trait::end(current_p, paren_vec)) {
         do {
-          candidate_block = candidate_block.previous();
+          candidate_block = Search_Trait::next(candidate_block);
           if (!candidate_block.isValid()) {
             return TextBlockUserData::MatchType::NoMatch;
           }
           user = userDataOf(candidate_block);
-          brackets_found = user->hasParentheses();
-        } while (!brackets_found);
-        parens = user->parentheses();
-        current_p = Search_Trait::start(parens);
+        } while (!user->hasParentheses());
+        paren_vec = user->parentheses();
+        current_p = Search_Trait::start(paren_vec);
       }
 
       if (Search_Trait::Parenthesis_type == current_p->t) {
@@ -121,13 +119,13 @@ protected:
           cursor.setPosition(
               candidate_block.position() + current_p->pos
                   + Search_Trait::position_offset, QTextCursor::KeepAnchor);
-          if (!Parenthesis::pair(*p_to_match, *current_p)) {
+          if (!Search_Trait::matches(*p_to_match, *current_p)) {
             return TextBlockUserData::MatchType::Mismatch;
           }
           return TextBlockUserData::MatchType::Match;
         }
       }
-      std::advance(current_p, d);
+      std::advance(current_p, dir);
     }
 
     return TextBlockUserData::MatchType::NoMatch;
@@ -150,28 +148,31 @@ inline void setParenthesesOf(const QTextBlock& block,
   data->setParentheses(parens);
 }
 
-
 namespace detail {
 
 template<typename Parenthesis::Type P_Type>
 struct search {
   static constexpr int search_direction { 1 };
   static constexpr int position_offset { 1 };
-  static constexpr Parenthesis::Type Parenthesis_type = P_Type;
+  static constexpr Parenthesis::Type Parenthesis_type { P_Type };
 
   template<typename Iter_Elem, typename Container>
-  inline static bool isEndOf(Iter_Elem&& e, Container&& vec) {
+  inline static bool end(Iter_Elem&& e, Container&& vec) {
     return e == std::end(vec);
   }
 
-  inline static QTextBlock getNewCandidateBlock(const QTextBlock& block) {
+  inline static QTextBlock next(const QTextBlock& block) {
     return block.next();
   }
 
   template<typename Container>
-  inline static auto start(
-      Container&& vec) -> decltype(std::prev(std::end(vec))) {
+  inline static auto start(Container&& vec) -> decltype(std::begin(vec)) {
     return std::begin(vec);
+  }
+
+  inline static bool matches(const Parenthesis& to_match,
+      const Parenthesis& current) {
+    return Parenthesis::pair(to_match, current);
   }
 };
 
@@ -179,22 +180,27 @@ template<>
 struct search<Parenthesis::Type::Closed> {
   static constexpr int search_direction { -1 };
   static constexpr int position_offset { 0 };
-  static constexpr Parenthesis::Type Parenthesis_type =
-      Parenthesis::Type::Closed;
+  static constexpr Parenthesis::Type Parenthesis_type {
+      Parenthesis::Type::Closed };
 
   template<typename Iter_Elem, typename Container>
-  inline static bool isEndOf(Iter_Elem&& e, Container&& vec) {
-    return e == std::prev(std::begin(vec));
+  inline static bool end(Iter_Elem&& e, Container&& vec) {
+    return e == std::prev(std::begin(vec)); // Qt misses rend()
   }
 
-  inline static QTextBlock getNewCandidateBlock(const QTextBlock& block) {
+  inline static QTextBlock next(const QTextBlock& block) {
     return block.previous();
   }
 
   template<typename Container>
   inline static auto start(
       Container&& vec) -> decltype(std::prev(std::end(vec))) {
-    return std::prev(std::end(vec));
+    return std::prev(std::end(vec)); // Qt misses rbegin()
+  }
+
+  inline static bool matches(const Parenthesis& to_match,
+      const Parenthesis& current) {
+    return Parenthesis::pair(current, to_match);
   }
 };
 
