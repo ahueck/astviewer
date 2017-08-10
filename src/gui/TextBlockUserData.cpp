@@ -9,6 +9,8 @@
 
 #include <QDebug>
 
+#include <iterator>
+
 namespace astviewer {
 
 TextBlockUserData::TextBlockUserData() = default;
@@ -41,83 +43,24 @@ TextBlockUserData::MatchType TextBlockUserData::matchParenthesisCursor(
   const auto pos = cursor.position() - block.position();
 
   const auto match =
-      [&] (decltype(pos) position, Parenthesis::Type t, int& paren_index) {
-        paren_index = 0;
-        auto res =  std::find_if(std::begin(parens), std::end(parens), [&](const Parenthesis& p) {
-              ++paren_index;
+      [&] (decltype(pos) position, Parenthesis::Type t) {
+        auto res = std::find_if(std::begin(parens), std::end(parens), [&](const Parenthesis& p) {
               return position == p.pos && t == p.t;
             });
-        --paren_index;
         return res;
       };
 
-  int index;
-  auto iter = match(pos, Parenthesis::Type::Opened, index);
+  auto iter = match(pos, Parenthesis::Type::Opened);
   if (iter != std::end(parens)) {
-    qDebug() <<  "Match found";
     // match a closing bracket (forward)
-    return matchOpenParenthesis(cursor, index);
+    return matchParenthesis< Parenthesis::Type::Opened >(cursor, iter);
+    //return matchOpenParenthesis(cursor, iter);
   } else {
-    iter = match(pos - 1, Parenthesis::Type::Closed, index);
+    iter = match(pos - 1, Parenthesis::Type::Closed);
     if (iter != std::end(parens)) {
       // match a opening bracket (backward)
+      return matchParenthesis< Parenthesis::Type::Closed >(cursor, iter);
     }
-  }
-
-  return TextBlockUserData::MatchType::NoMatch;
-}
-
-TextBlockUserData::MatchType TextBlockUserData::matchOpenParenthesis(
-    QTextCursor& cursor, const int index_p) {
-  auto block = cursor.block();
-  auto user = userDataOf(block);
-  auto parens = user->parentheses();
-  auto closing_block = block;
-  auto open_paren = parens.at(index_p);
-  auto paren_pos = index_p + 1;
-
-
-  qDebug() << "Finding bracket of idx: " << paren_pos << " end: " << parens.size();
-  int depth = 0;
-  while (true) {
-    if (paren_pos >= parens.size()) {
-      qDebug() <<  "Query new block";
-      bool brackets_found = false;
-      do {
-        closing_block = closing_block.next();
-        if (!closing_block.isValid()) {
-          qDebug() <<  "Invalid block found";
-          return TextBlockUserData::MatchType::NoMatch;
-        }
-        user = userDataOf(closing_block);
-        brackets_found = user->hasParentheses();
-      } while (!brackets_found);
-      paren_pos = 0;
-      parens = user->parentheses();
-    }
-
-    auto paren = parens.at(paren_pos);
-
-    if (Parenthesis::Type::Opened == paren.t) {
-      ++depth;
-      qDebug() <<  "Analyze paren open" << depth;
-    } else {
-      qDebug() <<  "Analyze paren close" << depth;
-      if (depth > 0) {
-        --depth;
-      } else {
-        qDebug() <<  "Found paren close" << depth;
-        cursor.clearSelection();
-        cursor.setPosition(closing_block.position() + paren.pos + 1,
-            QTextCursor::KeepAnchor);
-        if (!Parenthesis::pair(open_paren, paren)) {
-          qDebug() <<  "Not a pair - paren close" << depth;
-          return TextBlockUserData::MatchType::Mismatch;
-        }
-        return TextBlockUserData::MatchType::Match;
-      }
-    }
-    ++paren_pos;
   }
 
   return TextBlockUserData::MatchType::NoMatch;

@@ -24,14 +24,14 @@ void avLoggingOutput(QtMsgType type, const QMessageLogContext &context, const QS
     using astviewer::QLogHandler;
     QLogHandler::instance().outputMessage(type, context, msg);
 }
-
+#include <iostream>
 int main(int argc, const char **argv) {
   namespace av = astviewer;
   llvm::sys::PrintStackTraceOnErrorSignal(argv[0]);
 
   qInstallMessageHandler(avLoggingOutput);
 
-  QApplication a(argc, const_cast<char**>(argv));
+  QApplication qapp(argc, const_cast<char**>(argv));
 
   QueryApp app;
   MainWindow w;;
@@ -63,5 +63,5 @@ int main(int argc, const char **argv) {
 //  w.show();
 //  return a.exec();
 
-  return a.exec();
+  return qapp.exec();
 }

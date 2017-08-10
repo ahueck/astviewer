@@ -35,24 +35,30 @@ void CommandInput::setHighlighter(QSyntaxHighlighter* h) {
 }
 
 void CommandInput::updateHighlights() {
+  QList<QTextEdit::ExtraSelection> paren_selection;
+
   auto cursor = textCursor();
   auto user = userDataOf(cursor.block());
-
   auto match = user->matchParenthesisCursor(cursor);
-  QList<QTextEdit::ExtraSelection> paren_selection;
+
   switch (match) {
   case TextBlockUserData::MatchType::NoMatch: {
     qDebug() << "No matching brackets found";
     break;
   }
-  case TextBlockUserData::MatchType::Match: {
+  case TextBlockUserData::MatchType::Match: [[fallthrough]]
+  case TextBlockUserData::MatchType::Mismatch: {
     QTextEdit::ExtraSelection selection;
 
     qDebug() << "Applying format (" << cursor.selectionStart() << "/"
-        << cursor.selectionEnd() << ")"
-        << (selection.format.fontWeight() == QFont::Bold);
+        << cursor.selectionEnd() << ") Mismatch: "
+        << (TextBlockUserData::MatchType::Mismatch == match);
 
     selection.format.setBackground(Qt::lightGray);
+
+    if(TextBlockUserData::MatchType::Mismatch == match) {
+      selection.format.setFontStrikeOut(true);
+    }
 
     selection.cursor = cursor;
     selection.cursor.clearSelection();
@@ -67,9 +73,6 @@ void CommandInput::updateHighlights() {
     selection.cursor.setPosition(selection.cursor.position() - 1,
         QTextCursor::KeepAnchor);
     paren_selection.push_back(selection);
-    break;
-  }
-  case TextBlockUserData::MatchType::Mismatch: {
     break;
   }
   default:
