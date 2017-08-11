@@ -51,8 +51,8 @@ private:
   Ui::MainWindow *ui;
   astviewer::CommandInput* in { nullptr };
   astviewer::RecentFileManager* recent_files { nullptr };
-  astviewer::LineTextEdit* src_view { nullptr };
-  astviewer::LineTextEdit* ast_view { nullptr };
+  astviewer::LineTextEdit* src_edit { nullptr };
+  astviewer::LineTextEdit* ast_edit { nullptr };
   QStringListModel* dbViewModel { nullptr };
 };
 

@@ -31,17 +31,17 @@ MainWindow::MainWindow(QWidget *parent) :
       this->ui->listViewCompDB);
   this->ui->listViewCompDB->setItemDelegate(delegate);
 
-  src_view = new astviewer::LineTextEdit(ui->widgetSrc);
-  src_view->setObjectName(QStringLiteral("plainTextEditSrc"));
-  ui->verticalLayout->addWidget(src_view);
+  src_edit = new astviewer::LineTextEdit(ui->widgetSrc);
+  src_edit->setObjectName(QStringLiteral("plainTextEditSrc"));
+  ui->verticalLayout->addWidget(src_edit);
 
-  ast_view = new astviewer::LineTextEdit(ui->widgetAST);
-  ast_view->setObjectName(QStringLiteral("plainTextEditAST"));
-  ast_view->setAcceptDrops(false);
-  ast_view->setUndoRedoEnabled(false);
-  ast_view->setReadOnly(true);
-  ast_view->showLine(false);
-  ui->verticalLayout_2->addWidget(ast_view);
+  ast_edit = new astviewer::LineTextEdit(ui->widgetAST);
+  ast_edit->setObjectName(QStringLiteral("plainTextEditAST"));
+  ast_edit->setAcceptDrops(false);
+  ast_edit->setUndoRedoEnabled(false);
+  ast_edit->setReadOnly(true);
+  ast_edit->showLine(false);
+  ui->verticalLayout_2->addWidget(ast_edit);
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
@@ -108,14 +108,14 @@ void MainWindow::clickedDBView(const QModelIndex& index) {
 }
 
 void MainWindow::setSource(QString source) {
-  src_view->clear();
-  src_view->insertPlainText(source);
+  src_edit->clear();
+  src_edit->insertPlainText(source);
 }
 
 void MainWindow::setClangAST(QString source) {
-  ast_view->clear();
-  ast_view->insertPlainText(source);
-  ast_view->ensureCursorVisible();
+  ast_edit->clear();
+  ast_edit->insertPlainText(source);
+  ast_edit->ensureCursorVisible();
 }
 
 void MainWindow::fileLoadFinished(QString file) {

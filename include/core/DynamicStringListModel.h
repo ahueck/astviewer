@@ -18,7 +18,7 @@ namespace astviewer {
 class DynamicStringListModel: public QStringListModel {
 Q_OBJECT
 public:
-  DynamicStringListModel(QObject* parent = nullptr);
+  explicit DynamicStringListModel(QObject* parent = nullptr);
   virtual ~DynamicStringListModel();
 
 public slots:
