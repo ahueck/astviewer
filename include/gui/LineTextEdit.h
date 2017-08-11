@@ -24,7 +24,7 @@ private:
   bool show_current { true };
 
 public:
-  LineTextEdit(QWidget* parent = nullptr);
+  explicit LineTextEdit(QWidget* parent = nullptr);
   void showLine(bool);
   virtual ~LineTextEdit();
 
@@ -47,7 +47,7 @@ private:
   LineTextEdit* editor;
 
 public:
-  LineNumberArea(LineTextEdit* editor) :
+  explicit LineNumberArea(LineTextEdit* editor) :
       QWidget(editor), editor(editor) {
   }
 

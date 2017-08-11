@@ -14,7 +14,7 @@ namespace astviewer {
 
 class Highlighter: public QSyntaxHighlighter {
 public:
-  Highlighter(QObject* parent = nullptr); // FIXME segfault when nullptr
+  explicit Highlighter(QObject* parent = nullptr); // FIXME segfault when nullptr
   virtual void highlightBlock(const QString& text) override;
   virtual ~Highlighter();
 };

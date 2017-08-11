@@ -20,7 +20,7 @@ protected:
 QSyntaxHighlighter* highlighter {nullptr};
 
 public:
-  CommandInput(QWidget* parent = nullptr);
+  explicit CommandInput(QWidget* parent = nullptr);
   //bool eventFilter(QObject *, QEvent *e) override;
   void setHighlighter(QSyntaxHighlighter* h);
   ~CommandInput() override;

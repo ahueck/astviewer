@@ -27,7 +27,7 @@ protected:
   DynamicCompleter* input_completer { nullptr };
 
 public:
-  CompletionInput(QWidget* parent = nullptr);
+  explicit CompletionInput(QWidget* parent = nullptr);
   virtual ~CompletionInput();
 
 protected:

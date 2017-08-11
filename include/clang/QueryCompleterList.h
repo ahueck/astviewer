@@ -23,7 +23,7 @@ Q_OBJECT
 private:
   clang::query::QuerySession* wrapper { nullptr };
 public:
-  QueryCompleterList(QObject* parent = nullptr);
+  explicit QueryCompleterList(QObject* parent = nullptr);
   virtual ~QueryCompleterList();
 
 public slots:

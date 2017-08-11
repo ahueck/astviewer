@@ -22,7 +22,7 @@ Q_OBJECT
 protected:
   DynamicStringListModel* dyn_model { nullptr };
 public:
-  DynamicCompleter(QObject* parent = nullptr);
+  explicit DynamicCompleter(QObject* parent = nullptr);
   virtual void setDynModel(DynamicStringListModel*);
   virtual ~DynamicCompleter();
 

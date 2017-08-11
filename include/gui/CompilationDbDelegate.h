@@ -14,7 +14,7 @@ namespace astviewer {
 
 class CompilationDbDelegate : public QStyledItemDelegate {
 public:
-  CompilationDbDelegate(QObject* parent = nullptr);
+  explicit CompilationDbDelegate(QObject* parent = nullptr);
   QString displayText(const QVariant &value, const QLocale& locale) const override;
   void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
   virtual ~CompilationDbDelegate();
