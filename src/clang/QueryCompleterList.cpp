@@ -38,9 +38,7 @@ void QueryCompleterList::updateModelList(const QString& in_line,
   const auto completion_prefix = prefix.left(cursor_pos);
   for (auto& completion : completions) {
     list << completion_prefix  + QString::fromStdString(completion.TypedText);
-    list_style << QString::fromStdString(completion.DisplayText);
   }
-  qDebug() << "Candidates: " << list << " and style: " << list_style;
   this->setStringList(list);
 }
 

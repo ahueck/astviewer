@@ -8,7 +8,9 @@
 #ifndef INCLUDE_GUI_TEXTBLOCKUSERDATA_H_
 #define INCLUDE_GUI_TEXTBLOCKUSERDATA_H_
 
-#include <qtextobject.h>
+#include <QTextCursor>
+#include <QTextBlock>
+#include <QTextBlockUserData>
 
 #include <QDebug>
 
@@ -95,7 +97,7 @@ protected:
     const auto p_to_match = std::next(std::begin(paren_vec), parenthesis_index);
     auto current_p = std::next(p_to_match, dir);
 
-    int depth { 0 };
+    auto depth { 0 };
     while (true) {
       if (Search_Trait::end(current_p, paren_vec)) {
         do {
@@ -152,9 +154,9 @@ namespace detail {
 
 template<typename Parenthesis::Type P_Type>
 struct search {
-  static constexpr int search_direction { 1 };
-  static constexpr int position_offset { 1 };
-  static constexpr Parenthesis::Type Parenthesis_type { P_Type };
+  static constexpr auto search_direction { 1 };
+  static constexpr auto position_offset { 1 };
+  static constexpr auto Parenthesis_type { P_Type };
 
   template<typename Iter_Elem, typename Container>
   inline static bool end(Iter_Elem&& e, Container&& vec) {
@@ -178,10 +180,9 @@ struct search {
 
 template<>
 struct search<Parenthesis::Type::Closed> {
-  static constexpr int search_direction { -1 };
-  static constexpr int position_offset { 0 };
-  static constexpr Parenthesis::Type Parenthesis_type {
-      Parenthesis::Type::Closed };
+  static constexpr auto search_direction { -1 };
+  static constexpr auto position_offset { 0 };
+  static constexpr auto Parenthesis_type { Parenthesis::Type::Closed };
 
   template<typename Iter_Elem, typename Container>
   inline static bool end(Iter_Elem&& e, Container&& vec) {
