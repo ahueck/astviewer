@@ -7,8 +7,16 @@
 
 #include <gui/LineTextEdit.h>
 
+#include <QColor>
+#include <QFontMetrics>
+#include <QLatin1Char>
+#include <QPaintEvent>
 #include <QPainter>
+#include <QRect>
+#include <QRectF>
+#include <QRgb>
 #include <QTextBlock>
+#include <QTextCursor>
 
 namespace astviewer {
 

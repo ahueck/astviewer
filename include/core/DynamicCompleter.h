@@ -11,6 +11,7 @@
 #include <QCompleter>
 #include <QObject>
 
+class QObject;
 class QString;
 
 namespace astviewer {

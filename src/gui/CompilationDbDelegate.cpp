@@ -8,14 +8,10 @@
 #include <gui/CompilationDbDelegate.h>
 
 #include <QApplication>
-#include <QPainter>
-#include <QPalette>
-#include <QColor>
-#include <QFont>
-#include <QPen>
-#include <QDebug>
-#include <QFontMetrics>
- #include <QFileInfo>
+#include <QFileInfo>
+#include <QModelIndex>
+#include <QStyle>
+#include <QWidget>
 
 namespace astviewer {
 
@@ -24,9 +20,10 @@ CompilationDbDelegate::CompilationDbDelegate(QObject* parent) :
 
 }
 
-QString CompilationDbDelegate::displayText(const QVariant &value, const QLocale& locale) const {
-    auto text = QStyledItemDelegate::displayText(value, locale);
-    return QFileInfo(text).fileName();
+QString CompilationDbDelegate::displayText(const QVariant &value,
+    const QLocale& locale) const {
+  auto text = QStyledItemDelegate::displayText(value, locale);
+  return QFileInfo(text).fileName();
 }
 
 void CompilationDbDelegate::paint(QPainter* painter,
@@ -38,12 +35,12 @@ void CompilationDbDelegate::paint(QPainter* painter,
     QStyle* style = widget ? widget->style() : QApplication::style();
 
     /*
-    const auto elide = [&option](const QString& text) {
-       return option.fontMetrics.elidedText(text,
-              Qt::TextElideMode::ElideLeft, option.rect.width());
-    };
-    option.text = elide(option.text);
-    */
+     const auto elide = [&option](const QString& text) {
+     return option.fontMetrics.elidedText(text,
+     Qt::TextElideMode::ElideLeft, option.rect.width());
+     };
+     option.text = elide(option.text);
+     */
 
     style->drawControl(QStyle::CE_ItemViewItem, &option, painter, widget);
   } else {

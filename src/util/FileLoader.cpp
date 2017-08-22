@@ -6,11 +6,9 @@
  */
 
 #include <util/FileLoader.h>
+#include <core/Command.h>
+#include <core/FutureTask.h>
 #include <util/Util.h>
-
-#include <QtConcurrent>
-#include <QFuture>
-#include <QFutureWatcher>
 
 #include <QDebug>
 

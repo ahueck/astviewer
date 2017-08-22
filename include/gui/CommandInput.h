@@ -8,16 +8,20 @@
 #ifndef INCLUDE_GUI_COMMANDINPUT_H_
 #define INCLUDE_GUI_COMMANDINPUT_H_
 
+#include <QObject>
 #include <QTextEdit>
 
+class QKeyEvent;
+class QString;
 class QSyntaxHighlighter;
+class QWidget;
 
 namespace astviewer {
 
 class CommandInput: public QTextEdit {
 Q_OBJECT
 protected:
-QSyntaxHighlighter* highlighter {nullptr};
+  QSyntaxHighlighter* highlighter { nullptr };
 
 public:
   explicit CommandInput(QWidget* parent = nullptr);

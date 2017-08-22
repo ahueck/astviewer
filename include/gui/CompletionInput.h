@@ -10,11 +10,13 @@
 
 #include <gui/CommandInput.h>
 
-class QWidget;
-class QCompleter;
-class QString;
-class QKeyEvent;
+#include <QObject>
+
 class QAbstractItemModel;
+class QCompleter;
+class QKeyEvent;
+class QString;
+class QWidget;
 
 namespace astviewer {
 

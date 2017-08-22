@@ -6,6 +6,7 @@
  */
 
 #include <core/Task.h>
+#include <core/Command.h>
 
 #include <QDebug>
 

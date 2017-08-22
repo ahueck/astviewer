@@ -6,14 +6,23 @@
  */
 
 #include <clang/ClangToolSession.h>
+
+#include <core/Command.h>
+#include <core/FutureTask.h>
 #include <core/ToolWrapper.h>
 #include <util/Util.h>
 
-#include <QDebug>
-
 #include <clang/Frontend/ASTUnit.h>
+#include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
+#include <llvm/ADT/ArrayRef.h>
+#include <llvm/ADT/StringRef.h>
 
+#include <QDebug>
+#include <QFileInfo>
+
+#include <algorithm>
+#include <iterator>
 #include <string>
 
 namespace astviewer {

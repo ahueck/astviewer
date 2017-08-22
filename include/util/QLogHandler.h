@@ -9,7 +9,10 @@
 #define INCLUDE_UTIL_LOGVIEW_H_
 
 #include <QObject>
-#include <QPointer>
+#include <QtCore>
+
+class QString;
+class QMessageLogContext;
 
 namespace astviewer {
 

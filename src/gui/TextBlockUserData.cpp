@@ -7,8 +7,7 @@
 
 #include <gui/TextBlockUserData.h>
 
-#include <QDebug>
-
+#include <algorithm>
 #include <iterator>
 
 namespace astviewer {

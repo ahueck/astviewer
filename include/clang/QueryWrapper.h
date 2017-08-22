@@ -10,6 +10,18 @@
 
 #include <core/ToolWrapper.h>
 
+#include <QObject>
+
+#include <memory>
+#include <vector>
+
+namespace astviewer {
+class Command;
+}  // namespace astviewer
+namespace clang {
+class ASTUnit;
+}  // namespace clang
+
 namespace clang {
 namespace query {
 class QuerySession;

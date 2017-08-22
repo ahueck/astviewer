@@ -8,13 +8,14 @@
 #ifndef INCLUDE_UTIL_FILELOADER_H_
 #define INCLUDE_UTIL_FILELOADER_H_
 
-#include <core/FutureTask.h>
 #include <core/Command.h>
+#include <core/FutureTask.h>
 
 #include <QObject>
-#include <QString>
 
 namespace astviewer {
+
+class Command;
 
 class FileLoader: public FutureTask {
 Q_OBJECT

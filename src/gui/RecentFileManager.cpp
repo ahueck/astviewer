@@ -11,8 +11,10 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QSettings>
+#include <QVariant>
+#include <QString>
 
-#include <QDebug>
+#include <stddef.h>
 
 namespace astviewer {
 

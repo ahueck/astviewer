@@ -8,8 +8,8 @@
 #ifndef INCLUDE_CORE_DYNAMICSTRINGLISTMODEL_H_
 #define INCLUDE_CORE_DYNAMICSTRINGLISTMODEL_H_
 
-#include <QStringListModel>
 #include <QObject>
+#include <QStringListModel>
 
 class QString;
 
@@ -22,7 +22,8 @@ public:
   virtual ~DynamicStringListModel();
 
 public slots:
-  virtual void updateModelList(const QString& line, const QString& prefix, int cursor_pos = 0);
+  virtual void updateModelList(const QString& line, const QString& prefix,
+      int cursor_pos = 0);
 
 signals:
   void modelUpdated(bool);

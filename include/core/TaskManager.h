@@ -10,8 +10,10 @@
 
 #include <core/Command.h>
 
-#include <QObject>
 #include <QMap>
+#include <QObject>
+
+#include <stddef.h>
 
 namespace astviewer {
 

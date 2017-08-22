@@ -6,6 +6,9 @@
  */
 
 #include <core/FutureTask.h>
+#include <core/Task.h>
+
+#include <QFuture>
 
 namespace astviewer {
 

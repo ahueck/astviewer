@@ -5,12 +5,13 @@
  *      Author: ahueck
  */
 
-#include <core/CoreManager.h>
+#include <core/Task.h>
+#include <core/TaskManager.h>
 #include <core/Command.h>
-#include <gui/CommandInput.h>
-#include <util/FileLoader.h>
-
+#include <core/CoreManager.h>
 #include <gui/mainwindow.h>
+#include <util/StatusHandler.h>
+#include <util/FileLoader.h>
 
 #include <QDebug>
 

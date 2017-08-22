@@ -10,6 +10,10 @@
 
 #include <core/DynamicStringListModel.h>
 
+#include <QObject>
+
+class QString;
+
 namespace clang {
 namespace query {
 class QuerySession;
@@ -27,7 +31,8 @@ public:
   virtual ~QueryCompleterList();
 
 public slots:
-  void updateModelList(const QString& line, const QString& prefix, int cursor_pos) override;
+  void updateModelList(const QString& line, const QString& prefix,
+      int cursor_pos) override;
   void updateSession(clang::query::QuerySession*);
 };
 

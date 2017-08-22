@@ -6,29 +6,34 @@
  */
 
 #include <clang/QueryWrapper.h>
-
+#include <core/Command.h>
+#include <core/ToolWrapper.h>
 #include <util/Util.h>
 
 #include <clang/clang-query/Query.h>
 #include <clang/clang-query/QueryParser.h>
 #include <clang/clang-query/QuerySession.h>
-
-#include <clang/Frontend/ASTUnit.h>
+#include <llvm/ADT/ArrayRef.h>
+#include <llvm/ADT/IntrusiveRefCntPtr.h>
 #include <llvm/ADT/StringRef.h>
+#include <llvm/Support/raw_ostream.h>
 
 #include <QDebug>
+
+#include <string>
 
 namespace astviewer {
 
 using namespace clang::query;
 
-QueryWrapper::QueryWrapper(QObject* parent) : ToolWrapper(parent),  qs(nullptr) {
+QueryWrapper::QueryWrapper(QObject* parent) :
+    ToolWrapper(parent), qs(nullptr) {
 
 }
 
 void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
   qDebug() << "Init tool. #ASTs: " << AST_vec.size();
-  if(qs == nullptr) {
+  if (qs == nullptr) {
     qs = astviewer::make_unique<QuerySession>(AST_vec);
   } else {
     qs->ASTs = decltype(qs->ASTs)(AST_vec);
@@ -63,5 +68,4 @@ void QueryWrapper::futureFinished() {
 QueryWrapper::~QueryWrapper() = default;
 
 } /* namespace astviewer */
-
 

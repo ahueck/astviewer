@@ -8,13 +8,16 @@
 #ifndef INCLUDE_QUERYAPP_H_
 #define INCLUDE_QUERYAPP_H_
 
-#include "core/CoreManager.h"
+#include <core/Command.h>
+#include <core/CoreManager.h>
+
+#include <QObject>
 
 namespace av = astviewer;
 
 namespace astviewer {
-class QueryCompleterList;
 class DynamicCompleter;
+class QueryCompleterList;
 }
 
 class QueryApp: public av::CoreManager {

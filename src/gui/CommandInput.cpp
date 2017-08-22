@@ -6,14 +6,17 @@
  */
 
 #include <gui/CommandInput.h>
-
 #include <gui/TextBlockUserData.h>
 
-#include <QSyntaxHighlighter>
-#include <QEvent>
-#include <QKeyEvent>
+#include <QTextEdit>
 #include <QDebug>
-#include <QWidget>
+#include <QKeyEvent>
+#include <QList>
+#include <QObject>
+#include <QSyntaxHighlighter>
+#include <QTextBlock>
+#include <QTextCharFormat>
+#include <QTextCursor>
 
 namespace astviewer {
 
@@ -46,7 +49,7 @@ void CommandInput::updateHighlights() {
     qDebug() << "No matching brackets found";
     break;
   }
-  case TextBlockUserData::MatchType::Match: [[fallthrough]]
+  case TextBlockUserData::MatchType::Match:
   case TextBlockUserData::MatchType::Mismatch: {
     QTextEdit::ExtraSelection selection;
 
@@ -56,7 +59,7 @@ void CommandInput::updateHighlights() {
 
     selection.format.setBackground(Qt::lightGray);
 
-    if(TextBlockUserData::MatchType::Mismatch == match) {
+    if (TextBlockUserData::MatchType::Mismatch == match) {
       selection.format.setFontStrikeOut(true);
     }
 

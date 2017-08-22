@@ -6,7 +6,6 @@
  */
 
 #include <util/StatusHandler.h>
-
 #include <waitingspinnerwidget.h>
 
 #include <QStatusBar>
@@ -15,7 +14,7 @@ namespace astviewer {
 
 StatusHandler::StatusHandler(QObject* parent) :
     QObject(parent) {
-  spinner = new WaitingSpinnerWidget(nullptr,false,false);
+  spinner = new WaitingSpinnerWidget(nullptr, false, false);
   spinner->setLineLength(5);
   spinner->setInnerRadius(5);
 }

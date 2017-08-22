@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QObject>
 #include <QMainWindow>
+#include <QStringList>
 
 namespace Ui {
 class MainWindow;
@@ -9,17 +11,19 @@ class MainWindow;
 
 namespace astviewer {
 class CommandInput;
-class RecentFileManager;
 class CoreManager;
 class LineTextEdit;
+class RecentFileManager;
 }
 
 class QLabel;
-class QStatusBar;
-class QWidget;
 class QListView;
 class QModelIndex;
+class QStatusBar;
+class QString;
+class QStringList;
 class QStringListModel;
+class QWidget;
 
 class MainWindow: public QMainWindow {
 Q_OBJECT

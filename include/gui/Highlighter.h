@@ -10,6 +10,8 @@
 
 #include <QSyntaxHighlighter>
 
+class QString;
+
 namespace astviewer {
 
 class Highlighter: public QSyntaxHighlighter {

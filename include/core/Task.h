@@ -14,6 +14,8 @@
 
 namespace astviewer {
 
+class Command;
+
 class Task: public QObject {
 Q_OBJECT
 public:

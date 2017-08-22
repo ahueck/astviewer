@@ -6,12 +6,17 @@
  */
 
 #include <clang/QueryCompleterList.h>
+#include <core/DynamicStringListModel.h>
 
-#include <clang/clang-query/Query.h>
 #include <clang/clang-query/QueryParser.h>
-#include <clang/clang-query/QuerySession.h>
+#include <llvm/ADT/StringRef.h>
+#include <llvm/LineEditor/LineEditor.h>
 
-#include <QtDebug>
+#include <QString>
+#include <QDebug>
+#include <QStringList>
+
+#include <string>
 
 namespace astviewer {
 
@@ -37,11 +42,10 @@ void QueryCompleterList::updateModelList(const QString& in_line,
   QStringList list_style;
   const auto completion_prefix = prefix.left(cursor_pos);
   for (auto& completion : completions) {
-    list << completion_prefix  + QString::fromStdString(completion.TypedText);
+    list << completion_prefix + QString::fromStdString(completion.TypedText);
   }
   this->setStringList(list);
 }
-
 
 void QueryCompleterList::updateSession(clang::query::QuerySession* session) {
   qDebug() << "update query session";

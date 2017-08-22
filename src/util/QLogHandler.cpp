@@ -5,11 +5,14 @@
  *      Author: ahueck
  */
 
-#include "util/QLogHandler.h"
+#include <util/QLogHandler.h>
 
 #include <QDateTime>
+#include <QMessageLogContext>
+#include <QString>
 
 #include <iostream>
+#include <string>
 
 namespace astviewer {
 

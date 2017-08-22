@@ -10,13 +10,20 @@
 
 #include <core/FutureTask.h>
 
-#include <QStringList>
+#include <QObject>
+#include <QString>
 
 #include <memory>
 #include <vector>
 
+class QStringList;
+namespace astviewer {
+class Command;
+}  // namespace astviewer
+
 namespace clang {
 class ASTUnit;
+
 namespace tooling {
 class ClangTool;
 class CompilationDatabase;

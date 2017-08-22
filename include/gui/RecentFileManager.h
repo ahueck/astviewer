@@ -10,9 +10,11 @@
 
 #include <QList>
 #include <QObject>
+#include <QStringList>
 
-class QMenu;
 class QAction;
+class QMenu;
+class QString;
 
 namespace astviewer {
 

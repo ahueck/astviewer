@@ -9,10 +9,12 @@
 #define INCLUDE_UTIL_STATUSHANDLER_H_
 
 #include <QObject>
-#include <QString>
 
-class WaitingSpinnerWidget;
+#include <stddef.h>
+
 class QStatusBar;
+class QString;
+class WaitingSpinnerWidget;
 
 namespace astviewer {
 

@@ -9,14 +9,22 @@
 #define INCLUDE_GUI_TEXTBLOCKUSERDATA_H_
 
 #include <QTextCursor>
+#include <QChar>
+#include <QDebug>
+#include <QLatin1Char>
 #include <QTextBlock>
 #include <QTextBlockUserData>
+#include <QTextCursor>
+#include <QVector>
 
-#include <QDebug>
+#include <iterator>
+
+class QTextBlock;
 
 namespace astviewer {
 
 struct Parenthesis;
+
 using Parentheses = QVector<Parenthesis>;
 
 struct Parenthesis {
@@ -59,6 +67,7 @@ struct Parenthesis {
 };
 
 class TextBlockUserData;
+
 inline TextBlockUserData* userDataOf(const QTextBlock& block);
 inline void setParenthesesOf(const QTextBlock& block,
     const Parentheses& parens);

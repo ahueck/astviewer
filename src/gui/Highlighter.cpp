@@ -9,6 +9,9 @@
 #include <gui/TextBlockUserData.h>
 
 #include <QRegularExpression>
+#include <QRegularExpressionMatch>
+#include <QRegularExpressionMatchIterator>
+#include <QString>
 
 namespace astviewer {
 
@@ -21,7 +24,7 @@ void Highlighter::highlightBlock(const QString& text) {
   static const QRegularExpression quote("\".*\"");
 
   auto matches = quote.globalMatch(text);
-  while(matches.hasNext()) {
+  while (matches.hasNext()) {
     const auto match = matches.next();
     setFormat(match.capturedStart(), match.capturedLength(), Qt::darkGreen);
   }
@@ -30,10 +33,12 @@ void Highlighter::highlightBlock(const QString& text) {
   const auto length = text.length();
   for (int position = 0; position < length; ++position) {
     const auto c = text.at(position);
-    if(Parenthesis::isOpened(c)) {
-      block_parens.push_back(Parenthesis(Parenthesis::Type::Opened, c, position));
-    } else if(Parenthesis::isClosed(c)) {
-      block_parens.push_back(Parenthesis(Parenthesis::Type::Closed, c, position));
+    if (Parenthesis::isOpened(c)) {
+      block_parens.push_back(
+          Parenthesis(Parenthesis::Type::Opened, c, position));
+    } else if (Parenthesis::isClosed(c)) {
+      block_parens.push_back(
+          Parenthesis(Parenthesis::Type::Closed, c, position));
     }
   }
   auto u_data = userDataOf(currentBlock());

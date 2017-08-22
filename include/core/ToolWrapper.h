@@ -8,12 +8,12 @@
 #ifndef INCLUDE_CORE_TOOLWRAPPER_H_
 #define INCLUDE_CORE_TOOLWRAPPER_H_
 
-#include <core/Command.h>
 #include <core/FutureTask.h>
 
 #include <QObject>
 
 #include <memory>
+#include <vector>
 
 namespace clang {
 class ASTUnit;

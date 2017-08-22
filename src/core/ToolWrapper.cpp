@@ -6,8 +6,7 @@
  */
 
 #include <core/ToolWrapper.h>
-
-#include <QObject>
+#include <core/FutureTask.h>
 
 namespace astviewer {
 

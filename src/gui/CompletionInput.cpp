@@ -6,21 +6,20 @@
  */
 
 #include <gui/CompletionInput.h>
-
-#include <QCompleter>
-#include <QKeyEvent>
-#include <QAbstractItemView>
-#include <QtDebug>
-#include <QApplication>
-#include <QModelIndex>
-#include <QAbstractItemModel>
-#include <QScrollBar>
-#include <QStringListModel>
-#include <QFileSystemModel>
-
-//#include <clang/QueryCompleterModel.h>
-
 #include <core/DynamicCompleter.h>
+#include <gui/CommandInput.h>
+
+#include <QAbstractItemModel>
+#include <QAbstractItemView>
+#include <QCompleter>
+#include <QDebug>
+#include <QFlags>
+#include <QKeyEvent>
+#include <QObject>
+#include <QRect>
+#include <QScrollBar>
+#include <QSize>
+#include <QTextCursor>
 
 namespace astviewer {
 
@@ -29,8 +28,6 @@ CompletionInput::CompletionInput(QWidget* parent) :
 }
 
 void CompletionInput::completionEvent(QKeyEvent* e, bool filter) {
-  static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
-
   QString key_text = filter ? "" : e->text();
 
   QTextCursor tc = textCursor();

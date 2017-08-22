@@ -26,21 +26,23 @@ inline QString readTxtFile(QString file_path) {
 }
 
 namespace detail {
-  template<class T>
-  struct _Unique_if {
-    using _Single_object = std::unique_ptr<T>;
-  };
 
-  template<class T>
-  struct _Unique_if<T[]> {
-    using _Unknown_bound = std::unique_ptr<T []>;
-  };
+template<class T>
+struct _Unique_if {
+  using _Single_object = std::unique_ptr<T>;
+};
 
-  template<class T, size_t N>
-  struct _Unique_if<T[N]> {
-    using _Known_bound = void;
-  };
-}
+template<class T>
+struct _Unique_if<T[]> {
+  using _Unknown_bound = std::unique_ptr<T []>;
+};
+
+template<class T, size_t N>
+struct _Unique_if<T[N]> {
+  using _Known_bound = void;
+};
+
+} /* namespace detail */
 
 template<class T, class ... Args>
 typename detail::_Unique_if<T>::_Single_object make_unique(Args&&... args) {

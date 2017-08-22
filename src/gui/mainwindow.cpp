@@ -1,24 +1,27 @@
-#include <gui/mainwindow.h>
-#include <ui_mainwindow.h>
-
 #include <core/CoreManager.h>
-
 #include <gui/CommandInput.h>
-#include <gui/RecentFileManager.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
-
-#include <util/FileLoader.h>
+#include <gui/RecentFileManager.h>
+#include <gui/mainwindow.h>
 #include <util/QLogHandler.h>
-#include <util/Util.h>
 
-#include <QFileDialog>
-#include <QPointer>
+#include <ui_mainwindow.h>
+
+#include <QAction>
 #include <QDebug>
-#include <QLabel>
-#include <QtConcurrent>
-#include <QFuture>
-#include <QFutureWatcher>
+#include <QFileDialog>
+#include <QGridLayout>
+#include <QListView>
+#include <QModelIndex>
+#include <QObject>
+#include <QPlainTextEdit>
+#include <QSize>
+#include <QSizePolicy>
+#include <QStaticStringData>
+#include <QStringListModel>
+#include <QVBoxLayout>
+#include <QVariant>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), recent_files(

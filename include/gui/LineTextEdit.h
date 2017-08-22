@@ -8,7 +8,16 @@
 #ifndef INCLUDE_GUI_LINETEXTEDIT_H_
 #define INCLUDE_GUI_LINETEXTEDIT_H_
 
-#include <qplaintextedit.h>
+#include <QObject>
+#include <QPlainTextEdit>
+#include <QSize>
+#include <QWidget>
+
+class QString;
+class QPaintEvent;
+class QRect;
+class QResizeEvent;
+class QWidget;
 
 namespace astviewer {
 

@@ -10,12 +10,18 @@
 
 #include <core/Task.h>
 
-#include <QtConcurrent>
+#include <qtconcurrentrun.h>
+#include <QDebug>
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QObject>
+#include <QtConcurrent>
+
+#include <algorithm>
 
 namespace astviewer {
+
+class Command;
 
 class FutureTask: public Task {
 Q_OBJECT
@@ -25,8 +31,7 @@ protected:
   template<typename F, typename ... Args>
   void run(F function, Args&&... arguments) {
     qDebug() << "Run Future";
-    auto run = QtConcurrent::run(function,
-        std::forward<Args>(arguments)...);
+    auto run = QtConcurrent::run(function, std::forward<Args>(arguments)...);
     cmd_watcher.setFuture(run);
   }
 
