@@ -7,6 +7,7 @@
 #include <gui/RecentFileManager.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
+#include <gui/SelectionProvider.h>
 
 #include <util/FileLoader.h>
 #include <util/QLogHandler.h>
@@ -19,6 +20,7 @@
 #include <QtConcurrent>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QTextBlock>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), recent_files(
@@ -35,13 +37,24 @@ MainWindow::MainWindow(QWidget *parent) :
   src_edit->setObjectName(QStringLiteral("plainTextEditSrc"));
   ui->verticalLayout->addWidget(src_edit);
 
-  ast_edit = new astviewer::LineTextEdit(ui->widgetAST);
-  ast_edit->setObjectName(QStringLiteral("plainTextEditAST"));
-  ast_edit->setAcceptDrops(false);
-  ast_edit->setUndoRedoEnabled(false);
-  ast_edit->setReadOnly(true);
-  ast_edit->showLine(false);
-  ui->verticalLayout_2->addWidget(ast_edit);
+  this->selection_notifier = new astviewer::SelectionProvider(this);
+  selection_notifier->installOn(src_edit);
+
+  query_edit = new astviewer::LineTextEdit(ui->widgetQuery);
+  query_edit->setObjectName(QStringLiteral("plainTextEditAST"));
+  query_edit->setAcceptDrops(false);
+  query_edit->setUndoRedoEnabled(false);
+  query_edit->setReadOnly(true);
+  query_edit->showLine(false);
+  ui->verticalLayout_query->addWidget(query_edit);
+
+  selection_edit = new astviewer::LineTextEdit(ui->widgetSelection);
+  selection_edit->setObjectName(QStringLiteral("plainTextEditSelection"));
+  selection_edit->setAcceptDrops(false);
+  selection_edit->setUndoRedoEnabled(false);
+  selection_edit->setReadOnly(true);
+  selection_edit->showLine(true);
+  ui->verticalLayout_selection->addWidget(selection_edit);
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),
@@ -91,7 +104,10 @@ void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
       SLOT(setEnabled(bool)));
   QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_File,
       SLOT(setEnabled(bool)));
-
+  QObject::connect(selection_notifier, SIGNAL(lineSelected(unsigned, unsigned)),
+      cm, SLOT(sourceSelected(unsigned, unsigned)));
+  QObject::connect(cm, SIGNAL(selectionUnlock(bool)), selection_notifier,
+      SLOT(enableSelector(bool)));
 }
 
 QStatusBar* MainWindow::getStatusbar() {
@@ -113,9 +129,17 @@ void MainWindow::setSource(QString source) {
 }
 
 void MainWindow::setClangAST(QString source) {
-  ast_edit->clear();
-  ast_edit->insertPlainText(source);
-  ast_edit->ensureCursorVisible();
+  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
+  selection_edit->clear();
+  selection_edit->insertPlainText(source);
+  selection_edit->ensureCursorVisible();
+}
+
+void MainWindow::setClangQuery(QString source) {
+  ui->tabWidgetTools->setCurrentWidget(ui->widgetQuery);
+  query_edit->clear();
+  query_edit->insertPlainText(source);
+  query_edit->ensureCursorVisible();
 }
 
 void MainWindow::fileLoadFinished(QString file) {

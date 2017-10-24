@@ -19,12 +19,20 @@ Highlighter::Highlighter(QObject* parent) :
 
 void Highlighter::highlightBlock(const QString& text) {
   static const QRegularExpression quote("\".*\"");
+  static const QRegularExpression numbers("[0-9]+");
+
+  const auto apply_color = [&] (QRegularExpressionMatchIterator& matches, const QColor& color) {
+    while(matches.hasNext()) {
+      const auto match = matches.next();
+      setFormat(match.capturedStart(), match.capturedLength(), color);
+    }
+  };
 
   auto matches = quote.globalMatch(text);
-  while(matches.hasNext()) {
-    const auto match = matches.next();
-    setFormat(match.capturedStart(), match.capturedLength(), Qt::darkGreen);
-  }
+  apply_color(matches, Qt::darkGreen);
+
+  matches = numbers.globalMatch(text);
+  apply_color(matches, Qt::darkCyan);
 
   Parentheses block_parens;
   const auto length = text.length();

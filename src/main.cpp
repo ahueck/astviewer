@@ -15,7 +15,16 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <llvm/Support/Signals.h>
 
-
+    void function(int x) {
+      if(x > 1) { // find this
+      }
+      if(x > 1) { // but not this
+      } else {
+      }
+      if(x > 1) { // but not this
+      } else if(x < 2) {
+      }
+    }
 
 // FIXME does not link properly without this:
 static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);

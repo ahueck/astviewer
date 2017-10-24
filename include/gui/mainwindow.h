@@ -12,6 +12,7 @@ class CommandInput;
 class RecentFileManager;
 class CoreManager;
 class LineTextEdit;
+class SelectionProvider;
 }
 
 class QLabel;
@@ -34,9 +35,11 @@ signals:
   void selectedTU(QString);
   void selectedCompilationDB(QString);
   void selectedDbListItem(QString);
+  void selectedLines(unsigned, unsigned);
 
 public slots:
   void setSource(QString);
+  void setClangQuery(QString);
   void setClangAST(QString);
   void fileLoadFinished(QString);
   void updateDbView(QStringList);
@@ -52,7 +55,9 @@ private:
   astviewer::CommandInput* in { nullptr };
   astviewer::RecentFileManager* recent_files { nullptr };
   astviewer::LineTextEdit* src_edit { nullptr };
-  astviewer::LineTextEdit* ast_edit { nullptr };
+  astviewer::LineTextEdit* query_edit { nullptr };
+  astviewer::LineTextEdit* selection_edit { nullptr };
+  astviewer::SelectionProvider* selection_notifier { nullptr };
   QStringListModel* dbViewModel { nullptr };
 };
 

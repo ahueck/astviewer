@@ -46,7 +46,7 @@ void CommandInput::updateHighlights() {
     qDebug() << "No matching brackets found";
     break;
   }
-  case TextBlockUserData::MatchType::Match: [[fallthrough]]
+  case TextBlockUserData::MatchType::Match:
   case TextBlockUserData::MatchType::Mismatch: {
     QTextEdit::ExtraSelection selection;
 

@@ -59,6 +59,7 @@ protected slots:
   // File IO through GUI mainwindow
   void selectedTU(QString);
   void selectedCompilationDB(QString);
+  void sourceSelected(unsigned, unsigned);
 
 signals:
   //void dispatchCommand(Command);
