@@ -125,9 +125,17 @@ void MainWindow::setSource(QString source) {
 }
 
 void MainWindow::setClangAST(QString source) {
-  ast_edit->clear();
-  ast_edit->insertPlainText(source);
-  ast_edit->ensureCursorVisible();
+  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
+  selection_edit->clear();
+  selection_edit->insertPlainText(source);
+  selection_edit->ensureCursorVisible();
+}
+
+void MainWindow::setClangQuery(QString source) {
+  ui->tabWidgetTools->setCurrentWidget(ui->widgetQuery);
+  query_edit->clear();
+  query_edit->insertPlainText(source);
+  query_edit->ensureCursorVisible();
 }
 
 void MainWindow::fileLoadFinished(QString file) {

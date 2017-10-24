@@ -7,9 +7,6 @@
 #include <QDebug>
 
 #include <clang/Tooling/CommonOptionsParser.h>
-#include <llvm/ADT/StringRef.h>
-
-
 
 // FIXME does not link properly without this:
 static llvm::cl::extrahelp CommonHelp(clang::tooling::CommonOptionsParser::HelpMessage);
@@ -22,7 +19,7 @@ void avLoggingOutput(QtMsgType type, const QMessageLogContext &context,
 #include <iostream>
 int main(int argc, const char **argv) {
   namespace av = astviewer;
-  llvm::sys::PrintStackTraceOnErrorSignal(argv[0]);
+  //llvm::sys::PrintStackTraceOnErrorSignal(argv[0]);
 
   qInstallMessageHandler(avLoggingOutput);
 
