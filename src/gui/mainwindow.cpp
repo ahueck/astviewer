@@ -1,27 +1,25 @@
-#include <core/CoreManager.h>
-#include <gui/CommandInput.h>
-#include <gui/CompilationDbDelegate.h>
-#include <gui/LineTextEdit.h>
-#include <gui/RecentFileManager.h>
 #include <gui/mainwindow.h>
-#include <util/QLogHandler.h>
-
 #include <ui_mainwindow.h>
 
-#include <QAction>
-#include <QDebug>
+#include <core/CoreManager.h>
+
+#include <gui/CommandInput.h>
+#include <gui/RecentFileManager.h>
+#include <gui/CompilationDbDelegate.h>
+#include <gui/LineTextEdit.h>
+#include <gui/SelectionProvider.h>
+
+#include <util/FileLoader.h>
+#include <util/QLogHandler.h>
+#include <util/Util.h>
+
 #include <QFileDialog>
-#include <QGridLayout>
-#include <QListView>
-#include <QModelIndex>
-#include <QObject>
-#include <QPlainTextEdit>
-#include <QSize>
-#include <QSizePolicy>
-#include <QStaticStringData>
-#include <QStringListModel>
-#include <QVBoxLayout>
-#include <QVariant>
+#include <QPointer>
+#include <QDebug>
+#include <QLabel>
+#include <QtConcurrent>
+#include <QFuture>
+#include <QFutureWatcher>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), recent_files(
@@ -38,13 +36,24 @@ MainWindow::MainWindow(QWidget *parent) :
   src_edit->setObjectName(QStringLiteral("plainTextEditSrc"));
   ui->verticalLayout->addWidget(src_edit);
 
-  ast_edit = new astviewer::LineTextEdit(ui->widgetAST);
-  ast_edit->setObjectName(QStringLiteral("plainTextEditAST"));
-  ast_edit->setAcceptDrops(false);
-  ast_edit->setUndoRedoEnabled(false);
-  ast_edit->setReadOnly(true);
-  ast_edit->showLine(false);
-  ui->verticalLayout_2->addWidget(ast_edit);
+  this->selection_notifier = new astviewer::SelectionProvider(this);
+  selection_notifier->installOn(src_edit);
+
+  query_edit = new astviewer::LineTextEdit(ui->widgetQuery);
+  query_edit->setObjectName(QStringLiteral("plainTextEditAST"));
+  query_edit->setAcceptDrops(false);
+  query_edit->setUndoRedoEnabled(false);
+  query_edit->setReadOnly(true);
+  query_edit->showLine(false);
+  ui->verticalLayout_query->addWidget(query_edit);
+
+  selection_edit = new astviewer::LineTextEdit(ui->widgetSelection);
+  selection_edit->setObjectName(QStringLiteral("plainTextEditSelection"));
+  selection_edit->setAcceptDrops(false);
+  selection_edit->setUndoRedoEnabled(false);
+  selection_edit->setReadOnly(true);
+  selection_edit->showLine(true);
+  ui->verticalLayout_selection->addWidget(selection_edit);
 
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(),

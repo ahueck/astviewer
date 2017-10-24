@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="centralHLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QSplitter" name="centralSplitterH">
       <property name="maximumSize">
@@ -236,16 +236,22 @@
                  <number>2</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="labelAST">
-                  <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                 <widget class="QTabWidget" name="tabWidgetTools">
+                  <property name="currentIndex">
+                   <number>0</number>
                   </property>
-                  <property name="text">
-                   <string>AST</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
+                  <widget class="QWidget" name="widgetQuery">
+                   <attribute name="title">
+                    <string>Query</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_query"/>
+                  </widget>
+                  <widget class="QWidget" name="widgetSelection">
+                   <attribute name="title">
+                    <string>Selection AST</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_selection"/>
+                  </widget>
                  </widget>
                 </item>
                </layout>
@@ -280,7 +286,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabInput">
             <attribute name="title">
@@ -322,7 +328,7 @@
      <x>0</x>
      <y>0</y>
      <width>790</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAstViewer">

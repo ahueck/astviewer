@@ -27,11 +27,12 @@
 
 namespace astviewer {
 
-ClangToolSession::ClangToolSession(std::unique_ptr<ToolWrapper> wrapper,
-    QObject* parent) :
-    FutureTask(parent), clang_tool(std::move(wrapper)) {
-  connect(clang_tool.get(), SIGNAL(commandFinished(Command)), this,
-      SLOT(queryResult(Command)));
+ClangToolSession::ClangToolSession(QObject* parent) :
+    FutureTask(parent) {
+}
+
+void ClangToolSession::addTool(std::unique_ptr<ToolWrapper> tool) {
+  clang_tools.push_back(std::move(tool));
 }
 
 void ClangToolSession::fileLoad(Command cmd) {
@@ -63,8 +64,9 @@ void ClangToolSession::fileLoad(Command cmd) {
 
   AST_vec.clear();
   tool->buildASTs(AST_vec);
-  clang_tool->init(AST_vec);
-
+  for(auto& clang_tool : clang_tools) {
+    clang_tool->init(AST_vec);
+  }
   return cmd;
 } ;
   run(f, cmd);
@@ -93,13 +95,27 @@ void ClangToolSession::compilationDb(Command cmd) {
 
 void ClangToolSession::commandInput(Command cmd) {
   qDebug() << "Received command: " << cmd.input;
-  clang_tool->handleCommand(cmd);
+  for (auto& clang_tool : clang_tools) {
+    clang_tool->handleCommand(cmd);
+  }
 //emit matchedAST(this->query.run(in));
+}
+
+void ClangToolSession::sourceSelection(Command cmd) {
+  qDebug() << "Received selection command: " << cmd.input;
+  for (auto& clang_tool : clang_tools) {
+    clang_tool->handleCommand(cmd);
+  }
 }
 
 void ClangToolSession::queryResult(Command matched_ast) {
   qDebug() << "Query result received";
   emit commandFinished(matched_ast);
+}
+
+void ClangToolSession::selectionResult(Command selection_ast) {
+  qDebug() << "Selection result received";
+  emit commandFinished(selection_ast);
 }
 
 void ClangToolSession::futureFinished() {

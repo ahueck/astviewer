@@ -24,5 +24,5 @@ find_tidy # sets "$ctidy"
 
 find \( -path "./src/*" \) -name '*.cpp' \
   -exec "$ctidy" -p "$build_folder" --header-filter="$headerfilter" \
-        -checks=misc-*,modernize-*,cppcoreguidelines-*,readability-*,performance-*,llvm-header-guard,llvm-namespace-comment,google-build-using-namespace,google-explicit-constructor,google-readability-* \
+        -checks=google-explicit-constructor -fix \
         {} \;

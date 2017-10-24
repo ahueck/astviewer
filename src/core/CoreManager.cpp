@@ -87,6 +87,9 @@ void CoreManager::clangResult(Command cmd) {
   qDebug() << "Received clangResult";
   switch (cmd.t) {
   case Command::CommandType::query:
+    win->setClangQuery(cmd.result);
+    break;
+  case Command::CommandType::selection:
     win->setClangAST(cmd.result);
     break;
   default:
@@ -136,6 +139,22 @@ void CoreManager::selectedTU(QString tu_path) {
 
   emit fileLoadUnlock(false);
   //emit dispatchCommand(cmd);
+  tm.commit(cmd);
+}
+
+void CoreManager::sourceSelected(unsigned s, unsigned e) {
+  qDebug() << "Selected a source range: (" << s << "," << e << ")";
+  Command cmd;
+  cmd.t = Command::CommandType::selection;
+  cmd.column_start = 1;
+  cmd.column_end = 1;
+  cmd.row_start = s;
+  cmd.row_end = e;
+
+  pm.processStarted(tr("Source selection: lines %0 to %1").arg(s).arg(e),
+      cmd.id);
+
+  emit selectionUnlock(false);
   tm.commit(cmd);
 }
 

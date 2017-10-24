@@ -12,7 +12,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include/clang)
 include_directories(${PROJECT_SOURCE_DIR}/include/clang/clang-query)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/externalpackages)
-include_directories(${PROJECT_SOURCE_DIR}/externalpackages/qspinner)
 
 # needs headers for correct moc'ing and ui building
 set(UI_SOURCES
@@ -24,7 +23,9 @@ set(UI_SOURCES
   include/gui/CompletionInput.h
   src/gui/RecentFileManager.cpp
   include/gui/RecentFileManager.h
-  
+  src/gui/SelectionProvider.cpp
+  include/gui/SelectionProvider.h
+    
   src/core/DynamicCompleter.cpp
   include/core/DynamicCompleter.h
   src/core/DynamicStringListModel.cpp
@@ -62,7 +63,8 @@ set(UI_SOURCES
   src/core/ToolWrapper.cpp
   include/core/ToolWrapper.h
   
-  ${QSpinner_SOURCES}
+  ${qspinner_HEADERS}
+  ${qspinner_SOURCES}
 )
 
 set(CLANG_UI_SOURCES
@@ -72,6 +74,9 @@ set(CLANG_UI_SOURCES
   include/clang/QueryWrapper.h
   src/clang/QueryCompleterList.cpp
   include/clang/QueryCompleterList.h
+  
+  src/clang/ASTPrinterWrapper.cpp
+  include/clang/ASTPrinterWrapper.h
   
   include/QueryApp.h
   src/QueryApp.cpp
@@ -102,8 +107,13 @@ add_tidy_fix_target(tidy-core-fix
 
 add_library(query ${CLANG_UI_SOURCES} ${CLANG_QUERY_SOURCES})
 add_library(astui ${UI_SOURCES})
+
+target_include_directories(astui PUBLIC ${qspinner_INCLUDE_DIRS})
+target_include_directories(query PUBLIC ${astprinter_INCLUDE_DIRS})
+
 target_link_libraries(astui Qt5::Widgets Qt5::Concurrent)
 target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
+target_link_libraries(query ${astprinter_LIBRARIES})
 
 
 add_executable(astviewer${EXE_SUFFIX} src/main.cpp)

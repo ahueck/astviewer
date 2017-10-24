@@ -1,9 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QObject>
 #include <QMainWindow>
-#include <QStringList>
 
 namespace Ui {
 class MainWindow;
@@ -11,12 +9,16 @@ class MainWindow;
 
 namespace astviewer {
 class CommandInput;
+class RecentFileManager;
 class CoreManager;
 class LineTextEdit;
 class RecentFileManager;
+class SelectionProvider;
 }
 
 class QLabel;
+class QStatusBar;
+class QWidget;
 class QListView;
 class QModelIndex;
 class QStatusBar;
@@ -41,6 +43,7 @@ signals:
 
 public slots:
   void setSource(QString);
+  void setClangQuery(QString);
   void setClangAST(QString);
   void fileLoadFinished(QString);
   void updateDbView(QStringList);
@@ -56,7 +59,9 @@ private:
   astviewer::CommandInput* in { nullptr };
   astviewer::RecentFileManager* recent_files { nullptr };
   astviewer::LineTextEdit* src_edit { nullptr };
-  astviewer::LineTextEdit* ast_edit { nullptr };
+  astviewer::LineTextEdit* query_edit { nullptr };
+  astviewer::LineTextEdit* selection_edit { nullptr };
+  astviewer::SelectionProvider* selection_notifier { nullptr };
   QStringListModel* dbViewModel { nullptr };
 };
 
