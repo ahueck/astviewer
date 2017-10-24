@@ -95,6 +95,8 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
   ui->gridLayout->addWidget(in, 0, 0, 1, 1);
 
   in->setFocus(Qt::FocusReason::OtherFocusReason);
+
+  ui->tabWidgetInput->setCurrentWidget(ui->tabInput);
 }
 
 void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
@@ -104,6 +106,10 @@ void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
   QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_File,
       SLOT(setEnabled(bool)));
 
+  QObject::connect(selection_notifier, SIGNAL(lineSelected(unsigned, unsigned)),
+      cm, SLOT(sourceSelected(unsigned, unsigned)));
+  QObject::connect(cm, SIGNAL(selectionUnlock(bool)), selection_notifier,
+      SLOT(enableSelector(bool)));
 }
 
 QStatusBar* MainWindow::getStatusbar() {
