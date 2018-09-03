@@ -58,7 +58,11 @@ set(UI_SOURCES
 
   include/gui/Highlighter.h
   src/gui/Highlighter.cpp
-
+  include/gui/InputHighlighter.h
+  src/gui/InputHighlighter.cpp
+  include/gui/ClangASTHighlighter.h
+  src/gui/ClangASTHighlighter.cpp
+  
   src/core/CoreManager.cpp
   include/core/CoreManager.h
   src/core/TaskManager.cpp

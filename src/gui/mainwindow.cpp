@@ -3,33 +3,32 @@
 
 #include <core/CoreManager.h>
 
+#include <gui/ClangASTHighlighter.h>
 #include <gui/CommandInput.h>
-#include <gui/RecentFileManager.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
+#include <gui/RecentFileManager.h>
 #include <gui/SelectionProvider.h>
 
 #include <util/FileLoader.h>
 #include <util/QLogHandler.h>
 #include <util/Util.h>
 
-#include <QFileDialog>
-#include <QPointer>
 #include <QDebug>
-#include <QLabel>
-#include <QtConcurrent>
+#include <QFileDialog>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QLabel>
+#include <QPointer>
+#include <QtConcurrent>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), recent_files(
-        new astviewer::RecentFileManager(this)) {
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), recent_files(new astviewer::RecentFileManager(this)) {
   ui->setupUi(this);
 
   dbViewModel = new QStringListModel(this);
   this->ui->listViewCompDB->setModel(dbViewModel);
-  auto delegate = new astviewer::CompilationDbDelegate(
-      this->ui->listViewCompDB);
+  auto delegate = new astviewer::CompilationDbDelegate(this->ui->listViewCompDB);
   this->ui->listViewCompDB->setItemDelegate(delegate);
 
   src_edit = new astviewer::LineTextEdit(ui->widgetSrc);
@@ -53,34 +52,30 @@ MainWindow::MainWindow(QWidget *parent) :
   selection_edit->setUndoRedoEnabled(false);
   selection_edit->setReadOnly(true);
   selection_edit->showLine(true);
+  auto* highlighter = new astviewer::ClangASTHighlighter(selection_edit);
+  highlighter->setDocument(selection_edit->document());
   ui->verticalLayout_selection->addWidget(selection_edit);
 
   // Logging:
-  QObject::connect(&astviewer::QLogHandler::instance(),
-      SIGNAL(doLog(const QString&)), ui->logBrowser,
-      SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
+  QObject::connect(&astviewer::QLogHandler::instance(), SIGNAL(doLog(const QString&)), ui->logBrowser,
+                   SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
 
   // Recent file management:
   recent_files->setTopLevelMenu(ui->menuRecent_File);
-  QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this,
-      SLOT(recentFileLoad(QString)));
-  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files,
-      SLOT(clearRecentFiles()));
+  QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this, SLOT(recentFileLoad(QString)));
+  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files, SLOT(clearRecentFiles()));
 
   // Open action -> file / db:
-  QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this,
-      SLOT(openTU()));
-  QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this,
-      SLOT(openCompilationDB()));
+  QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this, SLOT(openTU()));
+  QObject::connect(ui->actionOpen_DB, SIGNAL(triggered()), this, SLOT(openCompilationDB()));
 
-  QObject::connect(ui->listViewCompDB,
-      SIGNAL(doubleClicked(const QModelIndex&)), this,
-      SLOT(clickedDBView(const QModelIndex&)));
+  QObject::connect(ui->listViewCompDB, SIGNAL(doubleClicked(const QModelIndex&)), this,
+                   SLOT(clickedDBView(const QModelIndex&)));
 }
 
 void MainWindow::registerInput(astviewer::CommandInput* in) {
   this->in = in;
-//in->setParent(ui->tabInput);
+  // in->setParent(ui->tabInput);
 
   in->setObjectName(QStringLiteral("textInput"));
 
@@ -100,25 +95,17 @@ void MainWindow::registerInput(astviewer::CommandInput* in) {
 }
 
 void MainWindow::registerWithManager(astviewer::CoreManager* cm) {
+  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_DB, SLOT(setEnabled(bool)));
+  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_File, SLOT(setEnabled(bool)));
 
-  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_DB,
-      SLOT(setEnabled(bool)));
-  QObject::connect(cm, SIGNAL(fileLoadUnlock(bool)), ui->actionOpen_File,
-      SLOT(setEnabled(bool)));
-
-  QObject::connect(selection_notifier, SIGNAL(lineSelected(unsigned, unsigned)),
-      cm, SLOT(sourceSelected(unsigned, unsigned)));
-  QObject::connect(cm, SIGNAL(selectionUnlock(bool)), selection_notifier,
-      SLOT(enableSelector(bool)));
+  QObject::connect(selection_notifier, SIGNAL(lineSelected(unsigned, unsigned)), cm,
+                   SLOT(sourceSelected(unsigned, unsigned)));
+  QObject::connect(cm, SIGNAL(selectionUnlock(bool)), selection_notifier, SLOT(enableSelector(bool)));
 }
 
-QStatusBar* MainWindow::getStatusbar() {
-  return ui->statusBar;
-}
+QStatusBar* MainWindow::getStatusbar() { return ui->statusBar; }
 
-void MainWindow::updateDbView(QStringList list) {
-  dbViewModel->setStringList(list);
-}
+void MainWindow::updateDbView(QStringList list) { dbViewModel->setStringList(list); }
 
 void MainWindow::clickedDBView(const QModelIndex& index) {
   QString item_text = index.data(Qt::DisplayRole).toString();
@@ -144,18 +131,13 @@ void MainWindow::setClangQuery(QString source) {
   query_edit->ensureCursorVisible();
 }
 
-void MainWindow::fileLoadFinished(QString file) {
-  recent_files->updateRecentFiles(file);
-}
+void MainWindow::fileLoadFinished(QString file) { recent_files->updateRecentFiles(file); }
 
-void MainWindow::recentFileLoad(QString recent_file) {
-  emit selectedTU(recent_file);
-}
+void MainWindow::recentFileLoad(QString recent_file) { emit selectedTU(recent_file); }
 
 void MainWindow::openTU() {
-  const auto file = QFileDialog::getOpenFileName(this,
-      tr("Open Translation Unit"), QString(),
-      tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
+  const auto file = QFileDialog::getOpenFileName(this, tr("Open Translation Unit"), QString(),
+                                                 tr("Translation Unit (*.cpp *.c *.cc *.cxx)"));
   qDebug() << "Selected TU file " << file;
 
   if (file == "") {
@@ -166,9 +148,8 @@ void MainWindow::openTU() {
 }
 
 void MainWindow::openCompilationDB() {
-  const auto file = QFileDialog::getOpenFileName(this,
-      tr("Open Compilation Database"), QString(),
-      tr("Compilation Database (*.json)"));
+  const auto file = QFileDialog::getOpenFileName(this, tr("Open Compilation Database"), QString(),
+                                                 tr("Compilation Database (*.json)"));
   qDebug() << "Selected DB file " << file;
 
   if (file == "") {
@@ -178,6 +159,4 @@ void MainWindow::openCompilationDB() {
   emit selectedCompilationDB(file);
 }
 
-MainWindow::~MainWindow() {
-  delete ui;
-}
+MainWindow::~MainWindow() { delete ui; }
