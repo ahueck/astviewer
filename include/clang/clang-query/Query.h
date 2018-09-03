@@ -10,26 +10,17 @@
 #ifndef LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_H
 #define LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_H
 
+#include <string>
 #include "clang/ASTMatchers/Dynamic/VariantValue.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/Optional.h"
-#include <string>
 
 namespace clang {
 namespace query {
 
 enum OutputKind { OK_Diag, OK_Print, OK_Dump };
 
-enum QueryKind {
-  QK_Invalid,
-  QK_NoOp,
-  QK_Help,
-  QK_Let,
-  QK_Match,
-  QK_SetBool,
-  QK_SetOutputKind,
-  QK_Quit
-};
+enum QueryKind { QK_Invalid, QK_NoOp, QK_Help, QK_Let, QK_Match, QK_SetBool, QK_SetOutputKind, QK_Quit };
 
 class QuerySession;
 
@@ -83,8 +74,7 @@ struct QuitQuery : Query {
 
 /// Query for "match MATCHER".
 struct MatchQuery : Query {
-  MatchQuery(const ast_matchers::dynamic::DynTypedMatcher &Matcher)
-      : Query(QK_Match), Matcher(Matcher) {}
+  MatchQuery(const ast_matchers::dynamic::DynTypedMatcher &Matcher) : Query(QK_Match), Matcher(Matcher) {}
   bool run(llvm::raw_ostream &OS, QuerySession &QS) const override;
 
   ast_matchers::dynamic::DynTypedMatcher Matcher;
@@ -103,34 +93,35 @@ struct LetQuery : Query {
   static bool classof(const Query *Q) { return Q->Kind == QK_Let; }
 };
 
-template <typename T> struct SetQueryKind {};
+template <typename T>
+struct SetQueryKind {};
 
-template <> struct SetQueryKind<bool> {
+template <>
+struct SetQueryKind<bool> {
   static const QueryKind value = QK_SetBool;
 };
 
-template <> struct SetQueryKind<OutputKind> {
+template <>
+struct SetQueryKind<OutputKind> {
   static const QueryKind value = QK_SetOutputKind;
 };
 
 /// Query for "set VAR VALUE".
-template <typename T> struct SetQuery : Query {
-  SetQuery(T QuerySession::*Var, T Value)
-      : Query(SetQueryKind<T>::value), Var(Var), Value(Value) {}
+template <typename T>
+struct SetQuery : Query {
+  SetQuery(T QuerySession::*Var, T Value) : Query(SetQueryKind<T>::value), Var(Var), Value(Value) {}
   bool run(llvm::raw_ostream &OS, QuerySession &QS) const override {
     QS.*Var = Value;
     return true;
   }
 
-  static bool classof(const Query *Q) {
-    return Q->Kind == SetQueryKind<T>::value;
-  }
+  static bool classof(const Query *Q) { return Q->Kind == SetQueryKind<T>::value; }
 
   T QuerySession::*Var;
   T Value;
 };
 
-} // namespace query
-} // namespace clang
+}  // namespace query
+}  // namespace clang
 
 #endif

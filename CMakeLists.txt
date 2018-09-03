@@ -1,11 +1,19 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT(astviewer)
 
-include(${PROJECT_SOURCE_DIR}/cmake/ToolchainOptions.cmake)
-
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+list(APPEND CMAKE_MODULE_PATH 
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
+include(ToolchainOptions)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/clang)
@@ -87,42 +95,28 @@ set(CLANG_QUERY_SOURCES
   src/clang/clang-query/QueryParser.cpp
 )
 
-add_format_target(format-all
-  "Formats astviewer source files"
-  EXCLUDES "external"
-)
-
-add_tidy_target(tidy-run
-  "Clang-tidy run on astviewer translation units"
-  SOURCES ${CLANG_UI_SOURCES} ${UI_SOURCES}
-  EXCLUDES "externalpackages"
-)
-
-add_tidy_fix_target(tidy-core-fix
-  "Clang-tidy run with fixes on astviewer translation units"
-  SOURCES ${CLANG_UI_SOURCES} ${UI_SOURCES}
-  EXCLUDES "externalpackages"
-  OTHER -checks=-*,modernize-*,llvm-header-guard,llvm-namespace-comment,google-explicit-constructor
-)
-
 add_library(query ${CLANG_UI_SOURCES} ${CLANG_QUERY_SOURCES})
-add_library(astui ${UI_SOURCES})
-
-target_include_directories(astui PUBLIC ${qspinner_INCLUDE_DIRS})
+target_project_compile_options(query
+  PUBLIC_FLAGS
+    -fno-rtti
+)
 target_include_directories(query PUBLIC ${astprinter_INCLUDE_DIRS})
-
-target_link_libraries(astui Qt5::Widgets Qt5::Concurrent)
+target_include_directories(query
+  SYSTEM
+  PUBLIC
+  ${LLVM_INCLUDE_DIRS}
+)
 target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
-target_link_libraries(query ${astprinter_LIBRARIES})
+target_link_libraries(query ${astprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
+
+
+add_library(astui ${UI_SOURCES})
+target_project_compile_options(astui)
+target_include_directories(astui PUBLIC ${qspinner_INCLUDE_DIRS})
+target_link_libraries(astui Qt5::Widgets Qt5::Concurrent)
 
 
 add_executable(astviewer${EXE_SUFFIX} src/main.cpp)
-
-target_link_libraries(astviewer${EXE_SUFFIX} query ${CLANG_LIBS} ${libedit_LIBRARIES} -lLLVMLineEditor -lLLVMSupport  -lLLVMLineEditor  -lLLVMMCParser  -lLLVMBitReader -lLLVMProfileData  -lLLVMOption -lLLVMCore -lLLVMMC -lLLVMSupport -lLLVMDemangle ${LLVM_SYSTEM_LIBS})
-
+target_project_compile_options(astviewer${EXE_SUFFIX})
+target_link_libraries(astviewer${EXE_SUFFIX} query ${CLANG_EXPORTED_TARGETS})
 target_link_libraries(astviewer${EXE_SUFFIX} astui)
-
-add_custom_target(executable
-  COMMENT "Target to compile astviewer executable"
-  DEPENDS astviewer${EXE_SUFFIX}
-)

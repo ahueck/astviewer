@@ -27,9 +27,7 @@ bool InvalidQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
   return false;
 }
 
-bool NoOpQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
-  return true;
-}
+bool NoOpQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const { return true; }
 
 bool HelpQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
   OS << "Available commands:\n\n"
@@ -60,12 +58,10 @@ namespace {
 struct CollectBoundNodes : MatchFinder::MatchCallback {
   std::vector<BoundNodes> &Bindings;
   CollectBoundNodes(std::vector<BoundNodes> &Bindings) : Bindings(Bindings) {}
-  void run(const MatchFinder::MatchResult &Result) override {
-    Bindings.push_back(Result.Nodes);
-  }
+  void run(const MatchFinder::MatchResult &Result) override { Bindings.push_back(Result.Nodes); }
 };
 
-} // namespace
+}  // namespace
 
 bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
   unsigned MatchCount = 0;
@@ -76,8 +72,7 @@ bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
     DynTypedMatcher MaybeBoundMatcher = Matcher;
     if (QS.BindRoot) {
       llvm::Optional<DynTypedMatcher> M = Matcher.tryBind("root");
-      if (M)
-        MaybeBoundMatcher = *M;
+      if (M) MaybeBoundMatcher = *M;
     }
     CollectBoundNodes Collect(Matches);
     if (!Finder.addDynamicMatcher(MaybeBoundMatcher, &Collect)) {
@@ -89,38 +84,33 @@ bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
     for (auto MI = Matches.begin(), ME = Matches.end(); MI != ME; ++MI) {
       OS << "\nMatch #" << ++MatchCount << ":\n\n";
 
-      for (auto BI = MI->getMap().begin(), BE = MI->getMap().end(); BI != BE;
-           ++BI) {
+      for (auto BI = MI->getMap().begin(), BE = MI->getMap().end(); BI != BE; ++BI) {
         switch (QS.OutKind) {
-        case OK_Diag: {
-          clang::SourceRange R = BI->second.getSourceRange();
-          if (R.isValid()) {
-            TextDiagnostic TD(OS, AST->getASTContext().getLangOpts(),
-                              &AST->getDiagnostics().getDiagnosticOptions());
-            TD.emitDiagnostic(R.getBegin(), DiagnosticsEngine::Note,
-                              "\"" + BI->first + "\" binds here",
-                              CharSourceRange::getTokenRange(R), None,
-                              &AST->getSourceManager());
+          case OK_Diag: {
+            clang::SourceRange R = BI->second.getSourceRange();
+            if (R.isValid()) {
+              TextDiagnostic TD(OS, AST->getASTContext().getLangOpts(), &AST->getDiagnostics().getDiagnosticOptions());
+              TD.emitDiagnostic(FullSourceLoc(R.getBegin(), AST->getSourceManager()), DiagnosticsEngine::Note,
+                                "\"" + BI->first + "\" binds here", CharSourceRange::getTokenRange(R), None);
+            }
+            break;
           }
-          break;
-        }
-        case OK_Print: {
-          OS << "Binding for \"" << BI->first << "\":\n";
-          BI->second.print(OS, AST->getASTContext().getPrintingPolicy());
-          OS << "\n";
-          break;
-        }
-        case OK_Dump: {
-          OS << "Binding for \"" << BI->first << "\":\n";
-          BI->second.dump(OS, AST->getSourceManager());
-          OS << "\n";
-          break;
-        }
+          case OK_Print: {
+            OS << "Binding for \"" << BI->first << "\":\n";
+            BI->second.print(OS, AST->getASTContext().getPrintingPolicy());
+            OS << "\n";
+            break;
+          }
+          case OK_Dump: {
+            OS << "Binding for \"" << BI->first << "\":\n";
+            BI->second.dump(OS, AST->getSourceManager());
+            OS << "\n";
+            break;
+          }
         }
       }
 
-      if (MI->getMap().empty())
-        OS << "No bindings.\n";
+      if (MI->getMap().empty()) OS << "No bindings.\n";
     }
   }
 
@@ -142,5 +132,5 @@ const QueryKind SetQueryKind<bool>::value;
 const QueryKind SetQueryKind<OutputKind>::value;
 #endif
 
-} // namespace query
-} // namespace clang
+}  // namespace query
+}  // namespace clang

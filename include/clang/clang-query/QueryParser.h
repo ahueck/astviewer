@@ -10,10 +10,10 @@
 #ifndef LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_PARSER_H
 #define LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_PARSER_H
 
+#include <cstddef>
 #include "Query.h"
 #include "QuerySession.h"
 #include "llvm/LineEditor/LineEditor.h"
-#include <cstddef>
 
 namespace clang {
 namespace query {
@@ -21,7 +21,7 @@ namespace query {
 class QuerySession;
 
 class QueryParser {
-public:
+ public:
   /// Parse \a Line as a query.
   ///
   /// \return A QueryRef representing the query, which may be an InvalidQuery.
@@ -32,17 +32,18 @@ public:
   /// likely to least likely.
   ///
   /// \return A vector of completions for \a Line.
-  static std::vector<llvm::LineEditor::Completion>
-  complete(StringRef Line, size_t Pos, const QuerySession &QS);
+  static std::vector<llvm::LineEditor::Completion> complete(StringRef Line, size_t Pos, const QuerySession &QS);
 
-private:
+ private:
   QueryParser(StringRef Line, const QuerySession &QS)
       : Begin(Line.begin()), End(Line.end()), CompletionPos(nullptr), QS(QS) {}
 
   StringRef lexWord();
 
-  template <typename T> struct LexOrCompleteWord;
-  template <typename T> LexOrCompleteWord<T> lexOrCompleteWord(StringRef &Str);
+  template <typename T>
+  struct LexOrCompleteWord;
+  template <typename T>
+  LexOrCompleteWord<T> lexOrCompleteWord(StringRef &Str);
 
   QueryRef parseSetBool(bool QuerySession::*Var);
   QueryRef parseSetOutputKind();
@@ -65,7 +66,7 @@ private:
   const QuerySession &QS;
 };
 
-} // namespace query
-} // namespace clang
+}  // namespace query
+}  // namespace clang
 
-#endif // LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_PARSER_H
+#endif  // LLVM_CLANG_TOOLS_EXTRA_CLANG_QUERY_QUERY_PARSER_H

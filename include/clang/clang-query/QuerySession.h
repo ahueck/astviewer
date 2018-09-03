@@ -23,7 +23,7 @@ namespace query {
 
 /// Represents the state for a particular clang-query session.
 class QuerySession {
-public:
+ public:
   QuerySession(llvm::ArrayRef<std::unique_ptr<ASTUnit>> ASTs)
       : ASTs(ASTs), OutKind(OK_Diag), BindRoot(true), Terminate(false) {}
 
@@ -34,7 +34,7 @@ public:
   llvm::StringMap<ast_matchers::dynamic::VariantValue> NamedValues;
 };
 
-} // namespace query
-} // namespace clang
+}  // namespace query
+}  // namespace clang
 
 #endif
