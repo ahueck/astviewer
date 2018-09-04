@@ -12,40 +12,28 @@
 
 namespace astviewer {
 
-Highlighter::Highlighter(QObject* parent) :
-    QSyntaxHighlighter(parent) {
-
-}
+Highlighter::Highlighter(QObject* parent) : QSyntaxHighlighter(parent) {}
 
 void Highlighter::highlightBlock(const QString& text) {
-  static const QRegularExpression quote("\".*\"");
+  static const QRegularExpression quote("['\"]([^ '\"]+[ ]*[^ '\"]*)+['\"]");
   static const QRegularExpression numbers("[0-9]+");
+  static const QRegularExpression hex_numbers("0x[0-9a-fA-F]+");
 
-  const auto apply_color = [&] (QRegularExpressionMatchIterator& matches, const QColor& color) {
-    while(matches.hasNext()) {
+  const auto apply_color = [&](QRegularExpressionMatchIterator& matches, const QColor& color) {
+    while (matches.hasNext()) {
       const auto match = matches.next();
       setFormat(match.capturedStart(), match.capturedLength(), color);
     }
   };
 
-  auto matches = quote.globalMatch(text);
-  apply_color(matches, Qt::darkGreen);
-
-  matches = numbers.globalMatch(text);
+  auto matches = numbers.globalMatch(text);
   apply_color(matches, Qt::darkCyan);
 
-  Parentheses block_parens;
-  const auto length = text.length();
-  for (int position = 0; position < length; ++position) {
-    const auto c = text.at(position);
-    if(Parenthesis::isOpened(c)) {
-      block_parens.push_back(Parenthesis(Parenthesis::Type::Opened, c, position));
-    } else if(Parenthesis::isClosed(c)) {
-      block_parens.push_back(Parenthesis(Parenthesis::Type::Closed, c, position));
-    }
-  }
-  auto u_data = userDataOf(currentBlock());
-  u_data->setParentheses(block_parens);
+  matches = hex_numbers.globalMatch(text);
+  apply_color(matches, Qt::darkCyan);
+
+  matches = quote.globalMatch(text);
+  apply_color(matches, {"#1ebf8a"});
 }
 
 Highlighter::~Highlighter() = default;
