@@ -15,7 +15,7 @@ namespace astviewer {
 Highlighter::Highlighter(QObject* parent) : QSyntaxHighlighter(parent) {}
 
 void Highlighter::highlightBlock(const QString& text) {
-  static const QRegularExpression quote("['\"]([^ ']+[ ]*[^ ']*)+['\"]");
+  static const QRegularExpression quote("['\"]([^ '\"]+[ ]*[^ '\"]*)+['\"]");
   static const QRegularExpression numbers("[0-9]+");
   static const QRegularExpression hex_numbers("0x[0-9a-fA-F]+");
 
@@ -33,7 +33,7 @@ void Highlighter::highlightBlock(const QString& text) {
   apply_color(matches, Qt::darkCyan);
 
   matches = quote.globalMatch(text);
-  apply_color(matches, Qt::darkGreen);
+  apply_color(matches, {"#1ebf8a"});
 }
 
 Highlighter::~Highlighter() = default;
