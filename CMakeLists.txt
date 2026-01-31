@@ -143,15 +143,18 @@ target_project_compile_options(query
   PUBLIC_FLAGS
     -fno-rtti
 )
-target_include_directories(query PUBLIC ${astprinter_INCLUDE_DIRS})
+target_include_directories(query SYSTEM PUBLIC ${astprinter_INCLUDE_DIRS})
+target_include_directories(query SYSTEM PUBLIC ${irprinter_INCLUDE_DIRS})
 target_include_directories(query
   SYSTEM
   PUBLIC
   ${LLVM_INCLUDE_DIRS}
 )
+
 target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
-target_link_libraries(query ${astprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
+target_link_libraries(query ${astprinter_LIBRARIES} ${irprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
 add_dependencies(query astprinter)
+add_dependencies(query irprinter)
 
 
 add_library(astui ${UI_SOURCES})

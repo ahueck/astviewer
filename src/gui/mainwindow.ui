@@ -238,7 +238,7 @@
                 <item>
                  <widget class="QTabWidget" name="tabWidgetTools">
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="widgetQuery">
                    <attribute name="title">
@@ -251,6 +251,12 @@
                     <string>Selection AST</string>
                    </attribute>
                    <layout class="QVBoxLayout" name="verticalLayout_selection"/>
+                  </widget>
+                  <widget class="QWidget" name="widgetSelectionIR">
+                   <attribute name="title">
+                    <string>Selection IR</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_selectionir"/>
                   </widget>
                  </widget>
                 </item>
@@ -328,7 +334,7 @@
      <x>0</x>
      <y>0</y>
      <width>790</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAstViewer">

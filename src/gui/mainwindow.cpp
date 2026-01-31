@@ -56,6 +56,17 @@ MainWindow::MainWindow(QWidget* parent)
   highlighter->setDocument(selection_edit->document());
   ui->verticalLayout_selection->addWidget(selection_edit);
 
+  ir_selection_edit = new astviewer::LineTextEdit(ui->widgetSelectionIR);
+  ir_selection_edit->setObjectName(QStringLiteral("plainTextEditSelectionIR"));
+  ir_selection_edit->setAcceptDrops(false);
+  ir_selection_edit->setUndoRedoEnabled(false);
+  ir_selection_edit->setReadOnly(true);
+  ir_selection_edit->showLine(true);
+  // TODO: IR highlighter
+  // auto* highlighter = new astviewer::ClangASTHighlighter(ir_selection_edit);
+  // highlighter->setDocument(ir_selection_edit->document());
+  ui->verticalLayout_selectionir->addWidget(ir_selection_edit);
+
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(), SIGNAL(doLog(const QString&)), ui->logBrowser,
                    SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
