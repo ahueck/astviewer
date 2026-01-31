@@ -1,0 +1,41 @@
+name: Compile
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        llvm_version: [19, 21]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget qtbase5-dev qt5-qmake libedit-dev zlib1g-dev libxml2-dev
+
+      - name: Install LLVM
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh ${{ matrix.llvm_version }}
+          sudo apt-get install -y libclang-${{ matrix.llvm_version }}-dev llvm-${{ matrix.llvm_version }}-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DLLVM_DIR=/usr/lib/llvm-${{ matrix.llvm_version }}/lib/cmake/llvm \
+            -DClang_DIR=/usr/lib/llvm-${{ matrix.llvm_version }}/lib/cmake/clang \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc) 
