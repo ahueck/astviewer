@@ -9,6 +9,7 @@
 #include <waitingspinnerwidget.h>
 
 #include <QStatusBar>
+#include <QTimer>
 
 namespace astviewer {
 
@@ -17,6 +18,14 @@ StatusHandler::StatusHandler(QObject* parent) :
   spinner = new WaitingSpinnerWidget(nullptr, false, false);
   spinner->setLineLength(5);
   spinner->setInnerRadius(5);
+
+  clearTimer = new QTimer(this);
+  clearTimer->setSingleShot(true);
+  connect(clearTimer, &QTimer::timeout, [this]() {
+    if (status) {
+      status->clearMessage();
+    }
+  });
 }
 
 void StatusHandler::setStatus(QStatusBar* status) {
@@ -25,6 +34,8 @@ void StatusHandler::setStatus(QStatusBar* status) {
 }
 
 void StatusHandler::processStarted(QString msg, size_t id) {
+  clearTimer->stop();
+  ++activeTasks;
   if (status) {
     spinner->start();
     status->showMessage(msg);
@@ -32,9 +43,12 @@ void StatusHandler::processStarted(QString msg, size_t id) {
 }
 
 void StatusHandler::processFinished(size_t id) {
-  if (status) {
-    status->clearMessage();
+  if (activeTasks > 0) {
+    --activeTasks;
+  }
+  if (activeTasks == 0) {
     spinner->stop();
+    clearTimer->start(1000);
   }
 }
 

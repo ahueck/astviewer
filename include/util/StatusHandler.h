@@ -15,6 +15,7 @@
 class QStatusBar;
 class QString;
 class WaitingSpinnerWidget;
+class QTimer;
 
 namespace astviewer {
 
@@ -24,6 +25,8 @@ Q_OBJECT
 private:
   WaitingSpinnerWidget* spinner;
   QStatusBar* status { nullptr };
+  QTimer* clearTimer { nullptr };
+  int activeTasks { 0 };
 
 public:
   explicit StatusHandler(QObject* parent = nullptr);
