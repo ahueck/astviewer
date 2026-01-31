@@ -13,10 +13,24 @@
 #include <string>
 #include "clang/ASTMatchers/Dynamic/VariantValue.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
+#include "llvm/ADT/StringRef.h"
+#include "llvm/Config/llvm-config.h"
+
+#if LLVM_VERSION_MAJOR >= 16
+#include <optional>
+namespace llvm {
+template <typename T>
+using Optional = std::optional<T>;
+inline constexpr std::nullopt_t None = std::nullopt;
+}
+#else
 #include "llvm/ADT/Optional.h"
+#endif
 
 namespace clang {
 namespace query {
+
+using llvm::StringRef;
 
 enum OutputKind { OK_Diag, OK_Print, OK_Dump };
 

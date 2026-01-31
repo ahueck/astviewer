@@ -91,7 +91,7 @@ bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
             if (R.isValid()) {
               TextDiagnostic TD(OS, AST->getASTContext().getLangOpts(), &AST->getDiagnostics().getDiagnosticOptions());
               TD.emitDiagnostic(FullSourceLoc(R.getBegin(), AST->getSourceManager()), DiagnosticsEngine::Note,
-                                "\"" + BI->first + "\" binds here", CharSourceRange::getTokenRange(R), None);
+                                "\"" + BI->first + "\" binds here", CharSourceRange::getTokenRange(R), llvm::None);
             }
             break;
           }
@@ -103,7 +103,11 @@ bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
           }
           case OK_Dump: {
             OS << "Binding for \"" << BI->first << "\":\n";
+#if LLVM_VERSION_MAJOR >= 11
+            BI->second.dump(OS, AST->getASTContext());
+#else
             BI->second.dump(OS, AST->getSourceManager());
+#endif
             OS << "\n";
             break;
           }

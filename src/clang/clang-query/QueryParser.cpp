@@ -67,11 +67,11 @@ struct QueryParser::LexOrCompleteWord {
       Switch.Case(S, Value);
     else if (N != 1 && IsCompletion && WordCompletionPos <= CaseStr.size() &&
              CaseStr.substr(0, WordCompletionPos) == Word.substr(0, WordCompletionPos))
-      P->Completions.push_back(LineEditor::Completion((CaseStr.substr(WordCompletionPos) + " ").str(), CaseStr));
+      P->Completions.push_back(LineEditor::Completion((CaseStr.substr(WordCompletionPos) + " ").str(), CaseStr.str()));
     return *this;
   }
 
-  T Default(const T &Value) const { return Switch.Default(Value); }
+  T Default(const T &Value) { return Switch.Default(Value); }
 };
 
 // Lexes a word and stores it in Word. Returns a LexOrCompleteWord<T> object
@@ -134,8 +134,9 @@ QueryRef makeInvalidQueryFromDiagnostics(const Diagnostics &Diag) {
 }  // namespace
 
 QueryRef QueryParser::completeMatcherExpression() {
+  StringRef Code(Begin, End - Begin);
   std::vector<MatcherCompletion> Comps =
-      Parser::completeExpression(StringRef(Begin, End - Begin), CompletionPos - Begin, nullptr, &QS.NamedValues);
+      Parser::completeExpression(Code, CompletionPos - Begin, nullptr, &QS.NamedValues);
   for (auto I = Comps.begin(), E = Comps.end(); I != E; ++I) {
     Completions.push_back(LineEditor::Completion(I->TypedText, I->MatcherDecl));
   }
@@ -174,7 +175,8 @@ QueryRef QueryParser::doParse() {
 
       Diagnostics Diag;
       ast_matchers::dynamic::VariantValue Value;
-      if (!Parser::parseExpression(StringRef(Begin, End - Begin), nullptr, &QS.NamedValues, &Value, &Diag)) {
+      StringRef Code(Begin, End - Begin);
+      if (!Parser::parseExpression(Code, nullptr, &QS.NamedValues, &Value, &Diag)) {
         return makeInvalidQueryFromDiagnostics(Diag);
       }
 
@@ -185,8 +187,9 @@ QueryRef QueryParser::doParse() {
       if (CompletionPos) return completeMatcherExpression();
 
       Diagnostics Diag;
+      StringRef Code(Begin, End - Begin);
       Optional<DynTypedMatcher> Matcher =
-          Parser::parseMatcherExpression(StringRef(Begin, End - Begin), nullptr, &QS.NamedValues, &Diag);
+          Parser::parseMatcherExpression(Code, nullptr, &QS.NamedValues, &Diag);
       if (!Matcher) {
         return makeInvalidQueryFromDiagnostics(Diag);
       }

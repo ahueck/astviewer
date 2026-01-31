@@ -1,11 +1,11 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 PROJECT(astviewer)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -14,6 +14,45 @@ list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 include(ToolchainOptions)
+
+# Detect Clang resource directory
+find_program(CLANG_EXECUTABLE NAMES clang-21 clang-19 clang-18 clang-17 clang)
+if(CLANG_EXECUTABLE)
+  execute_process(
+    COMMAND ${CLANG_EXECUTABLE} -print-resource-dir
+    OUTPUT_VARIABLE CLANG_RESOURCE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  add_definitions(-DCLANG_RESOURCE_DIR="${CLANG_RESOURCE_DIR}")
+endif()
+
+# Filter out tools and extra modules from CLANG_EXPORTED_TARGETS
+set(REQUIRED_CLANG_LIBS
+  clangBasic
+  clangLex
+  clangParse
+  clangAST
+  clangASTMatchers
+  clangDynamicASTMatchers
+  clangSema
+  clangAnalysis
+  clangEdit
+  clangRewrite
+  clangDriver
+  clangSerialization
+  clangFrontend
+  clangTooling
+  clangToolingCore
+)
+
+set(FILTERED_CLANG_TARGETS "")
+foreach(target ${CLANG_EXPORTED_TARGETS})
+  if(target IN_LIST REQUIRED_CLANG_LIBS)
+    list(APPEND FILTERED_CLANG_TARGETS ${target})
+  endif()
+endforeach()
+set(CLANG_EXPORTED_TARGETS ${FILTERED_CLANG_TARGETS})
+message(STATUS "FILTERED CLANG_EXPORTED_TARGETS: ${CLANG_EXPORTED_TARGETS}")
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include/clang)
@@ -112,6 +151,7 @@ target_include_directories(query
 )
 target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
 target_link_libraries(query ${astprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
+add_dependencies(query astprinter)
 
 
 add_library(astui ${UI_SOURCES})
