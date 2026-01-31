@@ -2,9 +2,8 @@
 
 format=clang-format
 
-# clang-format-3.6 does not support all file entries 
-# TODO check compatibility with clang-format-3.7 
-for v in 3.8 3.7 ; do
+# Try to find a modern clang-format version
+for v in 21 20 19 18 ; do
   if [[ $(type -p clang-format-"$v") ]] ; then  
     format="clang-format-"$v" -i -style=file -fallback-style=none"
     break

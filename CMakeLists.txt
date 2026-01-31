@@ -16,7 +16,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(ToolchainOptions)
 
 # Detect Clang resource directory
-find_program(CLANG_EXECUTABLE NAMES clang-21 clang-19 clang-18 clang-17 clang)
+find_program(CLANG_EXECUTABLE NAMES clang-${LLVM_VERSION_MAJOR} clang)
 if(CLANG_EXECUTABLE)
   execute_process(
     COMMAND ${CLANG_EXECUTABLE} -print-resource-dir

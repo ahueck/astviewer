@@ -3,7 +3,7 @@
 function find_tidy() {
   # Try for most current clang-tidy
   # out: $ctidy
-  for v in 4.0 3.8 3.7 3.6 ; do
+  for v in 21 20 19 18 ; do
     if [[ $(type -p clang-tidy-"$v") ]] ; then  
       ctidy=clang-tidy-"$v"
       break

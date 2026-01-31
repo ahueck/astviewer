@@ -15,7 +15,7 @@ function(add_tidy_target target comment)
   endforeach()
 
   find_program(TIDY_COMMAND
-               NAMES clang-tidy clang-tidy-6.0 clang-tidy-5.0 clang-tidy-4.0 clang-tidy-3.8 clang-tidy-3.7)
+               NAMES clang-tidy-${LLVM_VERSION_MAJOR} clang-tidy)
   if(TIDY_COMMAND)
     add_custom_target(${target}
       COMMAND ${TIDY_COMMAND} -p ${CMAKE_BINARY_DIR}

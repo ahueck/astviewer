@@ -89,9 +89,13 @@ bool MatchQuery::run(llvm::raw_ostream &OS, QuerySession &QS) const {
           case OK_Diag: {
             clang::SourceRange R = BI->second.getSourceRange();
             if (R.isValid()) {
+#if LLVM_VERSION_MAJOR >= 20
+              TextDiagnostic TD(OS, AST->getASTContext().getLangOpts(), AST->getDiagnostics().getDiagnosticOptions());
+#else
               TextDiagnostic TD(OS, AST->getASTContext().getLangOpts(), &AST->getDiagnostics().getDiagnosticOptions());
+#endif
               TD.emitDiagnostic(FullSourceLoc(R.getBegin(), AST->getSourceManager()), DiagnosticsEngine::Note,
-                                "\"" + BI->first + "\" binds here", CharSourceRange::getTokenRange(R), llvm::None);
+                                "\"" + BI->first + "\" binds here", CharSourceRange::getTokenRange(R), {});
             }
             break;
           }

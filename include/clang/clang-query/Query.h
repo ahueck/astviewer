@@ -21,7 +21,9 @@
 namespace llvm {
 template <typename T>
 using Optional = std::optional<T>;
+#if LLVM_VERSION_MAJOR < 17
 inline constexpr std::nullopt_t None = std::nullopt;
+#endif
 }
 #else
 #include "llvm/ADT/Optional.h"
