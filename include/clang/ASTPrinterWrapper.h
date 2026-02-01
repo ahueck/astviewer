@@ -14,21 +14,22 @@
 
 namespace astprinter {
 class NodeFinder;
-}
+}  // namespace astprinter
 
 namespace astviewer {
 
-class ASTPrinterWrapper: public ToolWrapper {
+class ASTPrinterWrapper : public ToolWrapper {
   std::string out_str;
   llvm::raw_string_ostream out{out_str};
   std::unique_ptr<astprinter::NodeFinder> astprinter;
-public:
+
+ public:
   ASTPrinterWrapper(QObject* parent = nullptr);
-  void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
+  void init(const CodeContext& data) override;
   void sourceSelection(Command cmd) override;
   virtual ~ASTPrinterWrapper();
 };
 
-} /* namespace astviewer */
+}  // namespace astviewer
 
 #endif /* INCLUDE_CLANG_ASTPRINTERWRAPPER_H_ */

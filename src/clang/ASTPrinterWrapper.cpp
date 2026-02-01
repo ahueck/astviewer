@@ -8,25 +8,23 @@
 #include <clang/ASTPrinterWrapper.h>
 #include <util/Util.h>
 
-#include <NodeFinder.h>
 #include <ClangUtil.h>
+#include <NodeFinder.h>
 
 namespace astviewer {
 
-ASTPrinterWrapper::ASTPrinterWrapper(QObject* parent) : ToolWrapper(parent) {
+ASTPrinterWrapper::ASTPrinterWrapper(QObject* parent) : ToolWrapper(parent) {}
 
-}
-
-void ASTPrinterWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
+void ASTPrinterWrapper::init(const CodeContext& data) {
   qDebug() << "Init printer";
-  auto& ctx = AST_vec[0]->getASTContext();
+  auto& ctx = data.AST_vec[0]->getASTContext();
   astprinter = astviewer::make_unique<astprinter::NodeFinder>(ctx, out);
   astprinter->showColor(false);
 }
 
 void ASTPrinterWrapper::sourceSelection(Command cmd) {
   qDebug() << "Execute sourceSelection request: " << cmd.input;
-  auto query = [&](Command c) -> Command {
+  run([&](Command c) -> Command {
     out_str.clear();
     astprinter->setLocation(c.row_start, c.row_end);
     astprinter->find(/*print_all_if_not_found=*/false);
@@ -34,10 +32,9 @@ void ASTPrinterWrapper::sourceSelection(Command cmd) {
     c.result = QString::fromStdString(out.str());
 
     return c;
-  };
-  run(query, cmd);
+  }, cmd);
 }
 
 ASTPrinterWrapper::~ASTPrinterWrapper() = default;
 
-} /* namespace astviewer */
+}  // namespace astviewer

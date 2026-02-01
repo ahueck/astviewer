@@ -26,25 +26,22 @@ namespace astviewer {
 
 using namespace clang::query;
 
-QueryWrapper::QueryWrapper(QObject* parent) :
-    ToolWrapper(parent), qs(nullptr) {
+QueryWrapper::QueryWrapper(QObject* parent) : ToolWrapper(parent), qs(nullptr) {}
 
-}
-
-void QueryWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
-  qDebug() << "Init tool. #ASTs: " << AST_vec.size();
+void QueryWrapper::init(const CodeContext& data) {
+  qDebug() << "Init tool. #ASTs: " << data.AST_vec.size();
   if (qs == nullptr) {
-    qs = astviewer::make_unique<QuerySession>(AST_vec);
+    qs = astviewer::make_unique<QuerySession>(data.AST_vec);
   } else {
-    qs->ASTs = decltype(qs->ASTs)(AST_vec);
+    qs->ASTs = decltype(qs->ASTs)(data.AST_vec);
   }
   emit sessionChanged(qs.get());
 }
 
 void QueryWrapper::commandInput(Command cmd) {
   qDebug() << "Execute query request: " << cmd.input;
-  //QuerySession& qsession = *qs.get();
-  auto query = [&](Command c) -> Command {
+  // QuerySession& qsession = *qs.get();
+  run([&](Command c) -> Command {
     auto file_std = c.input.toStdString();
     llvm::StringRef file_ref(file_std);
 
@@ -56,8 +53,7 @@ void QueryWrapper::commandInput(Command cmd) {
 
     c.result = QString::fromStdString(out.str());
     return c;
-  };
-  run(query, cmd);
+  }, cmd);
 }
 
 void QueryWrapper::futureFinished() {
@@ -67,5 +63,4 @@ void QueryWrapper::futureFinished() {
 
 QueryWrapper::~QueryWrapper() = default;
 
-} /* namespace astviewer */
-
+}  // namespace astviewer

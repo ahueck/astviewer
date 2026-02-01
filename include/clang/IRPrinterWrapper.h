@@ -14,7 +14,7 @@
 
 namespace irprinter {
 class IRNodeFinder;
-}
+}  // namespace irprinter
 
 namespace astviewer {
 
@@ -25,11 +25,11 @@ class IRPrinterWrapper : public ToolWrapper {
 
  public:
   IRPrinterWrapper(QObject* parent = nullptr);
-  void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
+  void init(const CodeContext& data) override;
   void sourceSelection(Command cmd) override;
   virtual ~IRPrinterWrapper();
 };
 
-} /* namespace astviewer */
+}  // namespace astviewer
 
 #endif /* INCLUDE_CLANG_IRPRINTERWRAPPER_H_ */

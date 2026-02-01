@@ -16,17 +16,22 @@ namespace astviewer {
 
 IRPrinterWrapper::IRPrinterWrapper(QObject* parent) : ToolWrapper(parent) {}
 
-void IRPrinterWrapper::init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) {
+void IRPrinterWrapper::init(const CodeContext& data) {
   qDebug() << "Init IR printer";
-  // FIXME: IRNodeFinder requires CommonOptionsParser.
+  llvm::ArrayRef<std::string> ref(data.file);
+  // FIXME: irprinter also needs argument adjuster to find the standard header includes..
+  // Maybe implement this in irprinter via a cmake option @ LLVMTool.
+  irprinter = astviewer::make_unique<irprinter::IRNodeFinder>(data.compilation_database, ref, out);
+  irprinter->parse();
 }
 
 void IRPrinterWrapper::sourceSelection(Command cmd) {
   qDebug() << "Execute IR sourceSelection request: " << cmd.input;
-  auto query = [&](Command c) -> Command {
+  run([&](Command c) -> Command {
     out_str.clear();
     if (irprinter) {
       // irprinter->...
+      irprinter->printByLocation(cmd.row_start, cmd.row_end);
     } else {
       out << "IRPrinter not initialized (requires CommonOptionsParser)\n";
     }
@@ -34,10 +39,9 @@ void IRPrinterWrapper::sourceSelection(Command cmd) {
     c.result = QString::fromStdString(out.str());
 
     return c;
-  };
-  run(query, cmd);
+  }, cmd);
 }
 
 IRPrinterWrapper::~IRPrinterWrapper() = default;
 
-} /* namespace astviewer */
+}  // namespace astviewer

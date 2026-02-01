@@ -25,31 +25,31 @@ class ASTUnit;
 namespace clang {
 namespace query {
 class QuerySession;
-}
-}
+}  // namespace query
+}  // namespace clang
 
 namespace astviewer {
 
-class QueryWrapper: public ToolWrapper {
-Q_OBJECT
+class QueryWrapper : public ToolWrapper {
+  Q_OBJECT
 
-private:
+ private:
   // TODO make QuerySession per command execution?
   std::unique_ptr<clang::query::QuerySession> qs;
 
-public:
+ public:
   explicit QueryWrapper(QObject* parent = nullptr);
-  void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) override;
+  void init(const CodeContext& data) override;
   void commandInput(Command cmd) override;
   ~QueryWrapper() override;
 
-protected slots:
+ protected slots:
   void futureFinished() override;
 
-signals:
+ signals:
   void sessionChanged(clang::query::QuerySession*);
 };
 
-} /* namespace astviewer */
+}  // namespace astviewer
 
 #endif /* INCLUDE_CORE_QUERYWRAPPER_H_ */
