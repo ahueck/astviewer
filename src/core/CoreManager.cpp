@@ -59,6 +59,7 @@ void CoreManager::handleFinished(Command cmd) {
     emit selectionUnlock(true);
     break;
   case Command::CommandType::compilationDb:
+    win->dbLoadFinished(cmd.input);
     emit fileLoadUnlock(true);
     break;
   default:

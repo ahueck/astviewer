@@ -9,10 +9,9 @@ class MainWindow;
 
 namespace astviewer {
 class CommandInput;
-class RecentFileManager;
+class RecentListManager;
 class CoreManager;
 class LineTextEdit;
-class RecentFileManager;
 class SelectionProvider;
 }  // namespace astviewer
 
@@ -47,18 +46,21 @@ class MainWindow : public QMainWindow {
   void setClangAST(QString);
   void setClangIR(QString);
   void fileLoadFinished(QString);
+  void dbLoadFinished(QString);
   void updateDbView(QStringList);
 
  protected slots:
   void openTU();
   void openCompilationDB();
   void recentFileLoad(QString);
+  void recentDbLoad(QString);
   void clickedDBView(const QModelIndex& index);
 
  private:
   Ui::MainWindow* ui;
   astviewer::CommandInput* in{nullptr};
-  astviewer::RecentFileManager* recent_files{nullptr};
+  astviewer::RecentListManager* recent_files{nullptr};
+  astviewer::RecentListManager* recent_dbs{nullptr};
   astviewer::LineTextEdit* src_edit{nullptr};
   astviewer::LineTextEdit* query_edit{nullptr};
   astviewer::LineTextEdit* selection_edit{nullptr};

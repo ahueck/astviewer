@@ -7,7 +7,7 @@
 #include <gui/CommandInput.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
-#include <gui/RecentFileManager.h>
+#include <gui/RecentListManager.h>
 #include <gui/SelectionProvider.h>
 
 #include <util/FileLoader.h>
@@ -23,7 +23,10 @@
 #include <QtConcurrent>
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), recent_files(new astviewer::RecentFileManager(this)) {
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      recent_files(new astviewer::RecentListManager("recent_files", 6, this)),
+      recent_dbs(new astviewer::RecentListManager("recent_dbs", 6, this)) {
   ui->setupUi(this);
 
   dbViewModel = new QStringListModel(this);
@@ -73,8 +76,13 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Recent file management:
   recent_files->setTopLevelMenu(ui->menuRecent_File);
-  QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this, SLOT(recentFileLoad(QString)));
-  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files, SLOT(clearRecentFiles()));
+  QObject::connect(recent_files, SIGNAL(itemSelected(QString)), this, SLOT(recentFileLoad(QString)));
+  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files, SLOT(clearRecentItems()));
+
+  // Recent DB management:
+  recent_dbs->setTopLevelMenu(ui->menuRecent_DBs);
+  QObject::connect(recent_dbs, SIGNAL(itemSelected(QString)), this, SLOT(recentDbLoad(QString)));
+  QObject::connect(ui->actionClear_Recent_DBs, SIGNAL(triggered()), recent_dbs, SLOT(clearRecentItems()));
 
   // Open action -> file / db:
   QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this, SLOT(openTU()));
@@ -149,9 +157,13 @@ void MainWindow::setClangQuery(QString source) {
   query_edit->ensureCursorVisible();
 }
 
-void MainWindow::fileLoadFinished(QString file) { recent_files->updateRecentFiles(file); }
+void MainWindow::fileLoadFinished(QString file) { recent_files->updateRecentItems(file); }
 
 void MainWindow::recentFileLoad(QString recent_file) { emit selectedTU(recent_file); }
+
+void MainWindow::recentDbLoad(QString recent_db) { emit selectedCompilationDB(recent_db); }
+
+void MainWindow::dbLoadFinished(QString db) { recent_dbs->updateRecentItems(db); }
 
 void MainWindow::openTU() {
   const auto file = QFileDialog::getOpenFileName(this, tr("Open Translation Unit"), QString(),

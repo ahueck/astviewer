@@ -69,8 +69,9 @@ set(UI_SOURCES
   include/gui/CommandInput.h
   src/gui/CompletionInput.cpp
   include/gui/CompletionInput.h
-  src/gui/RecentFileManager.cpp
-  include/gui/RecentFileManager.h
+      src/gui/RecentListManager.cpp
+      include/gui/RecentListManager.h
+  
   src/gui/SelectionProvider.cpp
   include/gui/SelectionProvider.h
     
