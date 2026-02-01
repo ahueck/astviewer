@@ -135,6 +135,13 @@ void MainWindow::setClangAST(QString source) {
   selection_edit->ensureCursorVisible();
 }
 
+void MainWindow::setClangIR(QString source) {
+  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelectionIR);
+  ir_selection_edit->clear();
+  ir_selection_edit->insertPlainText(source);
+  ir_selection_edit->ensureCursorVisible();
+}
+
 void MainWindow::setClangQuery(QString source) {
   ui->tabWidgetTools->setCurrentWidget(ui->widgetQuery);
   query_edit->clear();

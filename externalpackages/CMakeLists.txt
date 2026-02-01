@@ -35,6 +35,7 @@ add_library(libastprint STATIC IMPORTED GLOBAL)
 set_target_properties(libastprint PROPERTIES
   IMPORTED_LOCATION "${INSTALL_DIR}/lib/libclang-ast-print${CMAKE_STATIC_LIBRARY_SUFFIX}"
   INTERFACE_INCLUDE_DIRECTORIES "${INSTALL_DIR}/include"
+  INTERFACE_LINK_LIBRARIES "${CLANG_EXPORTED_TARGETS}"
 )
 add_dependencies(libastprint astprinter)
 
@@ -62,6 +63,7 @@ add_library(libirprint STATIC IMPORTED GLOBAL)
 set_target_properties(libirprint PROPERTIES
   IMPORTED_LOCATION "${INSTALL_DIR}/lib/libllvm-ir-print${CMAKE_STATIC_LIBRARY_SUFFIX}"
   INTERFACE_INCLUDE_DIRECTORIES "${INSTALL_DIR}/include"
+  INTERFACE_LINK_LIBRARIES "${CLANG_EXPORTED_TARGETS}"
 )
 add_dependencies(libirprint irprinter)
 

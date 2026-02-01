@@ -146,6 +146,11 @@ void ClangToolSession::selectionResult(Command selection_ast) {
   emit commandFinished(selection_ast);
 }
 
+void ClangToolSession::irSelectionResult(Command ir_selection) {
+  qDebug() << "IR Selection result received";
+  emit commandFinished(ir_selection);
+}
+
 void ClangToolSession::futureFinished() {
   if (reloaded_db) {
     reloaded_db = false;

@@ -41,6 +41,7 @@ set(REQUIRED_CLANG_LIBS
   clangDriver
   clangSerialization
   clangFrontend
+  clangCodeGen
   clangTooling
   clangToolingCore
 )
@@ -128,6 +129,9 @@ set(CLANG_UI_SOURCES
   
   src/clang/ASTPrinterWrapper.cpp
   include/clang/ASTPrinterWrapper.h
+  
+  src/clang/IRPrinterWrapper.cpp
+  include/clang/IRPrinterWrapper.h
   
   include/QueryApp.h
   src/QueryApp.cpp

@@ -7,6 +7,7 @@
 
 #include <QueryApp.h>
 #include <clang/ASTPrinterWrapper.h>
+#include <clang/IRPrinterWrapper.h>
 #include <clang/ClangToolSession.h>
 #include <clang/QueryWrapper.h>
 #include <gui/InputHighlighter.h>
@@ -44,14 +45,17 @@ void QueryApp::createClangSession() {
   connect(ctool.get(), SIGNAL(sessionChanged(clang::query::QuerySession*)), m,
           SLOT(updateSession(clang::query::QuerySession*)));
   auto ctool_astp = av::make_unique<av::ASTPrinterWrapper>();
+  auto ctool_irp = av::make_unique<av::IRPrinterWrapper>();
 
   auto clang_tool = new av::ClangToolSession(this);
 
   connect(ctool.get(), SIGNAL(commandFinished(Command)), clang_tool, SLOT(queryResult(Command)));
   connect(ctool_astp.get(), SIGNAL(commandFinished(Command)), clang_tool, SLOT(selectionResult(Command)));
+  connect(ctool_irp.get(), SIGNAL(commandFinished(Command)), clang_tool, SLOT(irSelectionResult(Command)));
 
   clang_tool->addTool(std::move(ctool));
   clang_tool->addTool(std::move(ctool_astp));
+  clang_tool->addTool(std::move(ctool_irp));
 
   this->clang_session = clang_tool;
 

@@ -45,6 +45,7 @@ class MainWindow : public QMainWindow {
   void setSource(QString);
   void setClangQuery(QString);
   void setClangAST(QString);
+  void setClangIR(QString);
   void fileLoadFinished(QString);
   void updateDbView(QStringList);
 

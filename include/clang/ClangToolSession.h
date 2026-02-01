@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CLANG_CLANGTOOLSESSION
-#define INCLUDE_CLANG_CLANGTOOLSESSION
+#ifndef INCLUDE_CLANG_CLANGTOOLSESSION_H_
+#define INCLUDE_CLANG_CLANGTOOLSESSION_H_
 
 #include <core/FutureTask.h>
 
@@ -58,6 +58,7 @@ class ClangToolSession : public FutureTask {
  private slots:
   void queryResult(Command matched_ast);
   void selectionResult(Command selection_ast);
+  void irSelectionResult(Command ir_selection);
 
  signals:
   void compilationDataBaseChanged(QStringList);
@@ -65,4 +66,4 @@ class ClangToolSession : public FutureTask {
 
 } /* namespace astviewer */
 
-#endif /* INCLUDE_CLANG_CLANGTOOLSESSION */
+#endif /* INCLUDE_CLANG_CLANGTOOLSESSION_H_ */

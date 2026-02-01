@@ -55,6 +55,7 @@ void CoreManager::handleFinished(Command cmd) {
     emit queryUnlock(true);
     break;
   case Command::CommandType::selection:
+  case Command::CommandType::ir_selection:
     emit selectionUnlock(true);
     break;
   case Command::CommandType::compilationDb:
@@ -91,6 +92,9 @@ void CoreManager::clangResult(Command cmd) {
     break;
   case Command::CommandType::selection:
     win->setClangAST(cmd.result);
+    break;
+  case Command::CommandType::ir_selection:
+    win->setClangIR(cmd.result);
     break;
   default:
     qDebug() << "Not implemented: " << cmd;
@@ -156,6 +160,17 @@ void CoreManager::sourceSelected(unsigned s, unsigned e) {
 
   emit selectionUnlock(false);
   tm.commit(cmd);
+
+  Command ir_cmd;
+  ir_cmd.t = Command::CommandType::ir_selection;
+  ir_cmd.column_start = 1;
+  ir_cmd.column_end = 1;
+  ir_cmd.row_start = s;
+  ir_cmd.row_end = e;
+
+  pm.processStarted(tr("IR selection: lines %0 to %1").arg(s).arg(e), ir_cmd.id);
+
+  tm.commit(ir_cmd);
 }
 
 void CoreManager::postInit() {

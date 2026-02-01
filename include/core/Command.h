@@ -10,6 +10,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <atomic>
 
 namespace astviewer {
 
@@ -19,7 +20,7 @@ class Command final {
 public:
   enum class CommandType
     : size_t {
-      file_load = 1, file_store = 2, query = 4, selection = 8, compilationDb = 16
+      file_load = 1, file_store = 2, query = 4, selection = 8, compilationDb = 16, ir_selection = 32
   };
 
   cmd_id id;
@@ -32,7 +33,7 @@ public:
   QString result { "" };
 
   Command() {
-    static cmd_id id_ = 0;
+    static std::atomic<cmd_id> id_ { 0 };
     id = ++id_;
   }
 };
@@ -53,6 +54,9 @@ inline QString commandType2Str(const Command::CommandType type) {
     break;
   case Command::CommandType::compilationDb:
     return "Compilation DB";
+    break;
+  case Command::CommandType::ir_selection:
+    return "IR Selection";
     break;
   default:
     return "UNKNOWN";
