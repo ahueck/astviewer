@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CORE_TOOLWRAPPER_H_
-#define INCLUDE_CORE_TOOLWRAPPER_H_
+#ifndef INCLUDE_CORE_TOOLWRAPPER
+#define INCLUDE_CORE_TOOLWRAPPER
 
 #include <core/FutureTask.h>
 
@@ -21,10 +21,10 @@ class ASTUnit;
 
 namespace astviewer {
 
-class ToolWrapper: public FutureTask {
-Q_OBJECT
+class ToolWrapper : public FutureTask {
+  Q_OBJECT
 
-public:
+ public:
   explicit ToolWrapper(QObject* parent = nullptr);
 
   virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
@@ -34,4 +34,4 @@ public:
 
 } /* namespace astviewer */
 
-#endif /* INCLUDE_CORE_TOOLWRAPPER_H_ */
+#endif /* INCLUDE_CORE_TOOLWRAPPER */

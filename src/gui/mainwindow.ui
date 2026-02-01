@@ -222,6 +222,12 @@
                </layout>
               </widget>
               <widget class="QWidget" name="widgetAST" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <property name="leftMargin">
                  <number>0</number>
@@ -237,8 +243,14 @@
                 </property>
                 <item>
                  <widget class="QTabWidget" name="tabWidgetTools">
+                  <property name="minimumSize">
+                   <size>
+                    <width>220</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="currentIndex">
-                   <number>2</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="widgetQuery">
                    <attribute name="title">
@@ -348,9 +360,17 @@
      <addaction name="separator"/>
      <addaction name="actionClear_Menu"/>
     </widget>
+    <widget class="QMenu" name="menuRecent_DBs">
+     <property name="title">
+      <string>Recent DBs</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionClear_Recent_DBs"/>
+    </widget>
     <addaction name="actionOpen_File"/>
     <addaction name="menuRecent_File"/>
     <addaction name="actionOpen_DB"/>
+    <addaction name="menuRecent_DBs"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -387,7 +407,22 @@
   </action>
   <action name="actionClear_Menu">
    <property name="text">
-    <string>Clear Menu</string>
+    <string>Clear Recent Files</string>
+   </property>
+  </action>
+  <action name="actionRecent_DBs">
+   <property name="text">
+    <string>Recent DBs</string>
+   </property>
+  </action>
+  <action name="actionOpen_DBs">
+   <property name="text">
+    <string>Open DBs</string>
+   </property>
+  </action>
+  <action name="actionClear_Recent_DBs">
+   <property name="text">
+    <string>Clear Recent DBs</string>
    </property>
   </action>
  </widget>
