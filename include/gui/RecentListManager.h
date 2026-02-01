@@ -25,10 +25,12 @@ class RecentListManager : public QObject {
   QList<QAction*> recentActions;
   QStringList items;
   int max_items;
+  int path_components;
   QString settings_id;
 
  public:
-  explicit RecentListManager(QString settings_id, int max_items = 6, QObject* parent = nullptr);
+  explicit RecentListManager(QString settings_id, int max_items = 6, int path_components = 1,
+                             QObject* parent = nullptr);
   void setTopLevelMenu(QMenu* top_menu);
   ~RecentListManager() override;
 

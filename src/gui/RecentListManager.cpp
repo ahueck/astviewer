@@ -6,6 +6,7 @@
  */
 
 #include <gui/RecentListManager.h>
+#include <util/Util.h>
 
 #include <QAction>
 #include <QFileInfo>
@@ -18,8 +19,12 @@
 
 namespace astviewer {
 
-RecentListManager::RecentListManager(QString settings_id, int max_items, QObject* parent)
-    : QObject(parent), max_items(max_items), settings_id(settings_id) {
+RecentListManager::RecentListManager(QString settings_id, int max_items, int path_components,
+                                   QObject* parent)
+    : QObject(parent),
+      max_items(max_items),
+      path_components(path_components),
+      settings_id(settings_id) {
   QSettings settings("sc", "astviewer");
   items = settings.value(settings_id).toStringList();
   handleHistory();
@@ -56,11 +61,11 @@ void RecentListManager::updateRecentItems(QString item) {
     createAction(first, "ph");
   }
 
-  const auto strippedName = [](QString name) { return QFileInfo(name).fileName(); };
   size_t counter = 0;
   for (auto& f : items) {
     auto action = recentActions[counter];
-    action->setText(strippedName(f));
+    action->setText(shortenPath(f, path_components));
+    action->setToolTip(f);
     action->setData(f);
     ++counter;
   }
@@ -69,9 +74,9 @@ void RecentListManager::updateRecentItems(QString item) {
 }
 
 void RecentListManager::createAction(QAction* anchor, QString item_string) {
-  const auto strippedName = [](QString name) { return QFileInfo(name).fileName(); };
   auto* action = new QAction(this);
-  action->setText(strippedName(item_string));
+  action->setText(shortenPath(item_string, path_components));
+  action->setToolTip(item_string);
   action->setData(item_string);
   connect(action, SIGNAL(triggered()), this, SLOT(openRecentItem()));
   this->recentActions.push_back(action);

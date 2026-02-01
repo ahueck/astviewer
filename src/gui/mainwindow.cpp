@@ -25,8 +25,8 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow),
-      recent_files(new astviewer::RecentListManager("recent_files", 6, this)),
-      recent_dbs(new astviewer::RecentListManager("recent_dbs", 6, this)) {
+      recent_files(new astviewer::RecentListManager("recent_files", 6, 2, this)),
+      recent_dbs(new astviewer::RecentListManager("recent_dbs", 6, 3, this)) {
   ui->setupUi(this);
 
   dbViewModel = new QStringListModel(this);

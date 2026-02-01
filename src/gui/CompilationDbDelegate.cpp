@@ -6,6 +6,7 @@
  */
 
 #include <gui/CompilationDbDelegate.h>
+#include <util/Util.h>
 
 #include <QApplication>
 #include <QFileInfo>
@@ -15,19 +16,15 @@
 
 namespace astviewer {
 
-CompilationDbDelegate::CompilationDbDelegate(QObject* parent) :
-    QStyledItemDelegate(parent) {
+CompilationDbDelegate::CompilationDbDelegate(QObject* parent, int path_components)
+    : QStyledItemDelegate(parent), path_components(path_components) {}
 
-}
-
-QString CompilationDbDelegate::displayText(const QVariant &value,
-    const QLocale& locale) const {
+QString CompilationDbDelegate::displayText(const QVariant& value, const QLocale& locale) const {
   auto text = QStyledItemDelegate::displayText(value, locale);
-  return QFileInfo(text).fileName();
+  return shortenPath(text, path_components);
 }
 
-void CompilationDbDelegate::paint(QPainter* painter,
-    const QStyleOptionViewItem& opt, const QModelIndex& index) const {
+void CompilationDbDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt, const QModelIndex& index) const {
   if (index.data().canConvert<QString>()) {
     QStyleOptionViewItem option = opt;
     initStyleOption(&option, index);

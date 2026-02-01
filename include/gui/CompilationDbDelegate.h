@@ -20,13 +20,14 @@ class QVariant;
 
 namespace astviewer {
 
-class CompilationDbDelegate: public QStyledItemDelegate {
-public:
-  explicit CompilationDbDelegate(QObject* parent = nullptr);
-  QString displayText(const QVariant &value, const QLocale& locale) const
-      override;
-  void paint(QPainter* painter, const QStyleOptionViewItem& option,
-      const QModelIndex& index) const override;
+class CompilationDbDelegate : public QStyledItemDelegate {
+ private:
+  int path_components;
+
+ public:
+  explicit CompilationDbDelegate(QObject* parent = nullptr, int path_components = 1);
+  QString displayText(const QVariant& value, const QLocale& locale) const override;
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
   virtual ~CompilationDbDelegate();
 };
 
