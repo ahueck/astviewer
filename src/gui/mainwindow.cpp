@@ -137,14 +137,14 @@ void MainWindow::setSource(QString source) {
 }
 
 void MainWindow::setClangAST(QString source) {
-  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
+  // ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
   selection_edit->clear();
   selection_edit->insertPlainText(source);
   selection_edit->ensureCursorVisible();
 }
 
 void MainWindow::setClangIR(QString source) {
-  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelectionIR);
+  // ui->tabWidgetTools->setCurrentWidget(ui->widgetSelectionIR);
   ir_selection_edit->clear();
   ir_selection_edit->insertPlainText(source);
   ir_selection_edit->ensureCursorVisible();

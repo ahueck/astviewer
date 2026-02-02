@@ -6,6 +6,8 @@
  */
 
 #include <clang/IRPrinterWrapper.h>
+#include <qdebug.h>
+#include <qglobal.h>
 #include <util/Util.h>
 
 #include <printer/IRNodeFinder.h>
@@ -22,24 +24,37 @@ void IRPrinterWrapper::init(const CodeContext& data) {
   // FIXME: irprinter also needs argument adjuster to find the standard header includes..
   // Maybe implement this in irprinter via a cmake option @ LLVMTool.
   irprinter = astviewer::make_unique<irprinter::IRNodeFinder>(data.compilation_database, ref, out);
+#ifdef CLANG_RESOURCE_DIR
+  irprinter->setOptFlag("-resource-dir=" CLANG_RESOURCE_DIR);
+#endif
+  irprinter->setOptFlag("-g");
+  irprinter->setOptFlag("-fno-discard-value-names");
   irprinter->parse();
 }
 
 void IRPrinterWrapper::sourceSelection(Command cmd) {
-  qDebug() << "Execute IR sourceSelection request: " << cmd.input;
-  run([&](Command c) -> Command {
-    out_str.clear();
-    if (irprinter) {
-      // irprinter->...
-      irprinter->printByLocation(cmd.row_start, cmd.row_end);
-    } else {
-      out << "IRPrinter not initialized (requires CommonOptionsParser)\n";
-    }
+  if (cmd.t != Command::CommandType::ir_selection) {
+    return;
+  }
+  qDebug() << "Execute IR sourceSelection request: " << cmd;
+  run(
+      [&](Command c) -> Command {
+        out_str.clear();
+        if (irprinter) {
+          // irprinter->...
+          qDebug() << "Querying by location\n";
+          irprinter->printByLocation(c.row_start, c.row_end);
+        } else {
+          out << "IRPrinter not initialized (requires CodeContext)\n";
+        }
 
-    c.result = QString::fromStdString(out.str());
+        c.result = QString::fromStdString(out.str());
 
-    return c;
-  }, cmd);
+        qDebug() << "IR Result size: " << c.result.size();
+
+        return c;
+      },
+      cmd);
 }
 
 IRPrinterWrapper::~IRPrinterWrapper() = default;

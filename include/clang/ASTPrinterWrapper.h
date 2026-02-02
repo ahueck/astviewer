@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CLANG_ASTPRINTERWRAPPER_H_
-#define INCLUDE_CLANG_ASTPRINTERWRAPPER_H_
+#ifndef INCLUDE_CLANG_ASTPRINTERWRAPPER
+#define INCLUDE_CLANG_ASTPRINTERWRAPPER
 
 #include <core/ToolWrapper.h>
 
@@ -32,4 +32,4 @@ class ASTPrinterWrapper : public ToolWrapper {
 
 }  // namespace astviewer
 
-#endif /* INCLUDE_CLANG_ASTPRINTERWRAPPER_H_ */
+#endif /* INCLUDE_CLANG_ASTPRINTERWRAPPER */

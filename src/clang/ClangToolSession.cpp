@@ -42,72 +42,77 @@ void ClangToolSession::fileLoad(Command cmd) {
     auto pos = std::find(std::begin(files), std::end(files), file);
     return pos != std::end(files);
   };
-  run([&](Command cmd) -> Command {
-    auto file = cmd.input;
-    auto file_std = file.toStdString();
-    llvm::StringRef file_ref(file_std);
+  run(
+      [&](Command cmd) -> Command {
+        auto file = cmd.input;
+        auto file_std = file.toStdString();
+        llvm::StringRef file_ref(file_std);
 
-    if (db == nullptr || !has(db->getAllFiles(), file_std)) {
-      std::string er;
-      db = CompilationDatabase::autoDetectFromSource(file_ref, er);
-      if (db == nullptr || !er.empty()) {
-        qDebug() << "Could not load compilation db of file: " << file << "Reason: " << QString::fromStdString(er);
-        return cmd;  // FIXME return failed command
-      }
-      reloaded_db = true;
-    }
-    llvm::ArrayRef<std::string> ref(file_std);
-    tool = astviewer::make_unique<ClangTool>(*db.get(), ref);
+        if (db == nullptr || !has(db->getAllFiles(), file_std)) {
+          std::string er;
+          db = CompilationDatabase::autoDetectFromSource(file_ref, er);
+          if (db == nullptr || !er.empty()) {
+            qDebug() << "Could not load compilation db of file: " << file << "Reason: " << QString::fromStdString(er);
+            return cmd;  // FIXME return failed command
+          }
+          reloaded_db = true;
+        }
+        llvm::ArrayRef<std::string> ref(file_std);
+        tool = astviewer::make_unique<ClangTool>(*db.get(), ref);
 
     // Set resource directory so clang can find its internal headers (stddef.h etc)
 #ifdef CLANG_RESOURCE_DIR
-    std::string resource_dir = CLANG_RESOURCE_DIR;
+        std::string resource_dir = CLANG_RESOURCE_DIR;
 #else
-    std::string main_executable = "/usr/bin/clang";  // Fallback
-    std::string resource_dir = clang::driver::Driver::GetResourcesPath(main_executable);
+        std::string main_executable = "/usr/bin/clang";  // Fallback
+        std::string resource_dir = clang::driver::Driver::GetResourcesPath(main_executable);
 #endif
-    qDebug() << "Resource directory set to: " << QString::fromStdString(resource_dir);
-    if (!resource_dir.empty()) {
-      std::string resource_arg = "-resource-dir=" + resource_dir;
-      tool->appendArgumentsAdjuster(clang::tooling::getInsertArgumentAdjuster(
-          resource_arg.c_str(), clang::tooling::ArgumentInsertPosition::BEGIN));
-    }
+        qDebug() << "Resource directory set to: " << QString::fromStdString(resource_dir);
+        if (!resource_dir.empty()) {
+          std::string resource_arg = "-resource-dir=" + resource_dir;
+          tool->appendArgumentsAdjuster(clang::tooling::getInsertArgumentAdjuster(
+              resource_arg.c_str(), clang::tooling::ArgumentInsertPosition::BEGIN));
+        }
 
-    AST_vec.clear();
-    tool->buildASTs(AST_vec);
-    CodeContext data{file_std, AST_vec, *db};
-    for (auto& clang_tool : clang_tools) {
-      clang_tool->init(data);
-    }
-    return cmd;
-  }, cmd);
+        AST_vec.clear();
+        tool->buildASTs(AST_vec);
+        CodeContext data{file_std, AST_vec, *db};
+        for (auto& clang_tool : clang_tools) {
+          clang_tool->init(data);
+        }
+        return cmd;
+      },
+      cmd);
 }
 
 void ClangToolSession::compilationDb(Command cmd) {
   using clang::tooling::CompilationDatabase;
   using clang::tooling::JSONCompilationDatabase;
-  run([&](Command cmd) -> Command {
-    auto path_std = cmd.input.toStdString();
-    llvm::StringRef path_ref(path_std);
+  run(
+      [&](Command cmd) -> Command {
+        auto path_std = cmd.input.toStdString();
+        llvm::StringRef path_ref(path_std);
 
-    std::string er;
-    if (cmd.input.endsWith(".json", Qt::CaseInsensitive)) {
+        std::string er;
+        if (cmd.input.endsWith(".json", Qt::CaseInsensitive)) {
 #if LLVM_VERSION_MAJOR >= 17
-      db = JSONCompilationDatabase::loadFromFile(path_ref, er, clang::tooling::JSONCommandLineSyntax::AutoDetect);
+          db = JSONCompilationDatabase::loadFromFile(path_ref, er, clang::tooling::JSONCommandLineSyntax::AutoDetect);
 #else
-      db = JSONCompilationDatabase::loadFromFile(path_ref, er, clang::tooling::JSONCommandLineSyntax::Gnu);
+          db = JSONCompilationDatabase::loadFromFile(path_ref, er, clang::tooling::JSONCommandLineSyntax::Gnu);
 #endif
-    } else {
-      db = CompilationDatabase::loadFromDirectory(path_ref, er);
-    }
+        } else {
+          db = CompilationDatabase::loadFromDirectory(path_ref, er);
+        }
 
-    if (db == nullptr || !er.empty()) {
-      qDebug() << "Could not load compilation db of file: " << cmd.input << "Reason: " << QString::fromStdString(er);
-      return cmd;  // FIXME return failed command
-    }
-    reloaded_db = true;
-    return cmd;
-  }, cmd);
+        if (db == nullptr || !er.empty()) {
+          qDebug() << "Could not load compilation db of file: " << cmd.input
+                   << "Reason: " << QString::fromStdString(er);
+          return cmd;  // FIXME return failed command
+        }
+        reloaded_db = true;
+        return cmd;
+      },
+      cmd);
 }
 
 void ClangToolSession::commandInput(Command cmd) {
@@ -131,12 +136,12 @@ void ClangToolSession::queryResult(Command matched_ast) {
 }
 
 void ClangToolSession::selectionResult(Command selection_ast) {
-  qDebug() << "Selection result received";
+  qDebug() << "Selection result received " << selection_ast;
   emit commandFinished(selection_ast);
 }
 
 void ClangToolSession::irSelectionResult(Command ir_selection) {
-  qDebug() << "IR Selection result received";
+  qDebug() << "IR Selection result received " << ir_selection;
   emit commandFinished(ir_selection);
 }
 

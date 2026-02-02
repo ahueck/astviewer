@@ -10,6 +10,7 @@
 
 #include <ClangUtil.h>
 #include <NodeFinder.h>
+#include "core/Command.h"
 
 namespace astviewer {
 
@@ -23,16 +24,21 @@ void ASTPrinterWrapper::init(const CodeContext& data) {
 }
 
 void ASTPrinterWrapper::sourceSelection(Command cmd) {
-  qDebug() << "Execute sourceSelection request: " << cmd.input;
-  run([&](Command c) -> Command {
-    out_str.clear();
-    astprinter->setLocation(c.row_start, c.row_end);
-    astprinter->find(/*print_all_if_not_found=*/false);
+  if (cmd.t != Command::CommandType::selection) {
+    return;
+  }
+  qDebug() << "Execute sourceSelection request: " << cmd;
+  run(
+      [&](Command c) -> Command {
+        out_str.clear();
+        astprinter->setLocation(c.row_start, c.row_end);
+        astprinter->find(/*print_all_if_not_found=*/false);
 
-    c.result = QString::fromStdString(out.str());
+        c.result = QString::fromStdString(out.str());
 
-    return c;
-  }, cmd);
+        return c;
+      },
+      cmd);
 }
 
 ASTPrinterWrapper::~ASTPrinterWrapper() = default;
