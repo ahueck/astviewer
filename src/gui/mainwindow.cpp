@@ -4,6 +4,7 @@
 #include <core/CoreManager.h>
 
 #include <gui/ClangASTHighlighter.h>
+#include <gui/LlvmIRHighlighter.h>
 #include <gui/CommandInput.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
@@ -65,9 +66,8 @@ MainWindow::MainWindow(QWidget* parent)
   ir_selection_edit->setUndoRedoEnabled(false);
   ir_selection_edit->setReadOnly(true);
   ir_selection_edit->showLine(true);
-  // TODO: IR highlighter
-  // auto* highlighter = new astviewer::ClangASTHighlighter(ir_selection_edit);
-  // highlighter->setDocument(ir_selection_edit->document());
+  auto* ir_highlighter = new astviewer::LlvmIRHighlighter(ir_selection_edit);
+  ir_highlighter->setDocument(ir_selection_edit->document());
   ui->verticalLayout_selectionir->addWidget(ir_selection_edit);
 
   // Logging:

@@ -69,8 +69,8 @@ set(UI_SOURCES
   include/gui/CommandInput.h
   src/gui/CompletionInput.cpp
   include/gui/CompletionInput.h
-      src/gui/RecentListManager.cpp
-      include/gui/RecentListManager.h
+  src/gui/RecentListManager.cpp
+  include/gui/RecentListManager.h
   
   src/gui/SelectionProvider.cpp
   include/gui/SelectionProvider.h
@@ -103,6 +103,8 @@ set(UI_SOURCES
   src/gui/InputHighlighter.cpp
   include/gui/ClangASTHighlighter.h
   src/gui/ClangASTHighlighter.cpp
+  include/gui/LlvmIRHighlighter.h
+  src/gui/LlvmIRHighlighter.cpp
   
   src/core/CoreManager.cpp
   include/core/CoreManager.h

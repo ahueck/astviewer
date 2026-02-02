@@ -68,7 +68,7 @@ inline QString commandType2Str(const Command::CommandType type) {
 }
 
 inline QDebug operator<<(QDebug out_dbg, const Command& cmd) {
-  out_dbg << "[" << cmd.id << ":" << commandType2Str(cmd.t) << ":\"" << cmd.input << "\"]";
+  out_dbg << "[" << cmd.id << ":" << commandType2Str(cmd.t) << ":\"" << cmd.input << ": " << cmd.result.size() << "\"]";
 
   return out_dbg;
 }
