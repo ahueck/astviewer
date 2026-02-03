@@ -39,6 +39,8 @@ class CoreManager : public QObject {
   Task* clang_session{nullptr};
   Task* f_loader{nullptr};
 
+  int active_critical_tasks{0};
+
  public:
   CoreManager();
   void init(MainWindow* win);

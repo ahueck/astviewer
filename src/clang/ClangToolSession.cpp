@@ -116,14 +116,23 @@ void ClangToolSession::compilationDb(Command cmd) {
 }
 
 void ClangToolSession::commandInput(Command cmd) {
+  if (AST_vec.empty()) {
+    qDebug() << "Skipping commandInput: AST_vec is empty";
+    emit commandSkipped(cmd);
+    return;
+  }
   qDebug() << "Received command: " << cmd.input;
   for (auto& clang_tool : clang_tools) {
     clang_tool->handleCommand(cmd);
   }
-  // emit matchedAST(this->query.run(in));
 }
 
 void ClangToolSession::sourceSelection(Command cmd) {
+  if (AST_vec.empty()) {
+    qDebug() << "Skipping sourceSelection: AST_vec is empty";
+    emit commandSkipped(cmd);
+    return;
+  }
   qDebug() << "Received selection command: " << cmd.input;
   for (auto& clang_tool : clang_tools) {
     clang_tool->handleCommand(cmd);

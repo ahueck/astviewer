@@ -42,20 +42,24 @@ void CoreManager::init(MainWindow* win) {
 
 void CoreManager::handleFinished(Command cmd) {
   qDebug() << "Finished command: " << cmd.input;
+  --active_critical_tasks;
+  if (active_critical_tasks <= 0) {
+    active_critical_tasks = 0;
+    emit fileLoadUnlock(true);
+    emit queryUnlock(true);
+    emit selectionUnlock(true);
+  }
+
   switch (cmd.t) {
     case Command::CommandType::file_load:
-      emit fileLoadUnlock(true);
       break;
     case Command::CommandType::query:
-      emit queryUnlock(true);
       break;
     case Command::CommandType::selection:
     case Command::CommandType::ir_selection:
-      emit selectionUnlock(true);
       break;
     case Command::CommandType::compilationDb:
       win->dbLoadFinished(cmd.input);
-      emit fileLoadUnlock(true);
       break;
     default:
       qDebug() << "Unsupported command type.";
@@ -107,7 +111,11 @@ void CoreManager::commandInput(QString input_str) {
 
   pm.processStarted(tr("Executing query: %0").arg(input_str), cmd.id);
 
+  ++active_critical_tasks;
+  emit fileLoadUnlock(false);
   emit queryUnlock(false);
+  emit selectionUnlock(false);
+
   // emit dispatchCommand(cmd);
   qDebug() << "Commit command";
   tm.commit(cmd);
@@ -119,7 +127,11 @@ void CoreManager::selectedCompilationDB(QString db_path) {
   cmd.input = db_path;
   pm.processStarted(tr("Loading compile commands: %0").arg(db_path), cmd.id);
 
+  ++active_critical_tasks;
   emit fileLoadUnlock(false);
+  emit queryUnlock(false);
+  emit selectionUnlock(false);
+
   // emit dispatchCommand(cmd);
   tm.commit(cmd);
 }
@@ -132,7 +144,11 @@ void CoreManager::selectedTU(QString tu_path) {
 
   pm.processStarted(tr("Loading file: %0").arg(tu_path), cmd.id);
 
+  ++active_critical_tasks;
   emit fileLoadUnlock(false);
+  emit queryUnlock(false);
+  emit selectionUnlock(false);
+
   // emit dispatchCommand(cmd);
   tm.commit(cmd);
 }
@@ -148,6 +164,9 @@ void CoreManager::sourceSelected(unsigned s, unsigned e) {
 
   pm.processStarted(tr("Source selection: lines %0 to %1").arg(s).arg(e), cmd.id);
 
+  ++active_critical_tasks;
+  emit fileLoadUnlock(false);
+  emit queryUnlock(false);
   emit selectionUnlock(false);
   tm.commit(cmd);
 
@@ -160,6 +179,7 @@ void CoreManager::sourceSelected(unsigned s, unsigned e) {
 
   pm.processStarted(tr("IR selection: lines %0 to %1").arg(s).arg(e), ir_cmd.id);
 
+  ++active_critical_tasks;
   tm.commit(ir_cmd);
 }
 

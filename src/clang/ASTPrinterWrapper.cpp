@@ -31,10 +31,14 @@ void ASTPrinterWrapper::sourceSelection(Command cmd) {
   run(
       [&](Command c) -> Command {
         out_str.clear();
-        astprinter->setLocation(c.row_start, c.row_end);
-        astprinter->find(/*print_all_if_not_found=*/false);
+        if (astprinter) {
+          astprinter->setLocation(c.row_start, c.row_end);
+          astprinter->find(/*print_all_if_not_found=*/false);
 
-        c.result = QString::fromStdString(out.str());
+          c.result = QString::fromStdString(out.str());
+        } else {
+          c.result = "ASTPrinter not initialized (requires ASTContext)";
+        }
 
         return c;
       },

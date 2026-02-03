@@ -61,7 +61,7 @@ bool SelectionProvider::eventFilter(QObject* watched, QEvent* event) {
   cursor.setPosition(end_c);
   auto line_e = line_count(cursor);
 
-  if (line_s != start || line_e != end) {
+  if (enabled && (line_s != start || line_e != end)) {
     start = line_s;
     end = line_e;
     emit lineSelected(line_s, line_e);
