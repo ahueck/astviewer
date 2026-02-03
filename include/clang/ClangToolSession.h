@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CORE_CLANGTOOLSESSION_H_
-#define INCLUDE_CORE_CLANGTOOLSESSION_H_
+#ifndef INCLUDE_CLANG_CLANGTOOLSESSION_H_
+#define INCLUDE_CLANG_CLANGTOOLSESSION_H_
 
 #include <core/FutureTask.h>
 
@@ -27,42 +27,43 @@ class ASTUnit;
 namespace tooling {
 class ClangTool;
 class CompilationDatabase;
-}
-}
+}  // namespace tooling
+}  // namespace clang
 
 namespace astviewer {
 
 class ToolWrapper;
 
-class ClangToolSession: public FutureTask {
-Q_OBJECT
-private:
+class ClangToolSession : public FutureTask {
+  Q_OBJECT
+ private:
   std::vector<std::unique_ptr<ToolWrapper>> clang_tools;
   std::unique_ptr<clang::tooling::ClangTool> tool;
   std::unique_ptr<clang::tooling::CompilationDatabase> db;
   std::vector<std::unique_ptr<clang::ASTUnit>> AST_vec;
-  bool reloaded_db { false };
+  bool reloaded_db{false};
 
-public:
+ public:
   explicit ClangToolSession(QObject* parent = nullptr);
   void addTool(std::unique_ptr<ToolWrapper> tool);
   ~ClangToolSession() override;
 
-protected:
+ protected:
   void fileLoad(Command cmd) override;
   void commandInput(Command cmd) override;
   void sourceSelection(Command cmd) override;
   void compilationDb(Command cmd) override;
   void futureFinished() override;
 
-private slots:
+ private slots:
   void queryResult(Command matched_ast);
   void selectionResult(Command selection_ast);
+  void irSelectionResult(Command ir_selection);
 
-signals:
+ signals:
   void compilationDataBaseChanged(QStringList);
 };
 
 } /* namespace astviewer */
 
-#endif /* INCLUDE_CORE_CLANGTOOLSESSION_H_ */
+#endif /* INCLUDE_CLANG_CLANGTOOLSESSION_H_ */

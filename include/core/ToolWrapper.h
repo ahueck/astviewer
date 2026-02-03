@@ -5,33 +5,43 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CORE_TOOLWRAPPER_H_
-#define INCLUDE_CORE_TOOLWRAPPER_H_
+#ifndef INCLUDE_CORE_TOOLWRAPPER
+#define INCLUDE_CORE_TOOLWRAPPER
+
+#include <memory>
+#include <string>
+#include <vector>
 
 #include <core/FutureTask.h>
 
 #include <QObject>
 
-#include <memory>
-#include <vector>
-
 namespace clang {
 class ASTUnit;
-}
+namespace tooling {
+class CompilationDatabase;
+}  // namespace tooling
+}  // namespace clang
 
 namespace astviewer {
 
-class ToolWrapper: public FutureTask {
-Q_OBJECT
+struct CodeContext {
+  std::string file;
+  std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec;
+  const clang::tooling::CompilationDatabase& compilation_database;
+};
 
-public:
+class ToolWrapper : public FutureTask {
+  Q_OBJECT
+
+ public:
   explicit ToolWrapper(QObject* parent = nullptr);
 
-  virtual void init(std::vector<std::unique_ptr<clang::ASTUnit>>& AST_vec) = 0;
+  virtual void init(const CodeContext&) = 0;
 
   virtual ~ToolWrapper();
 };
 
-} /* namespace astviewer */
+}  // namespace astviewer
 
-#endif /* INCLUDE_CORE_TOOLWRAPPER_H_ */
+#endif /* INCLUDE_CORE_TOOLWRAPPER */

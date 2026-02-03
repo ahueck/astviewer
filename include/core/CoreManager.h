@@ -5,8 +5,8 @@
  *      Author: ahueck
  */
 
-#ifndef INCLUDE_CORE_COREMANAGER_H_
-#define INCLUDE_CORE_COREMANAGER_H_
+#ifndef INCLUDE_CORE_COREMANAGER
+#define INCLUDE_CORE_COREMANAGER
 
 #include <core/Task.h>
 #include <core/TaskManager.h>
@@ -23,27 +23,30 @@ class CommandInput;
 class Command;
 class Task;
 
-// QMap<QString, QVariantList> lockGroups; -> lockGroups to iterate over and setEnabled(true|false); for now handled by signal and slots
-// Connect TaskManager with ProcessHandler to generically show status messages (commandExecute and taskDone)
+// QMap<QString, QVariantList> lockGroups; -> lockGroups to iterate over and setEnabled(true|false); for now handled by
+// signal and slots Connect TaskManager with ProcessHandler to generically show status messages (commandExecute and
+// taskDone)
 
-class CoreManager: public QObject {
-Q_OBJECT
-protected:
+class CoreManager : public QObject {
+  Q_OBJECT
+ protected:
   TaskManager tm;
   StatusHandler pm;
 
-  MainWindow* win { nullptr };
-  CommandInput* input { nullptr };
+  MainWindow* win{nullptr};
+  CommandInput* input{nullptr};
 
-  Task* clang_session { nullptr };
-  Task* f_loader { nullptr };
+  Task* clang_session{nullptr};
+  Task* f_loader{nullptr};
 
-public:
+  int active_critical_tasks{0};
+
+ public:
   CoreManager();
   void init(MainWindow* win);
   virtual ~CoreManager();
 
-protected:
+ protected:
   virtual void createFileLoader();
   virtual void createInputWidget() = 0;
   virtual void createClangSession() = 0;
@@ -51,7 +54,7 @@ protected:
   virtual void connectClangSession();
   virtual void postInit();
 
-protected slots:
+ protected slots:
   // General TaskMangaer related connection:
   void handleFinished(Command);
   // SPecific Task connection (clang tooling and file IO tasks)
@@ -64,8 +67,8 @@ protected slots:
   void selectedCompilationDB(QString);
   void sourceSelected(unsigned, unsigned);
 
-signals:
-  //void dispatchCommand(Command);
+ signals:
+  // void dispatchCommand(Command);
   void fileLoadUnlock(bool);
   void queryUnlock(bool);
   void selectionUnlock(bool);
@@ -74,5 +77,4 @@ signals:
 
 } /* namespace astviewer */
 
-#endif /* INCLUDE_CORE_COREMANAGER_H_ */
-
+#endif /* INCLUDE_CORE_COREMANAGER */

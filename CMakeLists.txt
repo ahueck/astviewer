@@ -41,6 +41,7 @@ set(REQUIRED_CLANG_LIBS
   clangDriver
   clangSerialization
   clangFrontend
+  clangCodeGen
   clangTooling
   clangToolingCore
 )
@@ -68,8 +69,9 @@ set(UI_SOURCES
   include/gui/CommandInput.h
   src/gui/CompletionInput.cpp
   include/gui/CompletionInput.h
-  src/gui/RecentFileManager.cpp
-  include/gui/RecentFileManager.h
+  src/gui/RecentListManager.cpp
+  include/gui/RecentListManager.h
+  
   src/gui/SelectionProvider.cpp
   include/gui/SelectionProvider.h
     
@@ -101,6 +103,8 @@ set(UI_SOURCES
   src/gui/InputHighlighter.cpp
   include/gui/ClangASTHighlighter.h
   src/gui/ClangASTHighlighter.cpp
+  include/gui/LlvmIRHighlighter.h
+  src/gui/LlvmIRHighlighter.cpp
   
   src/core/CoreManager.cpp
   include/core/CoreManager.h
@@ -129,6 +133,9 @@ set(CLANG_UI_SOURCES
   src/clang/ASTPrinterWrapper.cpp
   include/clang/ASTPrinterWrapper.h
   
+  src/clang/IRPrinterWrapper.cpp
+  include/clang/IRPrinterWrapper.h
+  
   include/QueryApp.h
   src/QueryApp.cpp
 )
@@ -143,15 +150,18 @@ target_project_compile_options(query
   PUBLIC_FLAGS
     -fno-rtti
 )
-target_include_directories(query PUBLIC ${astprinter_INCLUDE_DIRS})
+target_include_directories(query SYSTEM PUBLIC ${astprinter_INCLUDE_DIRS})
+target_include_directories(query SYSTEM PUBLIC ${irprinter_INCLUDE_DIRS})
 target_include_directories(query
   SYSTEM
   PUBLIC
   ${LLVM_INCLUDE_DIRS}
 )
+
 target_link_libraries(query Qt5::Widgets Qt5::Concurrent)
-target_link_libraries(query ${astprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
+target_link_libraries(query ${astprinter_LIBRARIES} ${irprinter_LIBRARIES} ${CLANG_EXPORTED_TARGETS})
 add_dependencies(query astprinter)
+add_dependencies(query irprinter)
 
 
 add_library(astui ${UI_SOURCES})

@@ -4,10 +4,11 @@
 #include <core/CoreManager.h>
 
 #include <gui/ClangASTHighlighter.h>
+#include <gui/LlvmIRHighlighter.h>
 #include <gui/CommandInput.h>
 #include <gui/CompilationDbDelegate.h>
 #include <gui/LineTextEdit.h>
-#include <gui/RecentFileManager.h>
+#include <gui/RecentListManager.h>
 #include <gui/SelectionProvider.h>
 
 #include <util/FileLoader.h>
@@ -23,7 +24,10 @@
 #include <QtConcurrent>
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), recent_files(new astviewer::RecentFileManager(this)) {
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      recent_files(new astviewer::RecentListManager("recent_files", 6, 2, this)),
+      recent_dbs(new astviewer::RecentListManager("recent_dbs", 6, 3, this)) {
   ui->setupUi(this);
 
   dbViewModel = new QStringListModel(this);
@@ -56,14 +60,29 @@ MainWindow::MainWindow(QWidget* parent)
   highlighter->setDocument(selection_edit->document());
   ui->verticalLayout_selection->addWidget(selection_edit);
 
+  ir_selection_edit = new astviewer::LineTextEdit(ui->widgetSelectionIR);
+  ir_selection_edit->setObjectName(QStringLiteral("plainTextEditSelectionIR"));
+  ir_selection_edit->setAcceptDrops(false);
+  ir_selection_edit->setUndoRedoEnabled(false);
+  ir_selection_edit->setReadOnly(true);
+  ir_selection_edit->showLine(true);
+  auto* ir_highlighter = new astviewer::LlvmIRHighlighter(ir_selection_edit);
+  ir_highlighter->setDocument(ir_selection_edit->document());
+  ui->verticalLayout_selectionir->addWidget(ir_selection_edit);
+
   // Logging:
   QObject::connect(&astviewer::QLogHandler::instance(), SIGNAL(doLog(const QString&)), ui->logBrowser,
                    SLOT(appendPlainText(const QString&)), Qt::QueuedConnection);
 
   // Recent file management:
   recent_files->setTopLevelMenu(ui->menuRecent_File);
-  QObject::connect(recent_files, SIGNAL(recentFileSelected(QString)), this, SLOT(recentFileLoad(QString)));
-  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files, SLOT(clearRecentFiles()));
+  QObject::connect(recent_files, SIGNAL(itemSelected(QString)), this, SLOT(recentFileLoad(QString)));
+  QObject::connect(ui->actionClear_Menu, SIGNAL(triggered()), recent_files, SLOT(clearRecentItems()));
+
+  // Recent DB management:
+  recent_dbs->setTopLevelMenu(ui->menuRecent_DBs);
+  QObject::connect(recent_dbs, SIGNAL(itemSelected(QString)), this, SLOT(recentDbLoad(QString)));
+  QObject::connect(ui->actionClear_Recent_DBs, SIGNAL(triggered()), recent_dbs, SLOT(clearRecentItems()));
 
   // Open action -> file / db:
   QObject::connect(ui->actionOpen_File, SIGNAL(triggered()), this, SLOT(openTU()));
@@ -118,10 +137,17 @@ void MainWindow::setSource(QString source) {
 }
 
 void MainWindow::setClangAST(QString source) {
-  ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
+  // ui->tabWidgetTools->setCurrentWidget(ui->widgetSelection);
   selection_edit->clear();
   selection_edit->insertPlainText(source);
   selection_edit->ensureCursorVisible();
+}
+
+void MainWindow::setClangIR(QString source) {
+  // ui->tabWidgetTools->setCurrentWidget(ui->widgetSelectionIR);
+  ir_selection_edit->clear();
+  ir_selection_edit->insertPlainText(source);
+  ir_selection_edit->ensureCursorVisible();
 }
 
 void MainWindow::setClangQuery(QString source) {
@@ -131,9 +157,13 @@ void MainWindow::setClangQuery(QString source) {
   query_edit->ensureCursorVisible();
 }
 
-void MainWindow::fileLoadFinished(QString file) { recent_files->updateRecentFiles(file); }
+void MainWindow::fileLoadFinished(QString file) { recent_files->updateRecentItems(file); }
 
 void MainWindow::recentFileLoad(QString recent_file) { emit selectedTU(recent_file); }
+
+void MainWindow::recentDbLoad(QString recent_db) { emit selectedCompilationDB(recent_db); }
+
+void MainWindow::dbLoadFinished(QString db) { recent_dbs->updateRecentItems(db); }
 
 void MainWindow::openTU() {
   const auto file = QFileDialog::getOpenFileName(this, tr("Open Translation Unit"), QString(),

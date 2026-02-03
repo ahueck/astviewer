@@ -5,33 +5,28 @@
  *      Author: ahueck
  */
 
-#include <core/Task.h>
-#include <core/TaskManager.h>
 #include <core/Command.h>
 #include <core/CoreManager.h>
+#include <core/Task.h>
+#include <core/TaskManager.h>
 #include <gui/mainwindow.h>
-#include <util/StatusHandler.h>
 #include <util/FileLoader.h>
+#include <util/StatusHandler.h>
 
 #include <QDebug>
 
 namespace astviewer {
 
-CoreManager::CoreManager() :
-    tm(this), pm(this) {
-  QObject::connect(&tm, SIGNAL(tasksFinished(Command)), this,
-      SLOT(handleFinished(Command)));
+CoreManager::CoreManager() : tm(this), pm(this) {
+  QObject::connect(&tm, SIGNAL(tasksFinished(Command)), this, SLOT(handleFinished(Command)));
 }
 
 void CoreManager::init(MainWindow* win) {
   this->win = win;
   // Win:
-  QObject::connect(win, SIGNAL(selectedTU(QString)), this,
-      SLOT(selectedTU(QString)));
-  QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
-      SLOT(selectedCompilationDB(QString)));
-  QObject::connect(win, SIGNAL(selectedDbListItem(QString)), this,
-      SLOT(selectedTU(QString)));
+  QObject::connect(win, SIGNAL(selectedTU(QString)), this, SLOT(selectedTU(QString)));
+  QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this, SLOT(selectedCompilationDB(QString)));
+  QObject::connect(win, SIGNAL(selectedDbListItem(QString)), this, SLOT(selectedTU(QString)));
   win->registerWithManager(this);
   pm.setStatus(win->getStatusbar());
   /*QObject::connect(win, SIGNAL(selectedCompilationDB(QString)), this,
@@ -47,53 +42,58 @@ void CoreManager::init(MainWindow* win) {
 
 void CoreManager::handleFinished(Command cmd) {
   qDebug() << "Finished command: " << cmd.input;
-  switch (cmd.t) {
-  case Command::CommandType::file_load:
+  --active_critical_tasks;
+  if (active_critical_tasks <= 0) {
+    active_critical_tasks = 0;
     emit fileLoadUnlock(true);
-    break;
-  case Command::CommandType::query:
     emit queryUnlock(true);
-    break;
-  case Command::CommandType::selection:
     emit selectionUnlock(true);
-    break;
-  case Command::CommandType::compilationDb:
-    emit fileLoadUnlock(true);
-    break;
-  default:
-    qDebug() << "Unsupported command type.";
-    break; // or return;?
+  }
+
+  switch (cmd.t) {
+    case Command::CommandType::file_load:
+      break;
+    case Command::CommandType::query:
+      break;
+    case Command::CommandType::selection:
+    case Command::CommandType::ir_selection:
+      break;
+    case Command::CommandType::compilationDb:
+      win->dbLoadFinished(cmd.input);
+      break;
+    default:
+      qDebug() << "Unsupported command type.";
+      break;  // or return;?
   }
   pm.processFinished(cmd.id);
 }
 
-void CoreManager::createFileLoader() {
-  f_loader = new FileLoader(this);
-}
+void CoreManager::createFileLoader() { f_loader = new FileLoader(this); }
 
 void CoreManager::connectFileLoader() {
   tm.registerTask(f_loader);
-  QObject::connect(f_loader, SIGNAL(commandFinished(Command)), this,
-      SLOT(sourceLoaded(Command)));
+  QObject::connect(f_loader, SIGNAL(commandFinished(Command)), this, SLOT(sourceLoaded(Command)));
 }
 
 void CoreManager::connectClangSession() {
   tm.registerTask(clang_session);
-  QObject::connect(clang_session, SIGNAL(commandFinished(Command)), this,
-      SLOT(clangResult(Command)));
+  QObject::connect(clang_session, SIGNAL(commandFinished(Command)), this, SLOT(clangResult(Command)));
 }
 
 void CoreManager::clangResult(Command cmd) {
   qDebug() << "Received clangResult";
   switch (cmd.t) {
-  case Command::CommandType::query:
-    win->setClangQuery(cmd.result);
-    break;
-  case Command::CommandType::selection:
-    win->setClangAST(cmd.result);
-    break;
-  default:
-    qDebug() << "Not implemented: " << cmd;
+    case Command::CommandType::query:
+      win->setClangQuery(cmd.result);
+      break;
+    case Command::CommandType::selection:
+      win->setClangAST(cmd.result);
+      break;
+    case Command::CommandType::ir_selection:
+      win->setClangIR(cmd.result);
+      break;
+    default:
+      qDebug() << "Not implemented: " << cmd;
   }
 }
 
@@ -111,8 +111,12 @@ void CoreManager::commandInput(QString input_str) {
 
   pm.processStarted(tr("Executing query: %0").arg(input_str), cmd.id);
 
+  ++active_critical_tasks;
+  emit fileLoadUnlock(false);
   emit queryUnlock(false);
-  //emit dispatchCommand(cmd);
+  emit selectionUnlock(false);
+
+  // emit dispatchCommand(cmd);
   qDebug() << "Commit command";
   tm.commit(cmd);
 }
@@ -123,10 +127,13 @@ void CoreManager::selectedCompilationDB(QString db_path) {
   cmd.input = db_path;
   pm.processStarted(tr("Loading compile commands: %0").arg(db_path), cmd.id);
 
+  ++active_critical_tasks;
   emit fileLoadUnlock(false);
-  //emit dispatchCommand(cmd);
-  tm.commit(cmd);
+  emit queryUnlock(false);
+  emit selectionUnlock(false);
 
+  // emit dispatchCommand(cmd);
+  tm.commit(cmd);
 }
 
 void CoreManager::selectedTU(QString tu_path) {
@@ -137,8 +144,12 @@ void CoreManager::selectedTU(QString tu_path) {
 
   pm.processStarted(tr("Loading file: %0").arg(tu_path), cmd.id);
 
+  ++active_critical_tasks;
   emit fileLoadUnlock(false);
-  //emit dispatchCommand(cmd);
+  emit queryUnlock(false);
+  emit selectionUnlock(false);
+
+  // emit dispatchCommand(cmd);
   tm.commit(cmd);
 }
 
@@ -151,16 +162,28 @@ void CoreManager::sourceSelected(unsigned s, unsigned e) {
   cmd.row_start = s;
   cmd.row_end = e;
 
-  pm.processStarted(tr("Source selection: lines %0 to %1").arg(s).arg(e),
-      cmd.id);
+  pm.processStarted(tr("Source selection: lines %0 to %1").arg(s).arg(e), cmd.id);
 
+  ++active_critical_tasks;
+  emit fileLoadUnlock(false);
+  emit queryUnlock(false);
   emit selectionUnlock(false);
   tm.commit(cmd);
+
+  Command ir_cmd;
+  ir_cmd.t = Command::CommandType::ir_selection;
+  ir_cmd.column_start = 1;
+  ir_cmd.column_end = 1;
+  ir_cmd.row_start = s;
+  ir_cmd.row_end = e;
+
+  pm.processStarted(tr("IR selection: lines %0 to %1").arg(s).arg(e), ir_cmd.id);
+
+  ++active_critical_tasks;
+  tm.commit(ir_cmd);
 }
 
-void CoreManager::postInit() {
-
-}
+void CoreManager::postInit() {}
 
 CoreManager::~CoreManager() = default;
 
